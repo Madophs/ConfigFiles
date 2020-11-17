@@ -1,5 +1,13 @@
-export MDS_ROOT=/var/www/html/PsicoClinicoItsch/PsicoClinicoItsch
+# Shell configurations
+HISTSIZE=3000
+HISTFILESIZE=3000
+setopt APPEND_HISTORY
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_IGNORE_SPACE
+setopt HIST_REDUCE_BLANKS
 
+# env variables
 export GIT_REPOS=/home/$USER/Documents/git
 export TAGS=$MDS_ROOT/tags
 export TEST=$HOME/Documents/test
@@ -7,9 +15,7 @@ export CTEST=$TEST/cpp
 export MDS_INPUT=$HOME/MdsCode/input.txt
 export MDS_OUTPUT=$HOME/MdsCode/output.txt
 export MDS_CONFIG=$GIT_REPOS/ConfigFiles
-alias cpptags='cd $MDS_ROOT; rm -f tags; ctags -R --c++-kinds=+p; export TAGS=$MDS_ROOT/tags'
-alias phptags='cd $MDS_ROOT; rm -f tags; ctags -R --languages=php --exclude=storage; export TAGS=$MDS_ROOT/tags'
-alias setroot='export MDS_ROOT=$(pwd); export TAGS=$MDS_ROOT/tags'
+export MDS_ROOT=`cat $MDS_CONFIG/path.txt`
 
 # Directories aliases
 alias cdr='cd $MDS_ROOT'
@@ -20,8 +26,17 @@ alias artisan='php $MDS_ROOT/artisan'
 alias cdhtml='/var/www/html/'
 alias cddir='$HOME/Documents/'
 alias cdconfig='$MDS_CONFIG'
+alias cdw='$HOME/Downloads'
+alias cdd='$HOME/Documents'
 
-# Find files in a Laravel project in optimal way
-alias mdsgrep='grep -rn . --exclude-dir=storage --exclude-dir=vendor --exclude-dir=node_modules --exclude=tags --exclude="*.json" -e' 
+#command aliases
+alias cpptags='cd $MDS_ROOT; rm -f tags; ctags -R --c++-kinds=+p; export TAGS=$MDS_ROOT/tags'
+alias phptags='cd $MDS_ROOT; rm -f tags; ctags -R --languages=php --exclude=storage; export TAGS=$MDS_ROOT/tags'
+alias setroot='echo $(pwd) > $MDS_CONFIG/path.txt; export MDS_ROOT=`cat $MDS_CONFIG/path.txt`; export TAGS=$MDS_ROOT/tags'
 alias upgrade='sudo apt update && sudo apt upgrade'
+alias update='sudo apt update'
+alias install='sudo apt install'
+alias loadsh='source ~/.zshrc'
 
+# Scripts aliases
+alias operaffmpeg='$MDS_CONFIG/scripts/operaffmpeg.sh'

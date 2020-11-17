@@ -29,6 +29,11 @@ autocmd FileType html setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab
 " Set the workding directory to the current's file directory
 autocmd BufEnter * lcd %:p:h
 
+" Highlight trailing spaces automatically
+highlight ExtraWhitespace ctermbg=red guibg=red
+autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
+match ExtraWhitespace /\s\+$/
+
 " Global configurations
 colorscheme molokai
 syntax on
@@ -50,6 +55,8 @@ set autoindent
 set autowrite
 set cursorline
 set encoding=UTF-8
+set term=screen-256color
+set t_ut=
 
 " Add Cool status line
 set laststatus=2
@@ -66,7 +73,8 @@ map <F2> :YcmCompleter GoTo <CR>
 map <F3> :YcmCompleter GoToReferences <CR>
 map <F7> :w<CR>:! clear && mdscode -b % && mdscode -rio
 map <F8> :w<CR>:! clear && mdscode -rio
-map <F9> :call ToggleIOBuffers($MDS_INPUT,$MDS_OUTPUT) <CR> 
+map <F9> :call ToggleIOBuffers($MDS_INPUT,$MDS_OUTPUT) <CR>
+map <F10> :setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab smartindent <CR>
 
 map <c-f> :grep -rn $MDS_ROOT --exclude-dir=storage --exclude-dir=vendor --exclude-dir=node_modules --exclude=tags --exclude="*.json" -e
 map <F6> :vertical split /home/madophs/MdsCode/input.txt<CR>:split /home/madophs/MdsCode/output.txt <CR>
