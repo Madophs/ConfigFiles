@@ -9,13 +9,13 @@ setopt HIST_REDUCE_BLANKS
 
 # env variables
 export GIT_REPOS=/home/$USER/Documents/git
-export TAGS=$MDS_ROOT/tags
 export TEST=$HOME/Documents/test
 export CTEST=$TEST/cpp
 export MDS_INPUT=$HOME/MdsCode/input.txt
 export MDS_OUTPUT=$HOME/MdsCode/output.txt
 export MDS_CONFIG=$GIT_REPOS/ConfigFiles
 export MDS_ROOT=`cat $MDS_CONFIG/path.txt`
+export TAGS=$MDS_ROOT/tags
 
 # Directories aliases
 alias cdr='cd $MDS_ROOT'
