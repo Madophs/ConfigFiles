@@ -20,6 +20,8 @@ Plug 'ryanoasis/vim-devicons'
 Plug 'preservim/tagbar'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+Plug 'mhinz/vim-signify'
+Plug 'yggdroot/indentline'
 
 call plug#end()
 filetype plugin indent on
@@ -37,12 +39,15 @@ autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
 autocmd InsertEnter * match ExtraWhitespace /\s\+$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
+"autocmd InsertEnter FiletyIndentLinesEnable
+autocmd InsertEnter,CursorMoved *.cpp IndentLinesReset
 
 " Global configurations
 colorscheme molokai
 syntax on
 set path=.,$MDS_ROOT,$MDS_ROOT/**,
 set hlsearch
+set incsearch
 set tabstop=4
 set softtabstop=4 expandtab
 set shiftwidth=4
@@ -54,13 +59,19 @@ set autochdir
 set splitbelow
 set splitright
 set wildmenu
+set relativenumber
 set wildmode=list:longest,full
 set autoindent
 set autowrite
 set cursorline
+set showmatch
 set encoding=UTF-8
 set term=screen-256color
 set t_ut=
+set noshowmode
+
+" Bind VIM clipboard registry with Linux's
+set clipboard=unnamedplus
 
 " Add Cool status line
 set laststatus=2
@@ -80,10 +91,9 @@ map <F8> :w<CR>:! clear && mdscode -rio
 map <F9> :call ToggleIOBuffers($MDS_INPUT,$MDS_OUTPUT) <CR>
 map <F10> :setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab smartindent <CR>
 
-map <c-f> :grep -rn $MDS_ROOT --exclude-dir=storage --exclude-dir=vendor --exclude-dir=node_modules --exclude=tags --exclude="*.json" -e
+map <c-h> :grep -rn $MDS_ROOT --exclude-dir=storage --exclude-dir=vendor --exclude-dir=node_modules --exclude=tags --exclude="*.json" -e
 map <F6> :vertical split /home/madophs/MdsCode/input.txt<CR>:split /home/madophs/MdsCode/output.txt <CR>
 "map <C-i> :cd $MDS_ROOT <CR>
-nmap <C-V> "+gP
 map <C-n> :NERDTreeToggle<CR>
 map <F4> :TagbarToggle<CR>
 nnoremap <M-Right> <C-w>l
@@ -106,6 +116,7 @@ let g:ycm_use_clang=1
 let g:ycm_clangd_uses_ycmd_caching = 0
 " Use installed clangd, not YCM-bundled clangd which doesn't get updates.
 let g:ycm_clangd_binary_path = exepath("clangd")
+let g:trim_trailing_whitespace="true"
 
 " fzf stuff
 command! -bang -nargs=? -complete=dir Files
@@ -115,3 +126,15 @@ command! -bang -nargs=* Rg
   \   'rg --column --line-number --no-heading --color=always --smart-case -- '.shellescape(<q-args>), 1,
   \   fzf#vim#with_preview(), <bang>0)
 
+
+let g:indentLine_char_list = ['|', '¦', '┆', '┊']
+let g:indentLine_enabled = 1
+
+set updatetime=1000
+augroup MdsYCM
+  autocmd!
+  autocmd FileType c,cpp,python let b:ycm_hover = {
+    \ 'command': 'GetDoc',
+    \ 'syntax': &filetype
+    \ }
+augroup END

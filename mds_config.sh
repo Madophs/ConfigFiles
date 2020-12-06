@@ -14,7 +14,13 @@ export CTEST=$TEST/cpp
 export MDS_INPUT=$HOME/MdsCode/input.txt
 export MDS_OUTPUT=$HOME/MdsCode/output.txt
 export MDS_CONFIG=$GIT_REPOS/ConfigFiles
-export MDS_ROOT=`cat $MDS_CONFIG/path.txt`
+
+# Small setup
+. $MDS_CONFIG/scripts/setup.sh
+# User VI like map keys
+set -o vi
+
+export MDS_ROOT=`cat $MDS_CONFIG/.path.txt`
 export TAGS=$MDS_ROOT/tags
 
 # Directories aliases
@@ -32,10 +38,12 @@ alias cdd='$HOME/Documents'
 #command aliases
 alias cpptags='cd $MDS_ROOT; rm -f tags; ctags -R --c++-kinds=+p; export TAGS=$MDS_ROOT/tags'
 alias phptags='cd $MDS_ROOT; rm -f tags; ctags -R --languages=php --exclude=storage; export TAGS=$MDS_ROOT/tags'
-alias setroot='echo $(pwd) > $MDS_CONFIG/path.txt; export MDS_ROOT=`cat $MDS_CONFIG/path.txt`; export TAGS=$MDS_ROOT/tags'
+alias setroot='echo $(pwd) > $MDS_CONFIG/.path.txt; export MDS_ROOT=`cat $MDS_CONFIG/.path.txt`; export TAGS=$MDS_ROOT/tags'
 alias upgrade='sudo apt update && sudo apt upgrade'
 alias update='sudo apt update'
 alias install='sudo apt install'
+alias autoremove='sudo apt autoremove'
+alias show='sudo apt show'
 alias loadsh='source ~/.zshrc'
 
 # Scripts aliases
