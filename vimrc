@@ -28,8 +28,10 @@ filetype plugin indent on
 
 " configuration for html files
 autocmd FileType html setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab
-" Set the workding directory to the current's file directory
-autocmd BufEnter * lcd %:p:h
+
+" Set the working directory to the current's file directory
+" Issues with terminal buffer
+" autocmd BufEnter * lcd %:p:h
 
 " Highlight trailing spaces automatically
 highlight ExtraWhitespace ctermbg=red guibg=red
@@ -69,6 +71,8 @@ set encoding=UTF-8
 set term=screen-256color
 set t_ut=
 set noshowmode
+set updatetime=3000
+set mouse=ni
 
 " Bind VIM clipboard registry with Linux's
 set clipboard=unnamedplus
@@ -130,7 +134,6 @@ command! -bang -nargs=* Rg
 let g:indentLine_char_list = ['|', '¦', '┆', '┊']
 let g:indentLine_enabled = 1
 
-set updatetime=1000
 augroup MdsYCM
   autocmd!
   autocmd FileType c,cpp,python let b:ycm_hover = {
@@ -138,3 +141,34 @@ augroup MdsYCM
     \ 'syntax': &filetype
     \ }
 augroup END
+
+" Tagbar kinds configuration
+
+let g:tagbar_type_cpp = {
+    \ 'kinds' : [
+        \ 'd:macros:1:0',
+        \ 'p:prototypes:0:0',
+        \ 'g:enums',
+        \ 'e:enumerators:0:0',
+        \ 't:typedefs:0:0',
+        \ 'n:namespaces',
+        \ 'c:classes',
+        \ 's:structs',
+        \ 'u:unions',
+        \ 'f:functions',
+        \ 'm:members:0:0',
+        \ 'v:variables:0:0',
+        \ '?:unknown',
+    \ ],
+\ }
+
+
+let g:tagbar_type_php = {
+    \ 'kinds' : [
+        \ 'i:interfaces',
+        \ 'c:classes',
+        \ 'd:constant definitions:0:0',
+        \ 'f:functions',
+        \ 'j:javascript functions',
+    \ ],
+\ }
