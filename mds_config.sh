@@ -38,13 +38,21 @@ alias cdd='$HOME/Documents'
 #command aliases
 alias cpptags='cd $MDS_ROOT; rm -f tags; ctags -R --c++-kinds=+p; export TAGS=$MDS_ROOT/tags'
 alias phptags='cd $MDS_ROOT; rm -f tags; ctags -R --languages=php --exclude=storage; export TAGS=$MDS_ROOT/tags'
-alias setroot='echo $(pwd) > $MDS_CONFIG/.path.txt; export MDS_ROOT=`cat $MDS_CONFIG/.path.txt`; export TAGS=$MDS_ROOT/tags'
+alias setroot='echo $(pwd) > $MDS_CONFIG/.path.txt; export MDS_ROOT=$(cat $MDS_CONFIG/.path.txt) ; export TAGS=$MDS_ROOT/tags'
+alias getroot='echo $MDS_ROOT'
 alias upgrade='sudo apt update && sudo apt upgrade'
 alias update='sudo apt update'
 alias install='sudo apt install'
 alias autoremove='sudo apt autoremove'
+alias remove='sudo apt remove'
 alias show='sudo apt show'
+alias search'sudo apt search'
 alias loadsh='source ~/.zshrc'
+alias myip='host myip.opendns.com resolver1.opendns.com'
 
 # Scripts aliases
 alias operaffmpeg='$MDS_CONFIG/scripts/operaffmpeg.sh'
+alias zshplugins='$MDS_CONFIG/scripts/zsh_plugins.sh'
+
+# Plugins
+plugins=(zsh-autosuggestions)

@@ -22,6 +22,7 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'mhinz/vim-signify'
 Plug 'yggdroot/indentline'
+Plug 'crusoexia/vim-monokai'
 
 call plug#end()
 filetype plugin indent on
@@ -45,7 +46,7 @@ autocmd BufWinLeave * call clearmatches()
 autocmd InsertEnter,CursorMoved *.cpp IndentLinesReset
 
 " Global configurations
-colorscheme molokai
+colorscheme monokai
 syntax on
 set path=.,$MDS_ROOT,$MDS_ROOT/**,
 set hlsearch
