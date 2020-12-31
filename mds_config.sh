@@ -17,6 +17,7 @@ export MDS_CONFIG=$GIT_REPOS/ConfigFiles
 
 # Small setup
 . $MDS_CONFIG/scripts/setup.sh
+
 # User VI like map keys
 set -o vi
 
@@ -48,6 +49,7 @@ alias remove='sudo apt remove'
 alias show='sudo apt show'
 alias search'sudo apt search'
 alias loadsh='source ~/.zshrc'
+alias zshlogin='exec zsh --login'
 alias myip='host myip.opendns.com resolver1.opendns.com'
 
 # Scripts aliases
@@ -55,4 +57,4 @@ alias operaffmpeg='$MDS_CONFIG/scripts/operaffmpeg.sh'
 alias zshplugins='$MDS_CONFIG/scripts/zsh_plugins.sh'
 
 # Plugins
-plugins=(zsh-autosuggestions)
+source $ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh

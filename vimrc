@@ -7,7 +7,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'VundleVim/Vundle.vim'
 Plug 'Valloric/YouCompleteMe'
 Plug 'octol/vim-cpp-enhanced-highlight'
-Plug 'scrooloose/nerdtree'
+"Plug 'scrooloose/nerdtree'
 Plug 'vifm/vifm.vim'
 Plug 'preservim/nerdcommenter'
 Plug 'itchyny/lightline.vim'
@@ -23,6 +23,11 @@ Plug 'junegunn/fzf.vim'
 Plug 'mhinz/vim-signify'
 Plug 'yggdroot/indentline'
 Plug 'crusoexia/vim-monokai'
+Plug 'jiangmiao/auto-pairs'
+Plug 'tpope/vim-vinegar'
+Plug 'embark-theme/vim'
+Plug 'ghifarit53/tokyonight-vim'
+Plug 'bluz71/vim-nightfly-guicolors'
 
 call plug#end()
 filetype plugin indent on
@@ -46,7 +51,6 @@ autocmd BufWinLeave * call clearmatches()
 autocmd InsertEnter,CursorMoved *.cpp IndentLinesReset
 
 " Global configurations
-colorscheme monokai
 syntax on
 set path=.,$MDS_ROOT,$MDS_ROOT/**,
 set hlsearch
@@ -84,6 +88,17 @@ set laststatus=2
 " Set tags location
 set tags=$TAGS
 
+" I use Konsole terminal so let's add some color
+" For more info :h xterm-true-color
+let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+
+" Nice looking terminal
+set termguicolors
+
+" Beautiful theme
+colorscheme nightfly
+
 " Source files (Usually functions)
 source $MDS_CONFIG/ToggleIOBuffers.vim
 source $MDS_CONFIG/Kwbd.vim
@@ -110,7 +125,7 @@ map <C-L> :Buffers <CR>
 
 " NERDTree configurations
 let g:netrw_keepdir=0 " Netrw: keeps track of current browsing directory
-let NERDTreeShowHidden=1
+"let NERDTreeShowHidden=1
 
 " YouCompleteme configuration
 "let g:ycm_global_ycm_extra_conf = '$HOME/.vim/plugged/YouCompleteMe/third_party/ycmd/.ycm_extra_conf.py'
@@ -123,6 +138,11 @@ let g:ycm_clangd_uses_ycmd_caching = 0
 let g:ycm_clangd_binary_path = exepath("clangd")
 let g:trim_trailing_whitespace="true"
 
+" netrw configurations
+let g:netrw_banner = 0
+let g:netrw_liststyle = 3
+let g:netrw_browse_split = 2
+let g:netrw_winsize = 25
 " fzf stuff
 command! -bang -nargs=? -complete=dir Files
     \ call fzf#vim#files(<q-args>, {'options': ['--layout=reverse', '--info=inline', '--preview', '~/.vim/plugged/fzf.vim/bin/preview.sh {}']}, <bang>0)
@@ -173,3 +193,4 @@ let g:tagbar_type_php = {
         \ 'j:javascript functions',
     \ ],
 \ }
+
