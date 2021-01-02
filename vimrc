@@ -7,7 +7,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'VundleVim/Vundle.vim'
 Plug 'Valloric/YouCompleteMe'
 Plug 'octol/vim-cpp-enhanced-highlight'
-"Plug 'scrooloose/nerdtree'
+Plug 'scrooloose/nerdtree'
 Plug 'vifm/vifm.vim'
 Plug 'preservim/nerdcommenter'
 Plug 'itchyny/lightline.vim'
@@ -28,16 +28,20 @@ Plug 'tpope/vim-vinegar'
 Plug 'embark-theme/vim'
 Plug 'ghifarit53/tokyonight-vim'
 Plug 'bluz71/vim-nightfly-guicolors'
+Plug 'luochen1990/rainbow'
+Plug 'terryma/vim-smooth-scroll'
+Plug 'inside/vim-search-pulse'
+Plug 'mhinz/vim-startify'
 
 call plug#end()
 filetype plugin indent on
 
-" configuration for html files
+" Configuration for html files
 autocmd FileType html setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab
 
 " Set the working directory to the current's file directory
 " Issues with terminal buffer
-" autocmd BufEnter * lcd %:p:h
+"autocmd BufEnter * lcd %:p:h
 
 " Highlight trailing spaces automatically
 highlight ExtraWhitespace ctermbg=red guibg=red
@@ -52,32 +56,59 @@ autocmd InsertEnter,CursorMoved *.cpp IndentLinesReset
 
 " Global configurations
 syntax on
+
+" Search related configs
 set path=.,$MDS_ROOT,$MDS_ROOT/**,
 set hlsearch
 set incsearch
+set ignorecase
+set smartcase
+
+" Space / indenting related configs
 set tabstop=4
 set softtabstop=4 expandtab
 set shiftwidth=4
 set autoindent
-set visualbell
-set autoread | au CursorHold,FocusGained,BufEnter * checktime
+set smartindent
+set shiftround
+set autoindent
+
+" Editor related configs
+set cursorline
 set number
+set relativenumber
+set mouse=ni
+set showmatch
+set wrap
+set linebreak
+set breakindent
+set scrolloff=2
+set ruler
+set foldmethod=indent
+set nofoldenable
+
+" Behavior
 set autochdir
+set updatetime=3000
+set autoread | au CursorHold,FocusGained,BufEnter * checktime
+set autowrite
+set noshowmode
 set splitbelow
 set splitright
-set wildmenu
-set relativenumber
-set wildmode=list:longest,full
-set autoindent
-set autowrite
-set cursorline
-set showmatch
-set encoding=UTF-8
+set confirm
+
+" Terminal related configs
 set term=screen-256color
+set encoding=UTF-8
 set t_ut=
-set noshowmode
-set updatetime=3000
-set mouse=ni
+set visualbell
+
+" Here start miscellaneous configs
+set wildmenu
+set wildmode=list:longest,full
+set title
+set backspace=indent,eol,start
+set noswapfile
 
 " Bind VIM clipboard registry with Linux's
 set clipboard=unnamedplus
@@ -98,6 +129,9 @@ set termguicolors
 
 " Beautiful theme
 colorscheme nightfly
+let g:lightline = { 'colorscheme': 'nightfly' }
+let g:nightflyUnderlineMatchParen = 1
+let g:nightflyCursorColor = 1
 
 " Source files (Usually functions)
 source $MDS_CONFIG/ToggleIOBuffers.vim
@@ -115,6 +149,7 @@ map <c-h> :grep -rn $MDS_ROOT --exclude-dir=storage --exclude-dir=vendor --exclu
 map <F6> :vertical split /home/madophs/MdsCode/input.txt<CR>:split /home/madophs/MdsCode/output.txt <CR>
 "map <C-i> :cd $MDS_ROOT <CR>
 map <C-n> :NERDTreeToggle<CR>
+nnoremap <leader>n :NERDTreeFocus<CR>
 map <F4> :TagbarToggle<CR>
 nnoremap <M-Right> <C-w>l
 nnoremap <M-Left> <C-w>h
@@ -123,9 +158,27 @@ nnoremap <M-Up> <C-w>k
 map <C-k> :Kwbd <CR>
 map <C-L> :Buffers <CR>
 
+" Smooth scrolling
+noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 0, 2)<CR>
+noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 0, 2)<CR>
+noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 0, 4)<CR>
+noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 0, 4)<CR>
+
+" Indentation character list
+let g:indentLine_char_list = ['|', '¦', '┆', '┊']
+let g:indentLine_enabled = 1
+
+" Parenthesis colors
+let g:rainbow_active = 1
+
+let g:vim_search_pulse_duration = 200
+
 " NERDTree configurations
-let g:netrw_keepdir=0 " Netrw: keeps track of current browsing directory
 "let NERDTreeShowHidden=1
+
+" Exit Vim if NERDTree is the only window left.
+autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() |
+    \ quit | endif
 
 " YouCompleteme configuration
 "let g:ycm_global_ycm_extra_conf = '$HOME/.vim/plugged/YouCompleteMe/third_party/ycmd/.ycm_extra_conf.py'
@@ -143,6 +196,8 @@ let g:netrw_banner = 0
 let g:netrw_liststyle = 3
 let g:netrw_browse_split = 2
 let g:netrw_winsize = 25
+let g:netrw_keepdir=0 " Netrw: keeps track of current browsing directory
+
 " fzf stuff
 command! -bang -nargs=? -complete=dir Files
     \ call fzf#vim#files(<q-args>, {'options': ['--layout=reverse', '--info=inline', '--preview', '~/.vim/plugged/fzf.vim/bin/preview.sh {}']}, <bang>0)
@@ -150,10 +205,6 @@ command! -bang -nargs=* Rg
   \ call fzf#vim#grep(
   \   'rg --column --line-number --no-heading --color=always --smart-case -- '.shellescape(<q-args>), 1,
   \   fzf#vim#with_preview(), <bang>0)
-
-
-let g:indentLine_char_list = ['|', '¦', '┆', '┊']
-let g:indentLine_enabled = 1
 
 augroup MdsYCM
   autocmd!
