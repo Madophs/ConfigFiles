@@ -81,6 +81,7 @@ set mouse=ni
 set showmatch
 set wrap
 set linebreak
+set showbreak=↳
 set breakindent
 set scrolloff=2
 set ruler
