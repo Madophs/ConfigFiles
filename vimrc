@@ -16,7 +16,9 @@ Plug 'mattn/emmet-vim'
 Plug 'tpope/vim-fugitive'
 Plug 'turbio/bracey.vim'
 Plug 'StanAngeloff/php.vim'
-Plug 'ryanoasis/vim-devicons'
+if $MDS_FANCY ==? "yes"
+    Plug 'ryanoasis/vim-devicons'
+endif
 Plug 'preservim/tagbar'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
@@ -120,19 +122,24 @@ set laststatus=2
 " Set tags location
 set tags=$TAGS
 
-" I use Konsole terminal so let's add some color
-" For more info :h xterm-true-color
-let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 
-" Nice looking terminal
-set termguicolors
+if $MDS_FANCY ==? "YES"
+    " I use Konsole terminal so let's add some color
+    " For more info :h xterm-true-color
+    let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 
-" Beautiful theme
-colorscheme nightfly
-let g:lightline = { 'colorscheme': 'nightfly' }
-let g:nightflyUnderlineMatchParen = 1
-let g:nightflyCursorColor = 1
+    " Nice looking terminal
+    set termguicolors
+
+    " Beautiful theme
+    colorscheme nightfly
+    let g:lightline = { 'colorscheme': 'nightfly' }
+    let g:nightflyUnderlineMatchParen = 1
+    let g:nightflyCursorColor = 1
+else
+    colorscheme monokai
+endif
 
 " Source files (Usually functions)
 source $MDS_CONFIG/ToggleIOBuffers.vim
