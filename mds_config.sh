@@ -31,6 +31,7 @@ export TAGS=$MDS_ROOT/tags
 # Directories aliases
 alias cdr='cd $MDS_ROOT'
 alias cdgit='cd $GIT_REPOS'
+alias lcpp='cd $GIT_REPOS/C-CPP-Linux-Programming'
 alias cpp='cd $CTEST'
 alias cdtest='$HOME/Documents/test/'
 alias artisan='php $MDS_ROOT/artisan'
