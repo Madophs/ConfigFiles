@@ -1,11 +1,15 @@
 # Shell configurations
 HISTSIZE=3000
 HISTFILESIZE=3000
-setopt APPEND_HISTORY
+
 setopt HIST_IGNORE_DUPS
 setopt HIST_IGNORE_ALL_DUPS
 setopt HIST_IGNORE_SPACE
 setopt HIST_REDUCE_BLANKS
+setopt HIST_SAVE_NO_DUPS
+setopt HIST_EXPIRE_DUPS_FIRST
+setopt HIST_FIND_NO_DUPS
+setopt EXTENDED_HISTORY
 
 # env variables
 export GIT_REPOS=/home/$USER/Documents/git
@@ -21,7 +25,7 @@ export MDS_CONFIG=$GIT_REPOS/ConfigFiles
 # User VI like map keys
 set -o vi
 
-export MDS_ROOT=`cat $MDS_CONFIG/.path.txt`
+export MDS_ROOT=$(cat $MDS_CONFIG/.path.txt)
 export TAGS=$MDS_ROOT/tags
 
 # Directories aliases
@@ -40,17 +44,19 @@ alias cdd='$HOME/Documents'
 alias cpptags='cd $MDS_ROOT; rm -f tags; ctags -R --c++-kinds=+p; export TAGS=$MDS_ROOT/tags'
 alias phptags='cd $MDS_ROOT; rm -f tags; ctags -R --languages=php --exclude=storage; export TAGS=$MDS_ROOT/tags'
 alias setroot='echo $(pwd) > $MDS_CONFIG/.path.txt; export MDS_ROOT=$(cat $MDS_CONFIG/.path.txt) ; export TAGS=$MDS_ROOT/tags'
-alias getroot='echo $MDS_ROOT'
+alias getroot='export MDS_ROOT=$(cat $MDS_CONFIG/.path.txt); echo $MDS_ROOT'
 alias upgrade='sudo apt update && sudo apt upgrade'
 alias update='sudo apt update'
 alias install='sudo apt install'
 alias autoremove='sudo apt autoremove'
 alias remove='sudo apt remove'
 alias show='sudo apt show'
-alias search'sudo apt search'
+alias search='sudo apt search'
 alias loadsh='source ~/.zshrc'
 alias zshlogin='exec zsh --login'
 alias myip='host myip.opendns.com resolver1.opendns.com'
+alias vimrc='vim $MDS_CONFIG/vimrc'
+alias config='vim $MDS_CONFIG'
 
 # Scripts aliases
 alias operaffmpeg='$MDS_CONFIG/scripts/operaffmpeg.sh'
@@ -58,3 +64,4 @@ alias zshplugins='$MDS_CONFIG/scripts/zsh_plugins.sh'
 
 # Plugins
 source $ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $ZSH_CUSTOM/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh

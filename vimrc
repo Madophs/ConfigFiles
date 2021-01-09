@@ -32,6 +32,8 @@ Plug 'luochen1990/rainbow'
 Plug 'terryma/vim-smooth-scroll'
 Plug 'inside/vim-search-pulse'
 Plug 'mhinz/vim-startify'
+Plug 'pboettch/vim-cmake-syntax'
+Plug 'vhdirk/vim-cmake'
 
 call plug#end()
 filetype plugin indent on
@@ -172,6 +174,9 @@ let g:indentLine_enabled = 1
 " Parenthesis colors
 let g:rainbow_active = 1
 
+" Disable Rainbow plugin when editing cmake files
+autocmd FileType cmake RainbowToggleOff
+
 let g:vim_search_pulse_duration = 200
 
 " NERDTree configurations
@@ -186,10 +191,14 @@ autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTr
 let g:ycm_autoclose_preview_window_after_completion=1
 "let g:ycm_show_diagnostics_ui = 0
 let g:ycm_use_clang=1
+
+" For more info check:
+" https://releases.llvm.org/10.0.0/tools/clang/tools/extra/docs/clangd/Installation.html
 " Let clangd fully control code completion
 let g:ycm_clangd_uses_ycmd_caching = 0
 " Use installed clangd, not YCM-bundled clangd which doesn't get updates.
 let g:ycm_clangd_binary_path = exepath("clangd")
+
 let g:trim_trailing_whitespace="true"
 
 " netrw configurations
@@ -198,6 +207,10 @@ let g:netrw_liststyle = 3
 let g:netrw_browse_split = 2
 let g:netrw_winsize = 25
 let g:netrw_keepdir=0 " Netrw: keeps track of current browsing directory
+
+" CMake configurations
+let g:cmake_export_compile_commands = 1
+let g:cmake_ycm_symlinks = 1
 
 " fzf stuff
 command! -bang -nargs=? -complete=dir Files
