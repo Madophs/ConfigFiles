@@ -18,6 +18,8 @@ Plug 'turbio/bracey.vim'
 Plug 'StanAngeloff/php.vim'
 if $MDS_FANCY ==? "yes"
     Plug 'ryanoasis/vim-devicons'
+    Plug 'bluz71/vim-nightfly-guicolors'
+    Plug 'ghifarit53/tokyonight-vim'
 endif
 Plug 'preservim/tagbar'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -28,8 +30,6 @@ Plug 'crusoexia/vim-monokai'
 Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-vinegar'
 Plug 'embark-theme/vim'
-Plug 'ghifarit53/tokyonight-vim'
-Plug 'bluz71/vim-nightfly-guicolors'
 Plug 'luochen1990/rainbow'
 Plug 'terryma/vim-smooth-scroll'
 Plug 'inside/vim-search-pulse'

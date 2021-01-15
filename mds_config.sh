@@ -21,6 +21,12 @@ export MDS_CONFIG=$GIT_REPOS/ConfigFiles
 
 # Small setup
 . $MDS_CONFIG/scripts/setup.sh
+. $MDS_CONFIG/scripts/plugins_enabled_default.sh
+
+# User configs (overrides default ones)
+if [[ -f $MDS_CONFIG/scripts/plugins_enabled_user.sh ]]; then
+    source $MDS_CONFIG/scripts/plugins_enabled_user.sh
+fi
 
 # User VI like map keys
 set -o vi
@@ -64,5 +70,24 @@ alias operaffmpeg='$MDS_CONFIG/scripts/operaffmpeg.sh'
 alias zshplugins='$MDS_CONFIG/scripts/zsh_plugins.sh'
 
 # Plugins
-source $ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-source $ZSH_CUSTOM/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+if [[ -e $ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
+    source $ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+fi
+
+if [[ -e $ZSH_CUSTOM/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
+    source $ZSH_CUSTOM/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
+
+if [[ -e ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-navigation-tools/zsh-navigation-tools.plugin.zsh ]]; then
+    source ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-navigation-tools/zsh-navigation-tools.plugin.zsh
+    znt_list_instant_select=1
+    znt_list_border=0
+    znt_list_bold=1
+    znt_list_colorpair="green/black"
+    znt_functions_keywords=( "zplg" "zgen" "match"  )
+    znt_cd_active_text="underline"
+    znt_env_nlist_coloring_color=$'\x1b[00;33m'
+    znt_cd_hotlist=( "~/.config/znt" "/usr/share/zsh/site-functions" "/usr/share/zsh"
+                    "/usr/local/share/zsh/site-functions" "/usr/local/share/zsh"
+                                    "/usr/local/bin" )
+fi
