@@ -41,13 +41,13 @@ handle_zsh_plugin() {
         if [[ ! -e $PLUGIN_PATH ]]; then
             git clone $GIT_REPO $PLUGIN_PATH
         else
-            echo "INFO: zsh autosuggestions its already installed."
+            echo "INFO: ${PLUGIN_NAME} its already installed."
             echo "Upgrading..."
             update_git_plugin $PLUGIN_PATH
         fi
     elif [[ $ENABLED == "N" ]]; then
         if [[ -e $PLUGIN_PATH ]]; then
-            echo "Removing {$PLUGIN_NAME} plugin..."
+            echo "Removing ${PLUGIN_NAME} plugin..."
             rm -rf $PLUGIN_PATH
             echo "Plugin removed."
         fi
