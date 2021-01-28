@@ -64,6 +64,7 @@ alias zshlogin='exec zsh --login'
 alias myip='host myip.opendns.com resolver1.opendns.com'
 alias vimrc='vim $MDS_CONFIG/vimrc'
 alias config='vim $MDS_CONFIG'
+alias kc='kubectl'
 
 # Scripts aliases
 alias operaffmpeg='$MDS_CONFIG/scripts/operaffmpeg.sh'
