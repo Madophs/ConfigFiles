@@ -36,6 +36,7 @@ Plug 'inside/vim-search-pulse'
 Plug 'mhinz/vim-startify'
 Plug 'pboettch/vim-cmake-syntax'
 Plug 'vhdirk/vim-cmake'
+Plug 'vim-python/python-syntax'
 
 call plug#end()
 filetype plugin indent on
@@ -114,6 +115,7 @@ set wildmode=list:longest,full
 set title
 set backspace=indent,eol,start
 set noswapfile
+let g:python_highlight_all = 1
 
 " Bind VIM clipboard registry with Linux's
 set clipboard=unnamedplus
@@ -265,4 +267,3 @@ let g:tagbar_type_php = {
         \ 'j:javascript functions',
     \ ],
 \ }
-
