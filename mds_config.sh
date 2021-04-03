@@ -52,7 +52,7 @@ alias cpptags='cd $MDS_ROOT; rm -f tags; ctags -R --c++-kinds=+p; export TAGS=$M
 alias phptags='cd $MDS_ROOT; rm -f tags; ctags -R --languages=php --exclude=storage; export TAGS=$MDS_ROOT/tags'
 alias setroot='echo $(pwd) > $MDS_CONFIG/.path.txt; export MDS_ROOT=$(cat $MDS_CONFIG/.path.txt) ; export TAGS=$MDS_ROOT/tags'
 alias getroot='export MDS_ROOT=$(cat $MDS_CONFIG/.path.txt); echo $MDS_ROOT'
-alias upgrade='sudo apt update && sudo apt upgrade'
+alias upgrade='sudo apt update && sudo apt upgrade -y'
 alias update='sudo apt update'
 alias install='sudo apt install'
 alias autoremove='sudo apt autoremove'
@@ -69,6 +69,7 @@ alias kc='kubectl'
 # Scripts aliases
 alias operaffmpeg='$MDS_CONFIG/scripts/operaffmpeg.sh'
 alias zshplugins='$MDS_CONFIG/scripts/zsh_plugins.sh'
+alias sl2='$MDS_CONFIG/scripts/backup_steam_savefiles.sh'
 
 # Plugins
 if [[ -e $ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
