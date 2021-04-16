@@ -5,7 +5,6 @@ filetype off                  " required
 call plug#begin('~/.vim/plugged')
 
 Plug 'VundleVim/Vundle.vim'
-Plug 'Valloric/YouCompleteMe'
 Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'scrooloose/nerdtree'
 Plug 'vifm/vifm.vim'
@@ -37,6 +36,10 @@ Plug 'mhinz/vim-startify'
 Plug 'pboettch/vim-cmake-syntax'
 Plug 'vhdirk/vim-cmake'
 Plug 'vim-python/python-syntax'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'ap/vim-buftabline'
+Plug 'sheerun/vim-polyglot'
+Plug 'uiiaoo/java-syntax.vim'
 
 call plug#end()
 filetype plugin indent on
@@ -61,6 +64,7 @@ autocmd InsertEnter,CursorMoved *.cpp IndentLinesReset
 
 " Global configurations
 syntax on
+highlight link JavaIdentifier NONE
 
 " Search related configs
 set path=.,$MDS_ROOT,$MDS_ROOT/**,
@@ -92,6 +96,7 @@ set scrolloff=2
 set ruler
 set foldmethod=indent
 set nofoldenable
+set hidden
 
 " Behavior
 set autochdir
@@ -150,8 +155,6 @@ source $MDS_CONFIG/ToggleIOBuffers.vim
 source $MDS_CONFIG/Kwbd.vim
 
 " Mappings
-map <F2> :YcmCompleter GoTo <CR>
-map <F3> :YcmCompleter GoToReferences <CR>
 map <F7> :w<CR>:! clear && mdscode -b % && mdscode -rio
 map <F8> :w<CR>:! clear && mdscode -rio
 map <F9> :call ToggleIOBuffers($MDS_INPUT,$MDS_OUTPUT) <CR>
@@ -160,21 +163,55 @@ map <F10> :setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab smartindent <
 map <c-h> :grep -rn $MDS_ROOT --exclude-dir=storage --exclude-dir=vendor --exclude-dir=node_modules --exclude=tags --exclude="*.json" -e
 map <F6> :vertical split /home/madophs/MdsCode/input.txt<CR>:split /home/madophs/MdsCode/output.txt <CR>
 "map <C-i> :cd $MDS_ROOT <CR>
-map <C-n> :NERDTreeToggle<CR>
+map <C-M> :NERDTreeToggle<CR>
 nnoremap <leader>n :NERDTreeFocus<CR>
 map <F4> :TagbarToggle<CR>
-nnoremap <M-Right> <C-w>l
-nnoremap <M-Left> <C-w>h
-nnoremap <M-Down> <C-w>j
-nnoremap <M-Up> <C-w>k
 map <C-k> :Kwbd <CR>
 map <C-L> :Buffers <CR>
+nnoremap <C-N> :bnext<CR>
+nnoremap <C-P> :bprev<CR>
 
 " Smooth scrolling
 noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 0, 2)<CR>
 noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 0, 2)<CR>
 noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 0, 4)<CR>
 noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 0, 4)<CR>
+
+" CoC confuration for php, it requires to run CocInstall coc-phpls
+
+" Use <c-space> to trigger completion.
+if has('nvim')
+  inoremap <silent><expr> <c-space> coc#refresh()
+else
+  inoremap <silent><expr> <c-@> coc#refresh()
+endif
+
+
+" To code navigation.
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Highlight the symbol and its references when holding the cursor.
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" Show functions docs using CoC
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  elseif (coc#rpc#ready())
+    call CocActionAsync('doHover')
+  else
+    execute '!' . &keywordprg . " " . expand('<cword>')
+  endif
+endfunction
+
+" Formatting selected code.
+xmap <leader>f  <Plug>(coc-format-selected)
+nmap <leader>f  <Plug>(coc-format-selected)
 
 " Indentation character list
 let g:indentLine_char_list = ['|', '¦', '┆', '┊']
@@ -194,19 +231,6 @@ let g:vim_search_pulse_duration = 200
 " Exit Vim if NERDTree is the only window left.
 autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() |
     \ quit | endif
-
-" YouCompleteme configuration
-"let g:ycm_global_ycm_extra_conf = '$HOME/.vim/plugged/YouCompleteMe/third_party/ycmd/.ycm_extra_conf.py'
-let g:ycm_autoclose_preview_window_after_completion=1
-"let g:ycm_show_diagnostics_ui = 0
-let g:ycm_use_clang=1
-
-" For more info check:
-" https://releases.llvm.org/10.0.0/tools/clang/tools/extra/docs/clangd/Installation.html
-" Let clangd fully control code completion
-let g:ycm_clangd_uses_ycmd_caching = 0
-" Use installed clangd, not YCM-bundled clangd which doesn't get updates.
-let g:ycm_clangd_binary_path = exepath("clangd")
 
 let g:trim_trailing_whitespace="true"
 
@@ -228,14 +252,6 @@ command! -bang -nargs=* Rg
   \ call fzf#vim#grep(
   \   'rg --column --line-number --no-heading --color=always --smart-case -- '.shellescape(<q-args>), 1,
   \   fzf#vim#with_preview(), <bang>0)
-
-augroup MdsYCM
-  autocmd!
-  autocmd FileType c,cpp,python let b:ycm_hover = {
-    \ 'command': 'GetDoc',
-    \ 'syntax': &filetype
-    \ }
-augroup END
 
 " Tagbar kinds configuration
 
@@ -267,3 +283,4 @@ let g:tagbar_type_php = {
         \ 'j:javascript functions',
     \ ],
 \ }
+

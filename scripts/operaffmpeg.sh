@@ -18,4 +18,4 @@ if [[ -f $LIB_FULLPATH ]]; then
     fi
 else
     echo "Error: library [$LIB_NAME] not found in path [$LIB_PATH]"
- fi
+fi
