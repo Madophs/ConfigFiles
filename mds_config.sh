@@ -18,6 +18,8 @@ export CTEST=$TEST/cpp
 export MDS_INPUT=$HOME/MdsCode/input.txt
 export MDS_OUTPUT=$HOME/MdsCode/output.txt
 export MDS_CONFIG=$GIT_REPOS/ConfigFiles
+export EDITOR=vim
+export PAGER=less
 
 # Small setup
 . $MDS_CONFIG/scripts/setup.sh
@@ -70,6 +72,8 @@ alias kc='kubectl'
 alias operaffmpeg='$MDS_CONFIG/scripts/operaffmpeg.sh'
 alias zshplugins='$MDS_CONFIG/scripts/zsh_plugins.sh'
 alias sl2='$MDS_CONFIG/scripts/backup_steam_savefiles.sh'
+alias htoken='$MDS_CONFIG/scripts/handle_git_token.sh'
+alias gpush='$MDS_CONFIG/scripts/git_push.sh'
 
 # Plugins
 if [[ -e $ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then

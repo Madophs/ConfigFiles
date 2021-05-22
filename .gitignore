@@ -2,3 +2,4 @@
 *.swp
 .path.txt
 plugins_enabled_user.sh
+token
