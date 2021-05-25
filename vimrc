@@ -9,7 +9,7 @@ Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'scrooloose/nerdtree'
 Plug 'vifm/vifm.vim'
 Plug 'preservim/nerdcommenter'
-Plug 'itchyny/lightline.vim'
+"Plug 'itchyny/lightline.vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'mattn/emmet-vim'
 Plug 'tpope/vim-fugitive'
@@ -34,12 +34,13 @@ Plug 'terryma/vim-smooth-scroll'
 Plug 'inside/vim-search-pulse'
 Plug 'mhinz/vim-startify'
 Plug 'pboettch/vim-cmake-syntax'
-Plug 'vhdirk/vim-cmake'
 Plug 'vim-python/python-syntax'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'ap/vim-buftabline'
 Plug 'sheerun/vim-polyglot'
 Plug 'uiiaoo/java-syntax.vim'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'cdelledonne/vim-cmake'
 
 call plug#end()
 filetype plugin indent on
@@ -163,7 +164,6 @@ map <F10> :setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab smartindent <
 map <c-h> :grep -rn $MDS_ROOT --exclude-dir=storage --exclude-dir=vendor --exclude-dir=node_modules --exclude=tags --exclude="*.json" -e
 map <F6> :vertical split /home/madophs/MdsCode/input.txt<CR>:split /home/madophs/MdsCode/output.txt <CR>
 "map <C-i> :cd $MDS_ROOT <CR>
-map <C-M> :NERDTreeToggle<CR>
 nnoremap <leader>n :NERDTreeFocus<CR>
 map <F4> :TagbarToggle<CR>
 nmap <C-J> :Kwbd <CR>
@@ -242,8 +242,14 @@ let g:netrw_winsize = 25
 let g:netrw_keepdir=0 " Netrw: keeps track of current browsing directory
 
 " CMake configurations
-let g:cmake_export_compile_commands = 1
-let g:cmake_ycm_symlinks = 1
+let g:cmake_link_compile_commands=1
+let g:cmake_default_config='build'
+
+" Airline configurations
+let g:airline#extensions#tabline#enabled = 1 "Show tabs if only one is enabled.
+let g:airline#extensions#tabline#formatter = 'default'
+let g:airline_powerline_fonts = 1
+let g:airline#extensions#tabline#formatter = 'unique_tail'
 
 " fzf stuff
 command! -bang -nargs=? -complete=dir Files
@@ -310,3 +316,4 @@ endif
 " format on enter, <cr> could be remapped by other vim plugin
 inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
                               \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
