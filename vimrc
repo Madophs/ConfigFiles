@@ -244,6 +244,11 @@ let g:netrw_keepdir=0 " Netrw: keeps track of current browsing directory
 " CMake configurations
 let g:cmake_link_compile_commands=1
 let g:cmake_default_config='build'
+nmap <silent> gG :CMakeGenerate <CR>
+nmap <silent> gB :CMakeBuild <CR>
+nmap <silent> gc :CMakeOpen <CR>
+nmap <silent> gC :CMakeClose <CR>
+nmap <silent> gl :CMakeClean <CR>
 
 " Airline configurations
 let g:airline#extensions#tabline#enabled = 1 "Show tabs if only one is enabled.
@@ -316,4 +321,3 @@ endif
 " format on enter, <cr> could be remapped by other vim plugin
 inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
                               \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
-
