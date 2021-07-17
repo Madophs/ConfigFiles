@@ -20,6 +20,7 @@ export MDS_OUTPUT=$HOME/MdsCode/output.txt
 export MDS_CONFIG=$GIT_REPOS/ConfigFiles
 export MDS_SCRIPTS=$MDS_CONFIG/scripts
 export MDS_APPS=$HOME/Documents/apps
+export PY_IMG=$GIT_REPOS/Image-Processsing/resources
 export EDITOR=vim
 export PAGER=less
 

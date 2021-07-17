@@ -41,6 +41,7 @@ Plug 'uiiaoo/java-syntax.vim'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'cdelledonne/vim-cmake'
+Plug 'ycm-core/YouCompleteMe'
 
 call plug#end()
 filetype plugin indent on
@@ -132,7 +133,6 @@ set laststatus=2
 " Set tags location
 set tags=$TAGS
 
-
 if $MDS_FANCY ==? "YES"
     " I use Konsole terminal so let's add some color
     " For more info :h xterm-true-color
@@ -150,10 +150,6 @@ if $MDS_FANCY ==? "YES"
 else
     colorscheme monokai
 endif
-
-" Source files (Usually functions)
-source $MDS_CONFIG/ToggleIOBuffers.vim
-source $MDS_CONFIG/Kwbd.vim
 
 " Mappings
 map <F7> :w<CR>:! clear && mdscode -b % && mdscode -rio
@@ -185,29 +181,6 @@ if has('nvim')
 else
   inoremap <silent><expr> <c-@> coc#refresh()
 endif
-
-
-" To code navigation.
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-
-" Highlight the symbol and its references when holding the cursor.
-autocmd CursorHold * silent call CocActionAsync('highlight')
-
-" Show functions docs using CoC
-nnoremap <silent> K :call <SID>show_documentation()<CR>
-
-function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  elseif (coc#rpc#ready())
-    call CocActionAsync('doHover')
-  else
-    execute '!' . &keywordprg . " " . expand('<cword>')
-  endif
-endfunction
 
 " Formatting selected code.
 xmap <leader>f  <Plug>(coc-format-selected)
@@ -321,3 +294,13 @@ endif
 " format on enter, <cr> could be remapped by other vim plugin
 inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
                               \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+"autocmd Filetype python CocDisable
+let g:ycm_filetype_whitelist = {'python': 1}
+let g:ycm_autoclose_preview_window_after_completion = 1
+let g:coc_filetypes_enable = [ 'c', 'cpp', 'javascript', 'php']
+
+" Source files (Usually functions)
+source $MDS_CONFIG/ToggleIOBuffers.vim
+source $MDS_CONFIG/Kwbd.vim
+source $MDS_CONFIG/Coc_vs_Ycm.vim
