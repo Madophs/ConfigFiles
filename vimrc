@@ -64,6 +64,9 @@ autocmd BufWinLeave * call clearmatches()
 "autocmd InsertEnter FiletyIndentLinesEnable
 autocmd InsertEnter,CursorMoved *.cpp IndentLinesReset
 
+" Delete trailing whitespace on write
+autocmd BufWritePre *.py :%s/\s\+$//e
+
 " Global configurations
 syntax on
 highlight link JavaIdentifier NONE
