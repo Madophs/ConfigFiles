@@ -151,7 +151,8 @@ if $MDS_FANCY ==? "YES"
     let g:nightflyUnderlineMatchParen = 1
     let g:nightflyCursorColor = 1
 else
-    colorscheme monokai
+    colorscheme torte
+    set cursorline&
 endif
 
 " Mappings
@@ -175,8 +176,6 @@ noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 0, 2)<CR>
 noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 0, 2)<CR>
 noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 0, 4)<CR>
 noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 0, 4)<CR>
-
-" CoC confuration for php, it requires to run CocInstall coc-phpls
 
 " Use <c-space> to trigger completion.
 if has('nvim')
@@ -301,7 +300,8 @@ inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
 "autocmd Filetype python CocDisable
 let g:ycm_filetype_whitelist = {'python': 1}
 let g:ycm_autoclose_preview_window_after_completion = 1
-let g:coc_filetypes_enable = [ 'c', 'cpp', 'javascript', 'php']
+let g:coc_filetypes_enable = [ 'c', 'cpp', 'javascript', 'php', 'bash', 'css', 'html']
+let g:coc_global_extensions = ['coc-json', 'coc-git', 'coc-angular', 'coc-cmake', 'coc-clangd', 'coc-css', 'coc-cssmodules', 'coc-html', 'coc-phpactor', 'coc-phpls', 'coc-sh', 'coc-spell-checker', 'coc-tsserver', 'coc-highlight', 'coc-blade-formatter', 'coc-blade-linter']
 
 " Source files (Usually functions)
 source $MDS_CONFIG/ToggleIOBuffers.vim
