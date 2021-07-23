@@ -47,7 +47,7 @@ call plug#end()
 filetype plugin indent on
 
 " Configuration for html files
-autocmd FileType html setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab
+autocmd FileType html,typescript,javascript setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab
 
 " Set the working directory to the current's file directory
 " Issues with terminal buffer
@@ -65,7 +65,7 @@ autocmd BufWinLeave * call clearmatches()
 autocmd InsertEnter,CursorMoved *.cpp IndentLinesReset
 
 " Delete trailing whitespace on write
-autocmd BufWritePre *.py :%s/\s\+$//e
+autocmd BufWritePre * :%s/\s\+$//e
 
 " Global configurations
 syntax on
@@ -300,7 +300,7 @@ inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
 "autocmd Filetype python CocDisable
 let g:ycm_filetype_whitelist = {'python': 1}
 let g:ycm_autoclose_preview_window_after_completion = 1
-let g:coc_filetypes_enable = [ 'c', 'cpp', 'javascript', 'php', 'bash', 'css', 'html']
+let g:coc_filetypes_enable = [ 'c', 'cpp', 'javascript', 'typescript', 'php', 'bash', 'css', 'html', 'sh']
 let g:coc_global_extensions = ['coc-json', 'coc-git', 'coc-angular', 'coc-cmake', 'coc-clangd', 'coc-css', 'coc-cssmodules', 'coc-html', 'coc-phpactor', 'coc-phpls', 'coc-sh', 'coc-spell-checker', 'coc-tsserver', 'coc-highlight', 'coc-blade-formatter', 'coc-blade-linter']
 
 " Source files (Usually functions)

@@ -79,6 +79,8 @@ alias zshplugins='$MDS_CONFIG/scripts/zsh_plugins.sh'
 alias sl2='$MDS_CONFIG/scripts/backup_steam_savefiles.sh'
 alias htoken='$MDS_CONFIG/scripts/handle_git_token.sh'
 alias gpush='$MDS_CONFIG/scripts/git_push.sh'
+alias gfetch='$MDS_SCRIPTS/git_fetch.sh'
+alias gfetch='$MDS_CONFIG/scripts/git'
 alias mdsetup='$MDS_SCRIPTS/mdsetup.sh'
 
 # Plugins
