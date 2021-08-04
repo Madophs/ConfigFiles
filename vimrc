@@ -23,10 +23,9 @@ endif
 Plug 'preservim/tagbar'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
-Plug 'mhinz/vim-signify'
+"Plug 'mhinz/vim-signify'
 Plug 'yggdroot/indentline'
 Plug 'crusoexia/vim-monokai'
-Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-vinegar'
 Plug 'embark-theme/vim'
 Plug 'luochen1990/rainbow'
@@ -42,12 +41,13 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'cdelledonne/vim-cmake'
 Plug 'ycm-core/YouCompleteMe'
+Plug 'bronson/vim-visual-star-search'
 
 call plug#end()
 filetype plugin indent on
 
 " Configuration for html files
-autocmd FileType html,typescript,javascript setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab
+autocmd FileType html,typescript,javascript,blade setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab
 
 " Set the working directory to the current's file directory
 " Issues with terminal buffer
@@ -85,7 +85,6 @@ set shiftwidth=4
 set autoindent
 set smartindent
 set shiftround
-set autoindent
 
 " Editor related configs
 set cursorline
@@ -300,10 +299,15 @@ inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
 "autocmd Filetype python CocDisable
 let g:ycm_filetype_whitelist = {'python': 1}
 let g:ycm_autoclose_preview_window_after_completion = 1
-let g:coc_filetypes_enable = [ 'c', 'cpp', 'javascript', 'typescript', 'php', 'bash', 'css', 'html', 'sh']
-let g:coc_global_extensions = ['coc-json', 'coc-git', 'coc-angular', 'coc-cmake', 'coc-clangd', 'coc-css', 'coc-cssmodules', 'coc-html', 'coc-phpactor', 'coc-phpls', 'coc-sh', 'coc-spell-checker', 'coc-tsserver', 'coc-highlight', 'coc-blade-formatter', 'coc-blade-linter']
+let g:coc_filetypes_enable = [ 'c', 'cpp', 'javascript', 'typescript', 'php', 'bash', 'css', 'html', 'sh', 'vim', 'blade', 'gitcommit']
+let g:coc_global_extensions = ['coc-json', 'coc-git', 'coc-angular', 'coc-cmake', 'coc-clangd', 'coc-css', 'coc-cssmodules', 'coc-html-css-support', 'coc-html', 'coc-htmlhint', 'coc-phpactor', 'coc-phpls', 'coc-sh', 'coc-spell-checker', 'coc-tsserver', 'coc-highlight', 'coc-blade-formatter', 'coc-blade-linter','coc-pairs', 'coc-yank', 'coc-vimlsp']
 
 " Source files (Usually functions)
 source $MDS_CONFIG/ToggleIOBuffers.vim
 source $MDS_CONFIG/Kwbd.vim
 source $MDS_CONFIG/Coc_vs_Ycm.vim
+
+call coc#config('html', {
+    \ 'autoClosingTags': 'true',
+    \ 'format.indentInnerHtml': 'true',
+		\})
