@@ -23,6 +23,10 @@ export MDS_APPS=$HOME/Documents/apps
 export PY_IMG=$GIT_REPOS/Image-Processsing/resources
 export EDITOR=vim
 export PAGER=less
+export MDS_ASSETS=$GIT_REPOS/assets
+export PATH=/usr/local/cuda-11.4/bin${PATH:+:${PATH}}
+export PATH=$GIT_REPOS/MdsCode_Bash:${PATH}
+export LD_LIBRARY_PATH=/usr/local/cuda-11.4/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
 
 # Small setup
 . $MDS_CONFIG/scripts/setup.sh
@@ -72,6 +76,9 @@ alias myip='host myip.opendns.com resolver1.opendns.com'
 alias vimrc='vim $MDS_CONFIG/vimrc'
 alias config='vim $MDS_CONFIG'
 alias kc='kubectl'
+alias mm='mdscode -f cpp -t -n'
+alias mb='mdscode -b'
+alias me='mdscode -e'
 
 # Scripts aliases
 alias operaffmpeg='$MDS_CONFIG/scripts/operaffmpeg.sh'
@@ -80,7 +87,6 @@ alias sl2='$MDS_CONFIG/scripts/backup_steam_savefiles.sh'
 alias htoken='$MDS_CONFIG/scripts/handle_git_token.sh'
 alias gpush='$MDS_CONFIG/scripts/git_push.sh'
 alias gfetch='$MDS_SCRIPTS/git_fetch.sh'
-alias gfetch='$MDS_CONFIG/scripts/git'
 alias mdsetup='$MDS_SCRIPTS/mdsetup.sh'
 
 # Plugins

@@ -16,6 +16,9 @@ case $SUBJECT in
     ACE)
         $SOURCE_PATH/ACE.sh
     ;;
+    cuda)
+        $SOURCE_PATH/cuda.sh
+    ;;
     *)
         echo "[ERROR]Unknown source"
         exit 1
