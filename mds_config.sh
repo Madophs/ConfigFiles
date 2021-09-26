@@ -85,9 +85,10 @@ alias operaffmpeg='$MDS_CONFIG/scripts/operaffmpeg.sh'
 alias zshplugins='$MDS_CONFIG/scripts/zsh_plugins.sh'
 alias sl2='$MDS_CONFIG/scripts/backup_steam_savefiles.sh'
 alias htoken='$MDS_CONFIG/scripts/handle_git_token.sh'
-alias gpush='$MDS_CONFIG/scripts/git_push.sh'
-alias gfetch='$MDS_SCRIPTS/git_fetch.sh'
 alias mdsetup='$MDS_SCRIPTS/mdsetup.sh'
+alias gclone='$MDS_SCRIPTS/git.sh clone'
+alias gpush='$MDS_SCRIPTS/git.sh push'
+alias gfetch='$MDS_SCRIPTS/git.sh fetch'
 
 # Plugins
 if [[ -e $ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then

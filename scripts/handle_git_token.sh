@@ -36,7 +36,8 @@ open_token_file() {
     then
         sudo vim $GITTOKEN
     else
-        echo "[INFO] Git token file doesn't exists"
+        echo "[ERROR] Git token file doesn't exists"
+        exit 1
     fi
 }
 
@@ -45,7 +46,8 @@ show_token() {
     then
         sudo cat $GITTOKEN
     else
-        echo "[INFO] Git token file doesn't exists"
+        echo "[ERROR] Git token file doesn't exists"
+        exit 1
     fi
 }
 

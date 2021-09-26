@@ -3,8 +3,14 @@
 set timeout 5
 
 set token [lindex $argv 0]
+set action [lindex $argv 1]
 
-spawn git push
+if { $argc == 3 } {
+    set repo [lindex $argv 2]
+    spawn git $action $repo
+} else {
+    spawn git $action
+}
 
 expect "Username for 'https://github.com':"
 send -- "madophs\n"
