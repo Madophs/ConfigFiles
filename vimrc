@@ -54,6 +54,7 @@ filetype plugin indent on
 
 " Configuration for html files
 autocmd FileType html,typescript,javascript,blade setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab
+autocmd BufEnter,BufNewFile,BufRead *.s,*.asm,*.S set filetype=nasm
 
 " Set the working directory to the current's file directory
 " Issues with terminal buffer
