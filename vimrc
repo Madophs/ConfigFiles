@@ -94,7 +94,7 @@ set smartindent
 set shiftround
 
 " Editor related configs
-set cursorline
+" set cursorline
 set number
 set relativenumber
 set mouse=ni
