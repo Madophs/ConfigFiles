@@ -162,8 +162,7 @@ else
 endif
 
 " Mappings
-map <F7> :w<CR>:! clear && mdscode -b % && mdscode -rio
-map <F8> :w<CR>:! clear && mdscode -rio
+map <F8> :wa <CR>:! clear && mdscode -b % -e <CR>
 map <F9> :call ToggleIOBuffers($MDS_INPUT,$MDS_OUTPUT) <CR>
 map <F10> :setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab smartindent <CR>
 
