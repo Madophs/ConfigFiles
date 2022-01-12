@@ -2,7 +2,7 @@
 
 if [[ $# == 0 ]]
 then
-    echo "[INFO] Invalid params. Params: clone [repo], push, fetch."
+    echo "[INFO] Invalid params. Params: clone [repo], push, fetch, pull."
     exit 0
 fi
 
@@ -28,6 +28,10 @@ case $1 in
     push)
         is_git_repo
         $MDS_CONFIG/scripts/git_expect.exp ${TOKEN} push
+    ;;
+    pull)
+        is_git_repo
+        $MDS_CONFIG/scripts/git_expect.exp ${TOKEN} pull
     ;;
     clone)
         if [[ $# != 2 ]]; then echo "[ERROR] Need to specify a repo."; exit 1; fi;

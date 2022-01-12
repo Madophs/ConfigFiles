@@ -19,6 +19,12 @@ case $SUBJECT in
     cuda)
         $SOURCE_PATH/cuda.sh
     ;;
+    nvim)
+        $SOURCE_PATH/nvim.sh
+    ;;
+    vim)
+        $SOURCE_PATH/vim.sh
+    ;;
     *)
         echo "[ERROR]Unknown source"
         exit 1
