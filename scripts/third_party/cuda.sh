@@ -15,7 +15,7 @@ assert_last_output() {
     fi
 }
 
-CUDA_VERSION="11.4.2"
+CUDA_VERSION="11.7.0"
 CUDA_DEB=$(ls -f cuda-repo*.deb 2> /dev/null)
 
 if [[ -z $CUDA_DEB ]]
@@ -25,9 +25,9 @@ then
     read OPT
     if [[ $OPT == "y" || $OPT == "Y" ]]
     then
-        CUDA_DEB=cuda-repo-ubuntu2004-11-4-local_11.4.2-470.57.02-1_amd64.deb
-        wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin
-        sudo mv cuda-ubuntu2004.pin /etc/apt/preferences.d/cuda-repository-pin-600
+        CUDA_DEB=cuda-repo-ubuntu2204-11-7-local_11.7.0-515.43.04-1_amd64.deb
+        wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-ubuntu2204.pin
+        sudo mv cuda-ubuntu2204.pin /etc/apt/preferences.d/cuda-repository-pin-600
         wget https://developer.download.nvidia.com/compute/cuda/${CUDA_VERSION}/local_installers/$CUDA_DEB
         assert_last_output $? "[ERROR] Failed to download cuda"
     else
@@ -59,13 +59,13 @@ assert_last_output $? "[ERROR] Failed to purge nvidia"
 sleep 3
 
 echo "[INFO] Installing nvidia driver."
-sudo apt install nvidia-driver-470 -y
+sudo apt install nvidia-driver-510 -y
 assert_last_output $? "[ERROR] Failed to install nvidia driver"
 sleep 3
 
 echo "[INFO] Installing Cuda ${CUDA_VERSION}"
 sudo dpkg -i $CUDA_DEB
-sudo apt-key add /var/cuda-repo-ubuntu2004-11-4-local/7fa2af80.pub
+sudo cp /var/cuda-repo-ubuntu2204-11-7-local/cuda-*-keyring.gpg /usr/share/keyrings/
 sudo apt-get update
 sudo apt-get -y install cuda
 
