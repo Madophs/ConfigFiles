@@ -2,7 +2,7 @@
 
 source $MDS_SCRIPTS/common.sh
 
-install_packages git python3-distutils python3-dev python2-dev
+install_packages git python3-distutils python3-dev python2-dev libncurses-dev
 CURRDIR=$(pwd)
 cd $GIT_REPOS
 

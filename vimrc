@@ -48,6 +48,7 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'cdelledonne/vim-cmake'
 Plug 'ycm-core/YouCompleteMe'
 Plug 'bronson/vim-visual-star-search'
+Plug 'voldikss/vim-floaterm'
 
 call plug#end()
 filetype plugin indent on
@@ -69,10 +70,15 @@ autocmd InsertEnter * match ExtraWhitespace /\s\+$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
 "autocmd InsertEnter FiletyIndentLinesEnable
-autocmd InsertEnter,CursorMoved *.cpp IndentLinesReset
 
-" Delete trailing whitespace on write
-autocmd BufWritePre * :%s/\s\+$//e
+" Delete trailing whitespaces on write
+function DelTrailingEmptyChars()
+    let currcurpos = getcurpos()
+    :%s/\s\+$//e
+    call setpos('.', currcurpos)
+endfunction
+
+autocmd BufWritePre * call DelTrailingEmptyChars()
 
 " Global configurations
 syntax on
@@ -118,9 +124,12 @@ set noshowmode
 set splitbelow
 set splitright
 set confirm
+set completeopt=preview,menuone,noinsert,noselect
 
 " Terminal related configs
+if !has('nvim')
 set term=screen-256color
+endif
 set encoding=UTF-8
 set t_ut=
 set visualbell
@@ -134,7 +143,7 @@ set noswapfile
 let g:python_highlight_all = 1
 
 " Bind VIM clipboard registry with Linux's
-set clipboard=unnamedplus
+"set clipboard=unnamedplus
 
 " Add Cool status line
 set laststatus=2
@@ -145,8 +154,10 @@ set tags=$TAGS
 if $MDS_FANCY ==? "YES"
     " I use Konsole terminal so let's add some color
     " For more info :h xterm-true-color
-    let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+    if !has('nvim')
+        let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+        let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+    endif
 
     " Nice looking terminal
     set termguicolors
@@ -162,9 +173,17 @@ else
 endif
 
 " Mappings
-map <F8> :wa <CR>:! clear && mdscode -b % -e <CR>
-map <F9> :call ToggleIOBuffers($MDS_INPUT,$MDS_OUTPUT) <CR>
+if has('nvim')
+    map <F7> :FloatermSend clear && mdscode -b % -t <CR> :FloatermToggle <CR>
+    map <F8> :FloatermSend clear && mdscode -b % -e <CR> :FloatermToggle <CR>
+else
+    map <F7> :!clear && mdscode -b % -t <CR>
+    map <F8> :!clear && mdscode -b % -e <CR>
+endif
+
+map <F9> :call ToggleIOBuffers() <CR>
 map <F10> :setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab smartindent <CR>
+let g:floaterm_keymap_toggle = '<F12>'
 
 map <c-h> :grep -rn $MDS_ROOT --exclude-dir=storage --exclude-dir=vendor --exclude-dir=node_modules --exclude=tags --exclude="*.json" -e
 map <F6> :vertical split /home/madophs/MdsCode/input.txt<CR>:split /home/madophs/MdsCode/output.txt <CR>
@@ -183,8 +202,14 @@ noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 0, 4)<CR>
 noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 0, 4)<CR>
 
 " Indentation character list
-let g:indentLine_char_list = ['|', '¦', '┆', '┊']
-let g:indentLine_enabled = 1
+if ! has('nvim')
+    "let g:indentLine_char_list = ['|', '¦', '┆', '┊']
+    let g:indentLine_char_list = ['|']
+    let g:indentLine_enabled = 1
+    autocmd InsertEnter,CursorMoved *.cpp IndentLinesReset
+else
+    let g:indentLine_enabled = 0
+endif
 
 " Parenthesis colors
 let g:rainbow_active = 1
@@ -215,8 +240,8 @@ let g:cmake_link_compile_commands=1
 let g:cmake_default_config='build'
 nmap <silent> gG :CMakeGenerate <CR>
 nmap <silent> gB :CMakeBuild <CR>
-nmap <silent> gc :CMakeOpen <CR>
-nmap <silent> gC :CMakeClose <CR>
+nmap <silent> gC :CMakeOpen <CR>
+nmap <silent> gc :CMakeClose <CR>
 nmap <silent> gl :CMakeClean <CR>
 
 " Airline configurations
@@ -267,7 +292,7 @@ let g:tagbar_type_php = {
 let g:ycm_filetype_whitelist = {'python': 1}
 let g:ycm_autoclose_preview_window_after_completion = 1
 let g:coc_filetypes_enable = [ 'c', 'cpp', 'javascript', 'typescript', 'php', 'bash', 'css', 'html', 'sh', 'vim', 'blade', 'gitcommit']
-let g:coc_global_extensions = ['coc-json', 'coc-git', 'coc-angular', 'coc-cmake', 'coc-clangd', 'coc-css', 'coc-cssmodules', 'coc-html-css-support', 'coc-html', 'coc-htmlhint', 'coc-phpactor', 'coc-phpls', 'coc-sh', 'coc-spell-checker', 'coc-tsserver', 'coc-highlight', 'coc-blade-formatter', 'coc-blade-linter','coc-pairs', 'coc-yank', 'coc-vimlsp']
+let g:coc_global_extensions = ['coc-json', 'coc-git', 'coc-angular', 'coc-cmake', 'coc-clangd', 'coc-css', 'coc-cssmodules', 'coc-html-css-support', 'coc-html', 'coc-htmlhint', 'coc-phpactor', 'coc-phpls', 'coc-sh', 'coc-spell-checker', 'coc-tsserver', 'coc-blade-formatter', 'coc-blade-linter', 'coc-blade','coc-pairs', 'coc-yank', 'coc-vimlsp']
 
 " Source files (Usually functions)
 source $MDS_CONFIG/ToggleIOBuffers.vim
