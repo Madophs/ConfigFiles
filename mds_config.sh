@@ -24,9 +24,9 @@ export PY_IMG=$GIT_REPOS/Image-Processsing/resources
 export EDITOR=vim
 export PAGER=less
 export MDS_ASSETS=$GIT_REPOS/assets
-export PATH=/usr/local/cuda-11.4/bin${PATH:+:${PATH}}
+export PATH=/usr/local/cuda-11.7/bin${PATH:+:${PATH}}
 export PATH=$GIT_REPOS/MdsCode_Bash:${PATH}
-export LD_LIBRARY_PATH=/usr/local/cuda-11.4/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+export LD_LIBRARY_PATH=/usr/local/cuda-11.7/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
 export GREP_COLORS='ms=01;32'
 
 # Small setup
@@ -78,10 +78,10 @@ alias zshlogin='exec zsh --login'
 alias myip='host myip.opendns.com resolver1.opendns.com'
 alias vimrc='vim $MDS_CONFIG/vimrc'
 alias config='vim $MDS_CONFIG'
-alias kc='kubectl'
 alias mm='mdscode -f cpp -t -n'
 alias mb='mdscode -b'
 alias me='mdscode -e'
+source $MDS_CONFIG/k8saliases.sh
 
 # Scripts aliases
 alias operaffmpeg='$MDS_CONFIG/scripts/operaffmpeg.sh'

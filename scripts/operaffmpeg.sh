@@ -39,6 +39,7 @@ then
             ls -f *deb | xargs ar x
 
             echo "Root privileges required!"
+            sudo cp -f $TARGET_PATH/$LIB_NAME "${TARGET_PATH}/${LIB_NAME}.backup"
             sudo tar -xJf data.tar.xz --strip-components=4 && sudo cp -f $LIB_NAME $TARGET_PATH
 
             RET=$?

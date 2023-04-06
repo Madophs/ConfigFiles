@@ -46,9 +46,10 @@ Plug 'uiiaoo/java-syntax.vim'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'cdelledonne/vim-cmake'
-Plug 'ycm-core/YouCompleteMe'
+"Plug 'ycm-core/YouCompleteMe'
 Plug 'bronson/vim-visual-star-search'
 Plug 'voldikss/vim-floaterm'
+Plug 'rust-lang/rust.vim'
 
 call plug#end()
 filetype plugin indent on
@@ -68,7 +69,7 @@ match ExtraWhitespace /\s\+$/
 autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
 autocmd InsertEnter * match ExtraWhitespace /\s\+$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
-autocmd BufWinLeave * call clearmatches()
+"autocmd BufWinLeave * call clearmatches()
 "autocmd InsertEnter FiletyIndentLinesEnable
 
 " Delete trailing whitespaces on write
@@ -186,7 +187,7 @@ map <F10> :setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab smartindent <
 let g:floaterm_keymap_toggle = '<F12>'
 
 map <c-h> :grep -rn $MDS_ROOT --exclude-dir=storage --exclude-dir=vendor --exclude-dir=node_modules --exclude=tags --exclude="*.json" -e
-map <F6> :vertical split /home/madophs/MdsCode/input.txt<CR>:split /home/madophs/MdsCode/output.txt <CR>
+map <F6> :vertical split $MDS_INPUT <CR>:split $MDS_OUTPUT <CR>
 "map <C-i> :cd $MDS_ROOT <CR>
 nnoremap <leader>n :NERDTreeFocus<CR>
 map <F4> :TagbarToggle<CR>
@@ -291,8 +292,8 @@ let g:tagbar_type_php = {
 
 let g:ycm_filetype_whitelist = {'python': 1}
 let g:ycm_autoclose_preview_window_after_completion = 1
-let g:coc_filetypes_enable = [ 'c', 'cpp', 'javascript', 'typescript', 'php', 'bash', 'css', 'html', 'sh', 'vim', 'blade', 'gitcommit']
-let g:coc_global_extensions = ['coc-json', 'coc-git', 'coc-angular', 'coc-cmake', 'coc-clangd', 'coc-css', 'coc-cssmodules', 'coc-html-css-support', 'coc-html', 'coc-htmlhint', 'coc-phpactor', 'coc-phpls', 'coc-sh', 'coc-spell-checker', 'coc-tsserver', 'coc-blade-formatter', 'coc-blade-linter', 'coc-blade','coc-pairs', 'coc-yank', 'coc-vimlsp']
+let g:coc_filetypes_enable = [ 'c', 'cpp', 'javascript', 'typescript', 'php', 'bash', 'css', 'html', 'sh', 'vim', 'blade', 'gitcommit', 'rust']
+let g:coc_global_extensions = ['coc-json', 'coc-git', 'coc-angular', 'coc-cmake', 'coc-clangd', 'coc-css', 'coc-cssmodules', 'coc-html-css-support', 'coc-html', 'coc-htmlhint', 'coc-phpactor', 'coc-phpls', 'coc-sh', 'coc-spell-checker', 'coc-tsserver', 'coc-blade-formatter', 'coc-blade-linter', 'coc-blade','coc-pairs', 'coc-yank', 'coc-vimlsp', 'coc-rust-analyzer']
 
 " Source files (Usually functions)
 source $MDS_CONFIG/ToggleIOBuffers.vim
