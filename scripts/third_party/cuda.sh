@@ -17,6 +17,7 @@ assert_last_output() {
 
 CUDA_VERSION="11.7.0"
 CUDA_DEB=$(ls -f cuda-repo*.deb 2> /dev/null)
+NVIDIA_DRIVER=$(nvidia-detector)
 
 if [[ -z $CUDA_DEB ]]
 then
@@ -59,7 +60,8 @@ assert_last_output $? "[ERROR] Failed to purge nvidia"
 sleep 3
 
 echo "[INFO] Installing nvidia driver."
-sudo apt install nvidia-driver-510 -y
+
+sudo apt install ${NVIDIA_DRIVER} -y
 assert_last_output $? "[ERROR] Failed to install nvidia driver"
 sleep 3
 
