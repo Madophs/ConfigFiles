@@ -187,7 +187,6 @@ map <F10> :setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab smartindent <
 let g:floaterm_keymap_toggle = '<F12>'
 
 map <c-h> :grep -rn $MDS_ROOT --exclude-dir=storage --exclude-dir=vendor --exclude-dir=node_modules --exclude=tags --exclude="*.json" -e
-map <F6> :vertical split $MDS_INPUT <CR>:split $MDS_OUTPUT <CR>
 "map <C-i> :cd $MDS_ROOT <CR>
 nnoremap <leader>n :NERDTreeFocus<CR>
 map <F4> :TagbarToggle<CR>
@@ -244,6 +243,7 @@ nmap <silent> gB :CMakeBuild <CR>
 nmap <silent> gC :CMakeOpen <CR>
 nmap <silent> gc :CMakeClose <CR>
 nmap <silent> gl :CMakeClean <CR>
+nmap <silent> gL :CMakeTest <CR>
 
 " Airline configurations
 let g:airline#extensions#tabline#enabled = 1 "Show tabs if only one is enabled.
