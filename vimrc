@@ -164,10 +164,14 @@ if $MDS_FANCY ==? "YES"
     set termguicolors
 
     " Beautiful theme
-    colorscheme nightfly
-    let g:lightline = { 'colorscheme': 'nightfly' }
-    let g:nightflyUnderlineMatchParen = 1
-    let g:nightflyCursorColor = 1
+    if !has('nvim')
+        colorscheme nightfly
+        let g:lightline = { 'colorscheme': 'nightfly' }
+        let g:nightflyUnderlineMatchParen = 1
+        let g:nightflyCursorColor = 1
+    else
+        colorscheme dracula
+    endif
 else
     colorscheme torte
     set cursorline&
