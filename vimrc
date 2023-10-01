@@ -164,14 +164,10 @@ if $MDS_FANCY ==? "YES"
     set termguicolors
 
     " Beautiful theme
-    if !has('nvim')
-        colorscheme nightfly
-        let g:lightline = { 'colorscheme': 'nightfly' }
-        let g:nightflyUnderlineMatchParen = 1
-        let g:nightflyCursorColor = 1
-    else
-        colorscheme dracula
-    endif
+    colorscheme nightfly
+    let g:lightline = { 'colorscheme': 'nightfly' }
+    let g:nightflyUnderlineMatchParen = 1
+    let g:nightflyCursorColor = 1
 else
     colorscheme torte
     set cursorline&
@@ -179,11 +175,20 @@ endif
 
 " Mappings
 if has('nvim')
-    map <F7> :FloatermSend clear && mdscode -b % -t <CR> :FloatermToggle <CR>
-    map <F8> :FloatermSend clear && mdscode -b % -e <CR> :FloatermToggle <CR>
+    "map <F7> :FloatermSend clear && mdscode -b % -t <CR> :FloatermToggle <CR>
+    "map <F8> :FloatermSend clear && mdscode -b % -e <CR> :FloatermToggle <CR>
+    map <F7> :!clear && mdscode -b % -t <CR>
+    map <F8> :!clear && mdscode -b % -e <CR>
+    nnoremap <silent> <C-N> :BufferNext <CR>
+    nnoremap <silent> <C-P> :BufferPrevious <CR>
+    nnoremap <silent> <M-i> <Cmd>BufferMovePrevious<CR>
+    nnoremap <silent> <M-o> <Cmd>BufferMoveNext<CR>
+    nnoremap <silent> <M-p> <Cmd>BufferPick<CR>
 else
     map <F7> :!clear && mdscode -b % -t <CR>
     map <F8> :!clear && mdscode -b % -e <CR>
+    nnoremap <C-N> :bnext <CR>
+    nnoremap <C-P> :bprev <CR>
 endif
 
 map <F9> :call ToggleIOBuffers() <CR>
@@ -192,12 +197,10 @@ let g:floaterm_keymap_toggle = '<F12>'
 
 map <c-h> :grep -rn $MDS_ROOT --exclude-dir=storage --exclude-dir=vendor --exclude-dir=node_modules --exclude=tags --exclude="*.json" -e
 "map <C-i> :cd $MDS_ROOT <CR>
-nnoremap <leader>n :NERDTreeFocus<CR>
+nnoremap <leader>n :NERDTreeToggle<CR>
 map <F4> :TagbarToggle<CR>
 nmap <C-J> :Kwbd <CR>
 map <C-L> :Buffers <CR>
-nnoremap <C-N> :bnext<CR>
-nnoremap <C-P> :bprev<CR>
 
 " Smooth scrolling
 noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 0, 2)<CR>
@@ -296,7 +299,7 @@ let g:tagbar_type_php = {
 
 let g:ycm_filetype_whitelist = {'python': 1}
 let g:ycm_autoclose_preview_window_after_completion = 1
-let g:coc_filetypes_enable = [ 'c', 'cpp', 'javascript', 'typescript', 'php', 'bash', 'css', 'html', 'sh', 'vim', 'blade', 'gitcommit', 'rust']
+let g:coc_filetypes_enable = [ 'c', 'cpp', 'javascript', 'typescript', 'php', 'bash', 'css', 'html', 'sh', 'vim', 'blade', 'gitcommit', 'rust', 'cmake']
 let g:coc_global_extensions = ['coc-json', 'coc-git', 'coc-angular', 'coc-cmake', 'coc-clangd', 'coc-css', 'coc-cssmodules', 'coc-html-css-support', 'coc-html', 'coc-htmlhint', 'coc-phpactor', 'coc-phpls', 'coc-sh', 'coc-spell-checker', 'coc-tsserver', 'coc-blade-formatter', 'coc-blade-linter', 'coc-blade','coc-pairs', 'coc-yank', 'coc-vimlsp', 'coc-rust-analyzer']
 
 " Source files (Usually functions)
