@@ -250,7 +250,7 @@ nmap <silent> gB :CMakeBuild <CR>
 nmap <silent> gC :CMakeOpen <CR>
 nmap <silent> gc :CMakeClose <CR>
 nmap <silent> gl :CMakeClean <CR>
-nmap <silent> gL :CMakeTest <CR>
+nmap <silent> gL :CMakeTest --output-on-failure <CR>
 
 " Airline configurations
 let g:airline#extensions#tabline#enabled = 1 "Show tabs if only one is enabled.
