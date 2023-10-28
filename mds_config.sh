@@ -82,7 +82,7 @@ alias config='vim $MDS_CONFIG'
 alias mm='mdscode -f cpp -t -n'
 alias mb='mdscode -b'
 alias me='mdscode -e'
-alias vimc='vim --servername Competitive --remote '
+alias vimc='vim --servername Competitive --remote-silent '
 source $MDS_CONFIG/k8saliases.sh
 
 # Scripts aliases
