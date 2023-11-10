@@ -22,13 +22,13 @@ function cout() {
 }
 
 function get_file_extension() {
-    missing_argument_validation $0 1 $1
+    missing_argument_validation 1 $1
     filename=$1
     echo $(echo ${filename} | grep -o -e '\..*')
 }
 
 function get_filename_without_extension() {
-    missing_argument_validation $0 1 $1
+    missing_argument_validation 1 $1
     filename=$1
     file_extension=$(get_file_extension ${filename})
     echo $(echo ${filename} | sed s/${file_extension}//g)
@@ -84,19 +84,18 @@ function is_cmd_option() {
 }
 
 function missing_argument_validation() {
-    context_name=${1}
-    args_required=${2}
-    if [[ -z ${context_name} || -z ${args_required} ]]
+    function_name=${FUNCNAME[1]}
+    args_required=${1}
+    if [[ -z ${args_required} ]]
     then
-        cout error "Missing arguments for ${0}"
+        cout error "Missing arguments for ${function_name}"
     fi
 
-    shift
     shift
     args_count=$#
     if [[ ${args_required} != ${args_count} ]]
     then
-        cout error "Missing arguments for ${context_name}, expected ${args_required} provided ${args_count}"
+        cout error "Missing arguments for ${function_name}, expected ${args_required} provided ${args_count}"
     fi
 
     args_list=($(echo $@ | paste -d ' '))
@@ -104,13 +103,13 @@ function missing_argument_validation() {
     do
         if [[ $(is_cmd_option ${args_list[${i}]}) == "YES" ]]
         then
-            cout error "Invalid argument \"${2}\" for ${context_name}"
+            cout error "Invalid argument \"${2}\" for ${function_name}"
         fi
     done
 }
 
 function is_package_hold() {
-    missing_argument_validation $0 1 $1
+    missing_argument_validation 1 $1
     package_name=$1
     results=$(apt-mark showhold ${package_name} | wc -l)
     if [[ ${results} > 0 ]]
@@ -122,7 +121,7 @@ function is_package_hold() {
 }
 
 function unhold_package() {
-    missing_argument_validation $0 1 $1
+    missing_argument_validation 1 $1
     package_name=$1
     if [[ $(is_package_hold ${package_name}) == "YES" ]]
     then
@@ -131,13 +130,13 @@ function unhold_package() {
 }
 
 function hold_package() {
-    missing_argument_validation $0 1 $1
+    missing_argument_validation 1 $1
     package_name=$1
     sudo apt-mark hold ${package_name}
 }
 
 function install_package() {
-    missing_argument_validation $0 1 $1
+    missing_argument_validation 1 $1
     if [[ -z ${IS_APT_UPDATE_PERFORMED} ]]
     then
         sudo apt update &> /dev/null
@@ -155,7 +154,7 @@ function install_package() {
 }
 
 function snap_package_already_installed() {
-    missing_argument_validation $0 1 $1
+    missing_argument_validation 1 $1
     package_name=$1
     snap list ${package_name} &> /dev/null
     if [[ $(any_error $?) == "NO" ]]
@@ -167,7 +166,7 @@ function snap_package_already_installed() {
 }
 
 function install_package_with_snap() {
-    missing_argument_validation $0 1 $1
+    missing_argument_validation 1 $1
     package_name=$1
     if [[ $(snap_package_already_installed ${package_name}) == "NO" ]]
     then
@@ -194,7 +193,7 @@ function check_required_packages() {
 }
 
 function download() {
-    missing_argument_validation $0 2 $1 $2
+    missing_argument_validation 2 $1 $2
     download_link=$1
     download_dir=$2
     mkdir -p ${download_dir}
