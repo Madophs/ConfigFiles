@@ -90,11 +90,13 @@ alias operaffmpeg='$MDS_CONFIG/scripts/operaffmpeg.sh'
 alias zshplugins='$MDS_CONFIG/scripts/zsh_plugins.sh'
 alias sl2='$MDS_CONFIG/scripts/backup_steam_savefiles.sh'
 alias htoken='$MDS_CONFIG/scripts/handle_git_token.sh'
-alias mdsetup='$MDS_SCRIPTS/mdsetup.sh'
 alias gclone='$MDS_SCRIPTS/git.sh clone'
 alias gpush='$MDS_SCRIPTS/git.sh push'
 alias gpull='$MDS_SCRIPTS/git.sh pull'
 alias gfetch='$MDS_SCRIPTS/git.sh fetch'
+
+# Scripts autocomplete
+source ${MDS_SCRIPTS}/autocomplete.sh
 
 # Plugins
 if [[ -e $ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
@@ -118,3 +120,9 @@ if [[ -e ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-navigation-tools/zsh-nav
                     "/usr/local/share/zsh/site-functions" "/usr/local/share/zsh"
                                     "/usr/local/bin" )
 fi
+
+# Symbolic links
+if [[ ! -h ~/.local/bin/mdssetup ]]; then
+    ln -s ${MDS_SCRIPTS}/mdssetup.sh ~/.local/bin/mdssetup
+fi
+
