@@ -93,12 +93,12 @@ set ignorecase
 set smartcase
 
 " Space / indenting related configs
-"set tabstop=4
-"set softtabstop=4 expandtab
-"set shiftwidth=4
-"set autoindent
-"set smartindent
-"set shiftround
+set tabstop=4
+set softtabstop=4 expandtab
+set shiftwidth=4
+set autoindent
+set smartindent
+set shiftround
 
 " Editor related configs
 " set cursorline
