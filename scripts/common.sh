@@ -154,6 +154,28 @@ function install_package() {
     fi
 }
 
+function snap_package_already_installed() {
+    missing_argument_validation $0 1 $1
+    package_name=$1
+    snap list ${package_name} &> /dev/null
+    if [[ $(any_error $?) == "NO" ]]
+    then
+        echo "YES"
+    else
+        echo "NO"
+    fi
+}
+
+function install_package_with_snap() {
+    missing_argument_validation $0 1 $1
+    package_name=$1
+    if [[ $(snap_package_already_installed ${package_name}) == "NO" ]]
+    then
+        cout info "About to install ${package_name} using snap"
+        sudo snap install ${package_name}
+    fi
+}
+
 function check_required_packages() {
     if [[ $# == 0 ]]
     then

@@ -3,6 +3,8 @@
 # so let's use the the codecs from Chromium that own these codecs
 
 LIB_NAME=libffmpeg.so
+FFMPEG_PACKAGE=chromium-ffmpeg
+FFMPEG_PACKAGE_DIR=/snap/chromium-ffmpeg/current
 DOWNLOAD_DIR='/tmp/ffmpeg'
 REPO_URL='http://security.ubuntu.com/ubuntu/pool/universe/c/chromium-browser/'
 TARGET_PATH=/usr/lib/x86_64-linux-gnu/opera
@@ -14,6 +16,21 @@ function exit_if_opera_running() {
         cout warning "It seems that Opera browser is running..."
         cout warning "Please consider terminate the process before proceed."
         exit 0
+    fi
+}
+
+function do_install_ffmpeg_with_snap() {
+    exit_if_opera_running
+    install_package_with_snap ${FFMPEG_PACKAGE}
+    LAST_DIR=$(ls -lt ${FFMPEG_PACKAGE_DIR}/${FFMPEG_PACKAGE}* | head -n 1 | awk -F '[/]' '{print $NF}'| sed s/://g)
+    FFMPEG_LIBRARY_PATH=${FFMPEG_PACKAGE_DIR}/${LAST_DIR}/${FFMPEG_PACKAGE}/${LIB_NAME}
+    sudo cp ${TARGET_PATH}/${LIB_NAME} ${TARGET_PATH}/${LIB_NAME}.backup
+    sudo cp -f ${FFMPEG_LIBRARY_PATH} ${TARGET_PATH}
+    if [[ $(any_error $?) == "NO" ]]
+    then
+        cout success "ffmpeg library installed"
+    else
+        cout error "something went wrong"
     fi
 }
 

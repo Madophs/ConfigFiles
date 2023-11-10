@@ -27,7 +27,7 @@ function do_opera_remove() {
 
 function do_opera_install_ffmpeg() {
     source ${MDS_SCRIPTS}/third_party/operaffmpeg.sh
-    do_install_ffmpeg
+    do_install_ffmpeg_with_snap
 }
 
 function do_opera_uninstall_ffmpeg() {
