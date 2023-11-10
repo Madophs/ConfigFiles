@@ -224,3 +224,10 @@ function download() {
         cout error "Failed to download ${download_link}"
     fi
 }
+
+function clean_file() {
+    missing_argument_validation 1 $1
+    file_to_empty=$1
+    touch ${file_to_empty} &> /dev/null
+    truncate -s 0 ${file_to_empty} &> /dev/null
+}

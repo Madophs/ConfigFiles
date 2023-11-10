@@ -34,7 +34,15 @@ function push_directory_to_hotlist() {
 }
 
 function remove_directory_from_hotlist() {
-    CURRENT_DIRECTORY=$@
-    echo $(cat ${HOSTLIST_FILE} | grep -v -w "${CURRENT_DIRECTORY}$") > ${HOSTLIST_FILE}
+    TARGET_DIRECTORY=$@
+    clean_file ${HOSTLIST_FILE}.tmp
+    cat ${HOSTLIST_FILE} | while read line
+    do
+        if [[ ${line} != ${TARGET_DIRECTORY} ]]
+        then
+            echo ${line} >> ${HOSTLIST_FILE}.tmp
+        fi
+    done
+    mv ${HOSTLIST_FILE}.tmp ${HOSTLIST_FILE}
     load_hostlist_file
 }
