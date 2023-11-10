@@ -103,7 +103,7 @@ function missing_argument_validation() {
     do
         if [[ $(is_cmd_option ${args_list[${i}]}) == "YES" ]]
         then
-            cout error "Invalid argument \"${2}\" for ${function_name}"
+            cout error "Invalid argument \"${args_list[${i}]}\" for ${function_name}"
         fi
     done
 }

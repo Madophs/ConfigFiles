@@ -94,6 +94,8 @@ alias gclone='$MDS_SCRIPTS/git.sh clone'
 alias gpush='$MDS_SCRIPTS/git.sh push'
 alias gpull='$MDS_SCRIPTS/git.sh pull'
 alias gfetch='$MDS_SCRIPTS/git.sh fetch'
+alias pdir='source $MDS_SCRIPTS/hotlist.sh; push_directory_to_hotlist $(pwd)'
+alias rdir='source $MDS_SCRIPTS/hotlist.sh; remove_directory_from_hotlist $(pwd)'
 
 # Scripts autocomplete
 source ${MDS_SCRIPTS}/autocomplete.sh
@@ -119,6 +121,9 @@ if [[ -e ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-navigation-tools/zsh-nav
     znt_cd_hotlist=( "~/.config/znt" "/usr/share/zsh/site-functions" "/usr/share/zsh"
                     "/usr/local/share/zsh/site-functions" "/usr/local/share/zsh"
                                     "/usr/local/bin" )
+
+    source ${MDS_SCRIPTS}/hotlist.sh
+    load_hostlist_file
 fi
 
 # Symbolic links
