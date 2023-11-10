@@ -7,11 +7,15 @@ mkdir -p ${HIDDEN_HOSTLIST_DIR}
 touch ${HOSTLIST_FILE}
 
 function load_hostlist_file() {
-    znt_cd_hotlist=($(cat ${HOSTLIST_FILE} | paste -d ' '))
+    znt_cd_hotlist=()
+    cat ${HOSTLIST_FILE} | while read line
+    do
+        znt_cd_hotlist+=("$line")
+    done
 }
 
 function is_already_present_in_hostlist() {
-    cat ${HOSTLIST_FILE} | grep -w "${1}$" &> /dev/null
+    cat ${HOSTLIST_FILE} | grep -w "${@}$" &> /dev/null
     if [[ $(any_error $?) == "YES" ]]
     then
         echo "NO"
