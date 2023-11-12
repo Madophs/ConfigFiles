@@ -113,7 +113,7 @@ set wrap
 set linebreak
 set showbreak=↳
 set breakindent
-set scrolloff=2
+set scrolloff=3
 set ruler
 set foldmethod=indent
 set nofoldenable
@@ -187,6 +187,9 @@ if has('nvim')
     nnoremap <silent> <M-i> <Cmd>BufferMovePrevious<CR>
     nnoremap <silent> <M-o> <Cmd>BufferMoveNext<CR>
     nnoremap <silent> <M-p> <Cmd>BufferPick<CR>
+    nnoremap <silent> <M-f> :HopWord<CR>
+    omap     <silent> m :<C-U>lua require('tsht').nodes()<CR>
+    xnoremap <silent> m :lua require('tsht').nodes()<CR>
 else
     map <F7> :!clear && mdscode -b % -t <CR>
     map <F8> :!clear && mdscode -b % -e <CR>
