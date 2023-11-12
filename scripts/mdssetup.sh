@@ -25,6 +25,10 @@ case ${SUBJECT} in
     vim)
         ${SOURCE_PATH}/vim.sh
     ;;
+    vifm)
+        shift
+        ${SOURCE_PATH}/vifm.sh $@
+    ;;
     opera)
         shift
         ${SOURCE_PATH}/opera.sh $@

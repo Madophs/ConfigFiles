@@ -7,14 +7,23 @@ _mdssetup() {
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
-    if [[ ${prev} == "opera" ]]; then
+    if [[ ${prev} == "opera" ]]
+    then
         opts="--install --update --with-ffmpeg --undo-ffmpeg --only-ffmpeg"
         COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
         return 0
     fi
 
-    if [[ ${cur} == * ]] ; then
-        opts="ACE cuda nvim opera vim"
+    if [[ ${prev} == "vifm" ]]
+    then
+        opts="--install-colorschemes"
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+
+    if [[ ${cur} == * ]]
+    then
+        opts="ACE cuda opera vim vifm nvim"
         COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
         return 0
     fi

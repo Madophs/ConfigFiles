@@ -60,6 +60,15 @@ function is_installed() {
     echo $?
 }
 
+function is_cmd_installed() {
+    if [[ -x $(which $1) ]]
+    then
+        echo "YES"
+    else
+        echo "NO"
+    fi
+}
+
 function install_packages() {
     package_arr=($@)
     for ((i=0; i < $#; i+=1))
@@ -95,7 +104,7 @@ function missing_argument_validation() {
     args_count=$#
     if [[ ${args_required} != ${args_count} ]]
     then
-        cout error "Missing arguments for ${function_name}, expected ${args_required} provided ${args_count}"
+        cout error "Missing arguments for ${function_name} expected ${args_required} provided ${args_count}"
     fi
 
     args_list=($(echo $@ | paste -d ' '))
@@ -150,6 +159,15 @@ function install_package() {
     if [[ $(any_error $?) == "YES" ]]
     then
         cout error "Failed to install ${package_name}"
+    fi
+}
+
+function install_cmd_if_missing() {
+    missing_argument_validation 1 $1
+    package=$1
+    if [[ $(is_cmd_installed ${package}) == "NO" ]]
+    then
+        install_package ${package}
     fi
 }
 

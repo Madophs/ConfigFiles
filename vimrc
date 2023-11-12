@@ -64,13 +64,16 @@ autocmd BufEnter,BufNewFile,BufRead *.s,*.asm,*.S set filetype=nasm
 
 " Highlight trailing spaces automatically
 highlight ExtraWhitespace ctermbg=red guibg=red
-autocmd ColorScheme * highlight ExtraWhitespace ctermbg=red guibg=red
+autocmd ColorScheme * highlight ExtraWhitespace ctermbg=yellow guibg=yellow
 match ExtraWhitespace /\s\+$/
-autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
-autocmd InsertEnter * match ExtraWhitespace /\s\+$/
-autocmd InsertLeave * match ExtraWhitespace /\s\+$/
-"autocmd BufWinLeave * call clearmatches()
-"autocmd InsertEnter FiletyIndentLinesEnable
+"autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
+"autocmd InsertEnter * match ExtraWhitespace /\s\+$/
+"autocmd InsertLeave * match ExtraWhitespace /\s\+$/
+if has('nvim')
+    autocmd TermOpen * highlight ExtraWhitespace ctermbg=none guibg=none
+    autocmd TermOpen * startinsert
+    autocmd TermLeave * highlight ExtraWhitespace ctermbg=yellow guibg=yellow
+endif
 
 " Delete trailing whitespaces on write
 function DelTrailingEmptyChars()
@@ -251,6 +254,11 @@ nmap <silent> gC :CMakeOpen <CR>
 nmap <silent> gc :CMakeClose <CR>
 nmap <silent> gl :CMakeClean <CR>
 nmap <silent> gL :CMakeTest --output-on-failure <CR>
+
+" Madophs defined commands
+command Mdsg !mdscode -g
+command Mdss !mdscode -s
+command Mdsr !mdscode --exer
 
 " Airline configurations
 let g:airline#extensions#tabline#enabled = 1 "Show tabs if only one is enabled.

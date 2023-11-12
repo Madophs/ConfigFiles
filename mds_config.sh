@@ -45,19 +45,19 @@ export MDS_ROOT=$(cat $MDS_CONFIG/.path.txt)
 export TAGS=$MDS_ROOT/tags
 
 # Directories aliases
-alias cdr='$MDS_ROOT'
-alias cdgit='$GIT_REPOS'
-alias lcpp='$GIT_REPOS/C-CPP-Linux-Programming'
-alias cpp='$CTEST'
-alias cdtest='$HOME/Documents/test/'
+alias cdr='cd $MDS_ROOT'
+alias cdgit='cd $GIT_REPOS'
+alias lcpp='cd $GIT_REPOS/C-CPP-Linux-Programming'
+alias cpp='cd $CTEST'
+alias cdtest='cd $HOME/Documents/test/'
 alias artisan='php $MDS_ROOT/artisan'
-alias cdhtml='/var/www/html/'
-alias cddir='$HOME/Documents/'
-alias cdconfig='$MDS_CONFIG'
-alias cdscripts='$MDS_SCRIPTS'
-alias cdw='$HOME/Downloads'
-alias cdd='$HOME/Documents'
-alias cdapps='$MDS_APPS'
+alias cdhtml='cd /var/www/html/'
+alias cddir='cd $HOME/Documents/'
+alias cdconfig='cd $MDS_CONFIG'
+alias cdscripts='cd $MDS_SCRIPTS'
+alias cdw='cd $HOME/Downloads'
+alias cdd='cd $HOME/Documents'
+alias cdapps='cd $MDS_APPS'
 
 #command aliases
 alias cpptags='cd $MDS_ROOT; rm -f tags; ctags -R --c++-kinds=+p; export TAGS=$MDS_ROOT/tags'
