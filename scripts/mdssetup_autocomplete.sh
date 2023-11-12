@@ -16,7 +16,7 @@ _mdssetup() {
 
     if [[ ${prev} == "vifm" ]]
     then
-        opts="--install-colorschemes"
+        opts="--install --install-colorschemes"
         COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
         return 0
     fi
