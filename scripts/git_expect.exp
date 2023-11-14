@@ -5,9 +5,9 @@ set timeout 5
 set token [lindex $argv 0]
 set action [lindex $argv 1]
 
-if { $argc == 3 } {
-    set repo [lindex $argv 2]
-    spawn git $action $repo
+if { $argc >= 3 } {
+    set extra_args [lrange $argv 2 end]
+    spawn git $action {*}$extra_args
 } else {
     spawn git $action
 }

@@ -27,7 +27,8 @@ is_git_repo() {
 case $1 in
     push)
         is_git_repo
-        $MDS_CONFIG/scripts/git_expect.exp ${TOKEN} push
+        shift
+        $MDS_CONFIG/scripts/git_expect.exp ${TOKEN} push "$@"
     ;;
     pull)
         is_git_repo
