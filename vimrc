@@ -85,13 +85,14 @@ function DelTrailingEmptyChars()
 endfunction
 
 autocmd BufWritePre * call DelTrailingEmptyChars()
+call setenv('CWRDIR', getcwd())
 
 " Global configurations
 syntax on
 highlight link JavaIdentifier NONE
 
 " Search related configs
-set path=.,$MDS_ROOT,$MDS_ROOT/**,
+set path=.,$MDS_ROOT,$MDS_ROOT/**,$CWRDIR,$CWRDIR/**,
 set hlsearch
 set incsearch
 set ignorecase
@@ -253,7 +254,7 @@ let g:netrw_banner = 0
 let g:netrw_liststyle = 3
 let g:netrw_browse_split = 2
 let g:netrw_winsize = 25
-let g:netrw_keepdir=0 " Netrw: keeps track of current browsing directory
+let g:netrw_keepdir = 0 " Netrw: keeps track of current browsing directory
 
 " CMake configurations
 let g:cmake_link_compile_commands=1
@@ -314,11 +315,15 @@ let g:tagbar_type_php = {
     \ ],
 \ }
 
+"command! -bang FFiles call fzf#vim#files($CWRDIR,{'options': ['--layout=reverse', '--info=inline', '--preview', 'bat {}']},<bang>0)
+
+
 let g:ycm_filetype_whitelist = {'python': 1}
 let g:ycm_autoclose_preview_window_after_completion = 1
-let g:coc_filetypes_enable = ['c', 'cpp', 'tpp', 'javascript', 'typescript', 'php', 'bash', 'css', 'html', 'sh', 'vim', 'blade', 'gitcommit', 'rust', 'cmake']
+let g:coc_filetypes_enable = ['c', 'cpp', 'tpp', 'javascript', 'typescript', 'php', 'bash', 'css', 'html', 'sh', 'vim', 'blade', 'gitcommit', 'rust', 'cmake', 'vim', 'lua']
 let g:coc_global_extensions = ['coc-json', 'coc-git', 'coc-angular', 'coc-cmake', 'coc-clangd', 'coc-css', 'coc-cssmodules', 'coc-html-css-support', 'coc-html', 'coc-htmlhint', 'coc-phpactor', 'coc-phpls', 'coc-sh', 'coc-spell-checker', 'coc-tsserver', 'coc-blade-formatter', 'coc-blade-linter', 'coc-blade','coc-pairs', 'coc-yank', 'coc-vimlsp', 'coc-rust-analyzer', 'coc-lua']
 let b:coc_pairs_disabled = ['"', "'"]
+let g:ycm_enabled = v:false
 
 " Source files (Usually functions)
 source $MDS_CONFIG/vim/ToggleIOBuffers.vim
