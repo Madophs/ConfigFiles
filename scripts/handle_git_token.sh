@@ -7,7 +7,7 @@ GITTOKEN=${MDS_HIDDEN_CONFIGS}/token
 create_token_file() {
     if [[ ! -f ${GITTOKEN} ]]
     then
-        sudo touch ${GITTOKEN} && sudo chown root:root ${GITTOKEN} && sudo chmod 400 ${GITTOKEN}
+        sudo touch ${GITTOKEN} && sudo chown root:root ${GITTOKEN} && sudo chmod 400 ${GITTOKEN} && sudo chattr +i ${GITTOKEN}
         if [[ $? != 0 ]]; then
             cout error "Wrong password"
         fi
