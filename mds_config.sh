@@ -11,123 +11,33 @@ setopt HIST_EXPIRE_DUPS_FIRST
 setopt HIST_FIND_NO_DUPS
 setopt EXTENDED_HISTORY
 
-# env variables
-export GIT_REPOS=/home/$USER/Documents/git
-export TEST=$HOME/Documents/test
-export CTEST=$TEST/cpp
-export MDS_INPUT=$HOME/MdsCode/input.txt
-export MDS_OUTPUT=$HOME/MdsCode/output.txt
-export MDS_CONFIG=$GIT_REPOS/ConfigFiles
-export MDS_SCRIPTS=$MDS_CONFIG/scripts
-export MDS_APPS=$HOME/Documents/apps
-export PY_IMG=$GIT_REPOS/Image-Processsing/resources
-export EDITOR=vim
-export PAGER=less
-export MDS_ASSETS=$GIT_REPOS/assets
-export PATH=/usr/local/cuda-11.7/bin${PATH:+:${PATH}}
-export PATH=$GIT_REPOS/MdsCode_Bash:${PATH}
-export LD_LIBRARY_PATH=/usr/local/cuda-11.7/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
-export GREP_COLORS='ms=01;32'
-
-# Small setup
-. $MDS_CONFIG/scripts/setup.sh
-. $MDS_CONFIG/scripts/plugins_enabled_default.sh
-
-# User configs (overrides default ones)
-if [[ -f $MDS_CONFIG/scripts/plugins_enabled_user.sh ]]; then
-    source $MDS_CONFIG/scripts/plugins_enabled_user.sh
-fi
-
 # User VI like map keys
 set -o vi
 
-export MDS_ROOT=$(cat $MDS_CONFIG/.path.txt)
-export TAGS=$MDS_ROOT/tags
+# env variables
+export MDS_CONFIG=$(cd -P -- "$(dirname -- "$0")" && printf '%s\n' "$(pwd -P)/$(basename -- "$0")" | sed 's/\/mds_config.sh//g')
+export MDS_INPUT=${HOME}/MdsCode/input.txt
+export MDS_OUTPUT=${HOME}/MdsCode/output.txt
+export MDS_SCRIPTS=${MDS_CONFIG}/scripts
+export MDS_APPS=${HOME}/Documents/apps
+export MDS_ASSETS=${GIT_REPOS}/assets
+export MDS_HIDDEN_CONFIGS=${HOME}/.config/mdsconfig
+export MDS_ROOT_FILE=${MDS_HIDDEN_CONFIGS}/.path.txt
+export MDS_ROOT=$(cat ${MDS_ROOT_FILE} 2> /dev/null)
+export GIT_REPOS=/home/${USER}/Documents/git
+export TEST=${HOME}/Documents/test
+export CTEST=${TEST}/cpp
+export PY_IMG=${GIT_REPOS}/Image-Processsing/resources
+export EDITOR=nvim
+export PAGER=less
+export LD_LIBRARY_PATH=/usr/local/cuda-11.7/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+export GREP_COLORS='ms=01;32'
+export TAGS=${MDS_ROOT}/tags
+export PATH=/usr/local/cuda-11.7/bin${PATH:+:${PATH}}
+export PATH=${MDS_APPS}/lua-language-server/bin:${PATH}
+export PATH=${GIT_REPOS}/MdsCode_Bash:${PATH}
 
-# Directories aliases
-alias cdr='cd $MDS_ROOT'
-alias cdgit='cd $GIT_REPOS'
-alias lcpp='cd $GIT_REPOS/C-CPP-Linux-Programming'
-alias cpp='cd $CTEST'
-alias cdtest='cd $HOME/Documents/test/'
-alias artisan='php $MDS_ROOT/artisan'
-alias cdhtml='cd /var/www/html/'
-alias cddir='cd $HOME/Documents/'
-alias cdconfig='cd $MDS_CONFIG'
-alias cdscripts='cd $MDS_SCRIPTS'
-alias cdw='cd $HOME/Downloads'
-alias cdd='cd $HOME/Documents'
-alias cdapps='cd $MDS_APPS'
-
-#command aliases
-alias cpptags='cd $MDS_ROOT; rm -f tags; ctags -R --c++-kinds=+p; export TAGS=$MDS_ROOT/tags'
-alias phptags='cd $MDS_ROOT; rm -f tags; ctags -R --languages=php --exclude=storage; export TAGS=$MDS_ROOT/tags'
-alias setroot='echo $(pwd) > $MDS_CONFIG/.path.txt; export MDS_ROOT=$(cat $MDS_CONFIG/.path.txt) ; export TAGS=$MDS_ROOT/tags'
-alias getroot='export MDS_ROOT=$(cat $MDS_CONFIG/.path.txt); echo $MDS_ROOT'
-alias upgrade='sudo apt update && sudo apt upgrade -y'
-alias update='sudo apt update'
-alias install='sudo apt install'
-alias reinstall='sudo apt reinstall'
-alias purge='sudo apt purge'
-alias autoremove='sudo apt autoremove'
-alias remove='sudo apt remove'
-alias show='sudo apt show'
-alias search='sudo apt search'
-alias loadsh='source ~/.zshrc'
-alias zshlogin='exec zsh --login'
-alias off='shutdown now'
-alias myip='host myip.opendns.com resolver1.opendns.com'
-alias vimrc='vim $MDS_CONFIG/vimrc'
-alias config='vim $MDS_CONFIG'
-alias mm='mdscode -f cpp -t -n'
-alias mb='mdscode -b'
-alias me='mdscode -e'
-alias vimc='vim --servername Competitive --remote-silent '
-source $MDS_CONFIG/k8saliases.sh
-
-# Scripts aliases
-alias operaffmpeg='$MDS_CONFIG/scripts/operaffmpeg.sh'
-alias zshplugins='$MDS_CONFIG/scripts/zsh_plugins.sh'
-alias sl2='$MDS_CONFIG/scripts/backup_steam_savefiles.sh'
-alias htoken='$MDS_CONFIG/scripts/handle_git_token.sh'
-alias gclone='$MDS_SCRIPTS/git.sh clone'
-alias gpush='$MDS_SCRIPTS/git.sh push'
-alias gpull='$MDS_SCRIPTS/git.sh pull'
-alias gfetch='$MDS_SCRIPTS/git.sh fetch'
-alias pdir='source $MDS_SCRIPTS/hotlist.sh; push_directory_to_hotlist $(pwd)'
-alias rdir='source $MDS_SCRIPTS/hotlist.sh; remove_directory_from_hotlist $(pwd)'
-
-# Scripts autocomplete
-source ${MDS_SCRIPTS}/autocomplete.sh
-
-# Plugins
-if [[ -e $ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
-    source $ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-fi
-
-if [[ -e $ZSH_CUSTOM/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
-    source $ZSH_CUSTOM/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-fi
-
-if [[ -e ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-navigation-tools/zsh-navigation-tools.plugin.zsh ]]; then
-    source ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-navigation-tools/zsh-navigation-tools.plugin.zsh
-    znt_list_instant_select=1
-    znt_list_border=0
-    znt_list_bold=1
-    znt_list_colorpair="green/black"
-    znt_functions_keywords=( "zplg" "zgen" "match"  )
-    znt_cd_active_text="underline"
-    znt_env_nlist_coloring_color=$'\x1b[00;33m'
-    znt_cd_hotlist=( "~/.config/znt" "/usr/share/zsh/site-functions" "/usr/share/zsh"
-                    "/usr/local/share/zsh/site-functions" "/usr/local/share/zsh"
-                                    "/usr/local/bin" )
-
-    source ${MDS_SCRIPTS}/hotlist.sh
-    load_hostlist_file
-fi
-
-# Symbolic links
-if [[ ! -h ~/.local/bin/mdssetup ]]; then
-    ln -s ${MDS_SCRIPTS}/mdssetup.sh ~/.local/bin/mdssetup
-fi
-
+# Small setup
+source ${MDS_SCRIPTS}/shellsetup.sh
+source ${MDS_SCRIPTS}/aliases.sh
+source ${MDS_SCRIPTS}/zsh/zsh_plugins.sh

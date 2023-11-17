@@ -97,6 +97,38 @@ end, {remap=true})
 --require('tsht').move({ side = "start" })
 
 require('lualine').setup()
+-- dont run neodev.setup
+--vim.lsp.start({
+  --name = "lua-language-server",
+  --cmd = { "lua-language-server" },
+  --before_init = require("neodev.lsp").before_init,
+  --root_dir = vim.fn.getcwd(),
+  --settings = { Lua = {} },
+--})
+--local lsp_zero = require('lsp-zero')
+
+--lsp_zero.on_attach(function(client, bufnr)
+  ---- see :help lsp-zero-keybindings
+  ---- to learn the available actions
+  --lsp_zero.default_keymaps({buffer = bufnr})
+--end)
+
+---
+-- Replace these language servers
+-- with the ones you have installed in your system
+---
+--require('lspconfig').lua_ls.setup({})
+--require('neodev').setup({})
+--require('lspconfig').rust_analyzer.setup({})
+--require('lspconfig').lua_ls.setup({
+  --settings = {
+    --Lua = {
+      --completion = {
+        --callSnippet = "Replace"
+      --}
+    --}
+  --}
+--})
 
 return require('packer').startup(function()
   -- Packer can manage itself
@@ -195,6 +227,28 @@ return require('packer').startup(function()
     'nvim-lualine/lualine.nvim',
     requires = { 'nvim-tree/nvim-web-devicons', opt = true }
   }
+
+  --use {'hrsh7th/nvim-cmp'}
+
+  --use {'folke/neodev.nvim', opts={}}
+
+  --use {'neovim/nvim-lspconfig'}
+--use {
+  --'VonHeikemen/lsp-zero.nvim',
+  --branch = 'v3.x',
+  --requires = {
+    --- Uncomment these if you want to manage LSP servers from neovim
+     --{'williamboman/mason.nvim'},
+     --{'williamboman/mason-lspconfig.nvim'},
+
+     --LSP Support
+    --{'neovim/nvim-lspconfig'},
+     --Autocompletion
+    --{'hrsh7th/nvim-cmp'},
+    --{'hrsh7th/cmp-nvim-lsp'},
+    --{'L3MON4D3/LuaSnip'},
+  --}
+--}
 
   -- These optional plugins should be loaded directly because of a bug in Packer lazy loading
   --use 'nvim-tree/nvim-web-devicons' -- OPTIONAL: for file icons

@@ -93,21 +93,21 @@ function is_cmd_option() {
 }
 
 function missing_argument_validation() {
-    function_name=${FUNCNAME[1]}
-    args_required=${1}
+    local function_name=${FUNCNAME[1]}
+    local args_required=${1}
     if [[ -z ${args_required} ]]
     then
         cout error "Missing arguments for ${function_name}"
     fi
 
     shift
-    args_count=$#
+    local args_count=$#
     if [[ ${args_required} != ${args_count} ]]
     then
         cout error "Missing arguments for ${function_name} expected ${args_required} provided ${args_count}"
     fi
 
-    args_list=($(echo $@ | paste -d ' '))
+    local args_list=($(echo $@ | paste -d ' '))
     for (( i=0; i < ${#args_list[@]}; i+=1 ))
     do
         if [[ $(is_cmd_option ${args_list[${i}]}) == "YES" ]]
@@ -164,9 +164,10 @@ function install_package() {
 
 function install_cmd_if_missing() {
     missing_argument_validation 1 $1
-    package=$1
+    local package=$1
     if [[ $(is_cmd_installed ${package}) == "NO" ]]
     then
+        cout info "Package ${package} in not present in the system. Trying to install..."
         install_package ${package}
     fi
 }
@@ -212,11 +213,11 @@ function check_required_packages() {
 
 function download() {
     missing_argument_validation 2 $1 $2
-    download_link=$1
-    download_dir=$2
+    local download_link=$1
+    local download_dir=$2
     mkdir -p ${download_dir}
 
-    file_to_download=$(echo ${download_link} | awk -F '/' '{print $NF}')
+    local file_to_download=$(echo ${download_link} | awk -F '/' '{print $NF}')
     if [[ -f ${download_dir}/${file_to_download} ]]
     then
         cout info "File ${file_to_download} already exists."

@@ -54,6 +54,8 @@ Plug 'rust-lang/rust.vim'
 call plug#end()
 filetype plugin indent on
 
+" autocmd section
+
 " Configuration for html files
 autocmd FileType html,typescript,javascript,blade setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab
 autocmd BufEnter,BufNewFile,BufRead *.s,*.asm,*.S set filetype=nasm
@@ -178,10 +180,12 @@ endif
 
 " Mappings
 if has('nvim')
-    "map <F7> :FloatermSend clear && mdscode -b % -t <CR> :FloatermToggle <CR>
-    "map <F8> :FloatermSend clear && mdscode -b % -e <CR> :FloatermToggle <CR>
-    map <F7> :!clear && mdscode -b % -t <CR>
-    map <F8> :!clear && mdscode -b % -e <CR>
+    map <F7> :FloatermSend clear && mdscode -b -n % -t <CR>
+    ":FloatermToggle <CR>
+    map <F8> :FloatermSend clear && mdscode -b -n % -e <CR>
+    ":FloatermToggle <CR>
+    "map <F7> :!clear && mdscode -b % -t <CR>
+    "map <F8> :!clear && mdscode -b % -e <CR>
     nnoremap <silent> <C-N> :BufferNext <CR>
     nnoremap <silent> <C-P> :BufferPrevious <CR>
     nnoremap <silent> <M-i> <Cmd>BufferMovePrevious<CR>
@@ -190,9 +194,10 @@ if has('nvim')
     nnoremap <silent> <M-f> :HopWord<CR>
     omap     <silent> m :<C-U>lua require('tsht').nodes()<CR>
     xnoremap <silent> m :lua require('tsht').nodes()<CR>
+    autocmd VimEnter * silent FloatermNew --silent
 else
-    map <F7> :!clear && mdscode -b % -t <CR>
-    map <F8> :!clear && mdscode -b % -e <CR>
+    map <F7> :!clear && mdscode -b -n % -t <CR>
+    map <F8> :!clear && mdscode -b -n % -e <CR>
     nnoremap <C-N> :bnext <CR>
     nnoremap <C-P> :bprev <CR>
 endif
@@ -200,6 +205,8 @@ endif
 map <F9> :call ToggleIOBuffers() <CR>
 map <F10> :setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab smartindent <CR>
 let g:floaterm_keymap_toggle = '<F12>'
+let g:floaterm_height=0.9
+let g:floaterm_width=0.8
 
 map <c-h> :grep -rn $MDS_ROOT --exclude-dir=storage --exclude-dir=vendor --exclude-dir=node_modules --exclude=tags --exclude="*.json" -e
 "map <C-i> :cd $MDS_ROOT <CR>
@@ -278,7 +285,6 @@ command! -bang -nargs=* Rg
   \   fzf#vim#with_preview(), <bang>0)
 
 " Tagbar kinds configuration
-
 let g:tagbar_type_cpp = {
     \ 'kinds' : [
         \ 'd:macros:1:0',
@@ -310,10 +316,18 @@ let g:tagbar_type_php = {
 
 let g:ycm_filetype_whitelist = {'python': 1}
 let g:ycm_autoclose_preview_window_after_completion = 1
-let g:coc_filetypes_enable = [ 'c', 'cpp', 'tpp', 'javascript', 'typescript', 'php', 'bash', 'css', 'html', 'sh', 'vim', 'blade', 'gitcommit', 'rust', 'cmake']
-let g:coc_global_extensions = ['coc-json', 'coc-git', 'coc-angular', 'coc-cmake', 'coc-clangd', 'coc-css', 'coc-cssmodules', 'coc-html-css-support', 'coc-html', 'coc-htmlhint', 'coc-phpactor', 'coc-phpls', 'coc-sh', 'coc-spell-checker', 'coc-tsserver', 'coc-blade-formatter', 'coc-blade-linter', 'coc-blade','coc-pairs', 'coc-yank', 'coc-vimlsp', 'coc-rust-analyzer']
+let g:coc_filetypes_enable = ['c', 'cpp', 'tpp', 'javascript', 'typescript', 'php', 'bash', 'css', 'html', 'sh', 'vim', 'blade', 'gitcommit', 'rust', 'cmake']
+let g:coc_global_extensions = ['coc-json', 'coc-git', 'coc-angular', 'coc-cmake', 'coc-clangd', 'coc-css', 'coc-cssmodules', 'coc-html-css-support', 'coc-html', 'coc-htmlhint', 'coc-phpactor', 'coc-phpls', 'coc-sh', 'coc-spell-checker', 'coc-tsserver', 'coc-blade-formatter', 'coc-blade-linter', 'coc-blade','coc-pairs', 'coc-yank', 'coc-vimlsp', 'coc-rust-analyzer', 'coc-lua']
+let b:coc_pairs_disabled = ['"', "'"]
 
 " Source files (Usually functions)
-source $MDS_CONFIG/ToggleIOBuffers.vim
-source $MDS_CONFIG/Kwbd.vim
-source $MDS_CONFIG/Coc_vs_Ycm.vim
+source $MDS_CONFIG/vim/ToggleIOBuffers.vim
+source $MDS_CONFIG/vim/Kwbd.vim
+source $MDS_CONFIG/vim/Coc_vs_Ycm.vim
+
+if has('nvim')
+    call setenv('MDS_EDITOR', 'nvim')
+    call setenv('EDITOR_COMMAND', "nvr -cc 'FloatermHide!' {{FILE}}")
+    call setenv('EDITOR_SPLIT_COMMAND', 'nvim -O2 {{FILE1}} {{FILE2}}')
+    call setenv('EDITOR_DIFF_COMMAND', 'nvim -d {{FILE1}} {{FILE2}}')
+endif

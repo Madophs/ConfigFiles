@@ -1,68 +1,59 @@
 #!/bin/bash
 
-# Let' create file to store git token
+source ${MDS_SCRIPTS}/common.sh
+missing_argument_validation 1 $1
 
-if [[ $# < 1 ]]
-then
-    echo "[ERROR] Missing args"
-    exit 1
-fi
-
-GITTOKEN=$MDS_CONFIG/token
+GITTOKEN=${MDS_HIDDEN_CONFIGS}/token
 create_token_file() {
-    if [[ ! -f $GITTOKEN ]]
+    if [[ ! -f ${GITTOKEN} ]]
     then
-        sudo touch $GITTOKEN && sudo chown root:root $GITTOKEN && sudo chmod 400 $GITTOKEN
+        sudo touch ${GITTOKEN} && sudo chown root:root ${GITTOKEN} && sudo chmod 400 ${GITTOKEN}
         if [[ $? != 0 ]]; then
-            echo "Wrong password"
-            exit 0;
+            cout error "Wrong password"
         fi
     else
-        echo "[INFO] File already exists!"
+        cout info "File alrady exists!"
     fi
 }
 
 delete_token_file() {
-    sudo rm -f $GITTOKEN
+    sudo rm -f ${GITTOKEN}
     if [[ $? != 0 ]]
     then
-        echo "Try again..."
-        exit 0;
+        cout warning "Try again..."
     fi
 }
 
 open_token_file() {
-    if [[ -f $GITTOKEN ]]
+    if [[ -f ${GITTOKEN} ]]
     then
-        sudo vim $GITTOKEN
+        sudo vim ${GITTOKEN}
     else
-        echo "[ERROR] Git token file doesn't exists"
-        exit 1
+        cout error "Git token file doesn't exists"
     fi
 }
 
 show_token() {
-    if [[ -f $GITTOKEN ]]
+    if [[ -f ${GITTOKEN} ]]
     then
-        sudo cat $GITTOKEN
+        sudo cat ${GITTOKEN}
     else
-        echo "[ERROR] Git token file doesn't exists"
-        exit 1
+        cout error "Git token file doesn't exists"
     fi
 }
 
 copy_token() {
-    if [[ -f $GITTOKEN ]]
+    if [[ -f ${GITTOKEN} ]]
     then
-        sudo xclip -selection clipboard $GITTOKEN
+        sudo xclip -selection clipboard ${GITTOKEN}
     else
-        echo "[INFO] Git token file doesn't exists"
+        cout info "Git token file doesn't exists"
     fi
 }
 
 OPT=$1
 main() {
-    case $OPT in
+    case ${OPT} in
         create)
             create_token_file
         ;;
@@ -81,4 +72,4 @@ main() {
     esac
 }
 
-main $OPT
+main ${OPT}
