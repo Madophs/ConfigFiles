@@ -18,4 +18,7 @@ function! LoadSession()
 endfunction
 
 command! SMake call SaveSession()
-silent! call LoadSession()
+
+if $VIM_EDITOR != 'nvim' && $VIM_EDITOR != 'vim'
+    silent! call LoadSession()
+endif

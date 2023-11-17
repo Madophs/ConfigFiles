@@ -183,10 +183,8 @@ endif
 
 " Mappings
 if has('nvim')
-    map <F7> :FloatermSend clear && mdscode -b -n % -t <CR>
-    ":FloatermToggle <CR>
-    map <F8> :FloatermSend clear && mdscode -b -n % -e <CR>
-    ":FloatermToggle <CR>
+    map <F7> :FloatermSend clear && mdscode -b -n % -t <CR> :FloatermToggle <CR>
+    map <F8> :FloatermSend clear && mdscode -b -n % -e <CR> :FloatermToggle <CR>
     "map <F7> :!clear && mdscode -b % -t <CR>
     "map <F8> :!clear && mdscode -b % -e <CR>
     nnoremap <silent> <C-N> :BufferNext <CR>
@@ -334,8 +332,11 @@ source $MDS_CONFIG/vim/Coc_vs_Ycm.vim
 source $MDS_CONFIG/vim/SessionManager.vim
 
 if has('nvim')
-    call setenv('MDS_EDITOR', 'nvim')
+    call setenv('VIM_EDITOR', 'nvim')
     call setenv('EDITOR_COMMAND', "nvr -cc 'FloatermHide!' {{FILE}}")
     call setenv('EDITOR_SPLIT_COMMAND', 'nvim -O2 {{FILE1}} {{FILE2}}')
     call setenv('EDITOR_DIFF_COMMAND', 'nvim -d {{FILE1}} {{FILE2}}')
+else
+    call setenv('VIM_EDITOR', 'vim')
 endif
+
