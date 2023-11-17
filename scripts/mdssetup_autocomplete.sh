@@ -21,9 +21,16 @@ _mdssetup() {
         return 0
     fi
 
+    if [[ ${prev} == "rust" ]]
+    then
+        opts="--install --update"
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+
     if [[ ${cur} == * ]]
     then
-        opts="ACE cuda opera vim vifm nvim"
+        opts="ACE cuda rust opera vim vifm nvim"
         COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
         return 0
     fi

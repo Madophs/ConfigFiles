@@ -60,9 +60,10 @@ else
 fi
 
 # Credits: https://github.com/Peltoche/lsd
-if [[ -f $(which lsd) ]]; then
-    alias ll='ls -l'
-    alias la='ls -a'
-    alias lla='ls -la'
-    alias lt='ls --tree'
+if [[ -x $(which lsd) ]]
+then
+    alias ll='lsd -l'
+    alias la='lsd -a'
+    alias lla='lsd -la'
+    alias lt='lsd --tree'
 fi

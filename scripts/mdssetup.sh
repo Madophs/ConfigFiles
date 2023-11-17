@@ -19,6 +19,9 @@ case ${SUBJECT} in
     cuda)
         ${SOURCE_PATH}/cuda.sh
     ;;
+    rust)
+        ${SOURCE_PATH}/rust.sh $@
+    ;;
     nvim)
         ${SOURCE_PATH}/nvim.sh
     ;;
