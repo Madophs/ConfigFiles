@@ -22,6 +22,7 @@ export MDS_SCRIPTS=${MDS_CONFIG}/scripts
 export MDS_APPS=${HOME}/Documents/apps
 export MDS_ASSETS=${GIT_REPOS}/assets
 export MDS_HIDDEN_CONFIGS=${HOME}/.config/mdsconfig
+export MDS_SESSIONS_DIR=${HOME}/.config/mdsconfig/sessions
 export MDS_ROOT_FILE=${MDS_HIDDEN_CONFIGS}/.path.txt
 export MDS_ROOT=$(cat ${MDS_ROOT_FILE} 2> /dev/null)
 export GIT_REPOS=/home/${USER}/Documents/git

@@ -43,13 +43,15 @@ Plug 'vim-python/python-syntax'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'sheerun/vim-polyglot'
 Plug 'uiiaoo/java-syntax.vim'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
 Plug 'cdelledonne/vim-cmake'
 "Plug 'ycm-core/YouCompleteMe'
 Plug 'bronson/vim-visual-star-search'
 Plug 'voldikss/vim-floaterm'
 Plug 'rust-lang/rust.vim'
+if ! has('nvim')
+    Plug 'vim-airline/vim-airline'
+    Plug 'vim-airline/vim-airline-themes'
+endif
 
 call plug#end()
 filetype plugin indent on
@@ -329,6 +331,7 @@ let g:ycm_enabled = v:false
 source $MDS_CONFIG/vim/ToggleIOBuffers.vim
 source $MDS_CONFIG/vim/Kwbd.vim
 source $MDS_CONFIG/vim/Coc_vs_Ycm.vim
+source $MDS_CONFIG/vim/SessionManager.vim
 
 if has('nvim')
     call setenv('MDS_EDITOR', 'nvim')

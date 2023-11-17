@@ -3,6 +3,8 @@
 source ${MDS_SCRIPTS}/autocomplete.sh
 
 mkdir -p ${MDS_HIDDEN_CONFIGS}
+mkdir -p ${MDS_SESSIONS_DIR}
+
 if [[ ! -f  ${MDS_ROOT_FILE} ]]
 then
     touch ${MDS_ROOT_FILE}
