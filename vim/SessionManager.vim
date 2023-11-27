@@ -1,4 +1,6 @@
-function! SaveSession()
+let g:startify_session_dir = $MDS_SESSIONS_DIR
+
+function! g:SaveSession()
     let l:wins2close = ['NERD_tree_', '__Tagbar__']
     for item in l:wins2close
         let l:winnr2id = win_getid(bufwinnr(item))
@@ -11,14 +13,14 @@ function! SaveSession()
     execute "mksession!" .. l:save_session_path
 endfunction
 
-function! LoadSession()
-    let g:mds_session_file = system("(REPONAME=$(git rev-parse --show-toplevel 2> /dev/null) && echo $REPONAME | awk -F '/' '{print \"git_\"$NF\".vim\"}') || echo " .. getcwd() .. " | awk -F '/' '{print $NF\".vim\"}'")
+function! g:LoadSession(...)
+    let g:mds_session_file = a:0 > 0 ? a:1 : ''
+    if g:mds_session_file == ''
+        let g:mds_session_file = system("(REPONAME=$(git rev-parse --show-toplevel 2> /dev/null) && echo $REPONAME | awk -F '/' '{print \"git_\"$NF\".vim\"}') || echo " .. getcwd() .. " | awk -F '/' '{print $NF\".vim\"}'")
+    endif
     let l:save_session_path = $MDS_SESSIONS_DIR .. '/' .. g:mds_session_file
     execute "silent! source " .. l:save_session_path
 endfunction
 
-command! SMake call SaveSession()
-
-if $VIM_EDITOR != 'nvim' && $VIM_EDITOR != 'vim'
-    silent! call LoadSession()
-endif
+command! SMake call g:SaveSession()
+autocmd VimEnter * command! -nargs=* SLoad call g:LoadSession(<f-args>)

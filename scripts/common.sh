@@ -16,7 +16,7 @@ function cout() {
         echo -e "\e[1;33m[WARNING]\e[0m ${message}"
         ;;
         blue|info)
-        echo -e "\e[1;34m[INFO]\e[0m ${message}"
+        echo -e "\e[1;36m[INFO]\e[0m ${message}"
         ;;
     esac
 }

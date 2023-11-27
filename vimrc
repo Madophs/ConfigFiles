@@ -183,10 +183,8 @@ endif
 
 " Mappings
 if has('nvim')
-    map <F7> :FloatermSend clear && mdscode -b -n % -t <CR> :FloatermToggle <CR>
-    map <F8> :FloatermSend clear && mdscode -b -n % -e <CR> :FloatermToggle <CR>
-    "map <F7> :!clear && mdscode -b % -t <CR>
-    "map <F8> :!clear && mdscode -b % -e <CR>
+    map <F7> :FloatermSend clear && mdscode -b -n %:p -t <CR> :FloatermToggle <CR>
+    map <F8> :FloatermSend clear && mdscode -b -n %:p -e <CR> :FloatermToggle <CR>
     nnoremap <silent> <C-N> :BufferNext <CR>
     nnoremap <silent> <C-P> :BufferPrevious <CR>
     nnoremap <silent> <M-i> <Cmd>BufferMovePrevious<CR>
@@ -197,8 +195,8 @@ if has('nvim')
     xnoremap <silent> m :lua require('tsht').nodes()<CR>
     autocmd VimEnter * silent FloatermNew --silent
 else
-    map <F7> :!clear && mdscode -b -n % -t <CR>
-    map <F8> :!clear && mdscode -b -n % -e <CR>
+    map <F7> :!clear && mdscode -b -n %:p -t <CR>
+    map <F8> :!clear && mdscode -b -n %:p -e <CR>
     nnoremap <C-N> :bnext <CR>
     nnoremap <C-P> :bprev <CR>
 endif
@@ -207,7 +205,7 @@ map <F9> :call ToggleIOBuffers() <CR>
 map <F10> :setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab smartindent <CR>
 let g:floaterm_keymap_toggle = '<F12>'
 let g:floaterm_height=0.9
-let g:floaterm_width=0.8
+let g:floaterm_width=0.9
 
 map <c-h> :grep -rn $MDS_ROOT --exclude-dir=storage --exclude-dir=vendor --exclude-dir=node_modules --exclude=tags --exclude="*.json" -e
 "map <C-i> :cd $MDS_ROOT <CR>
@@ -262,7 +260,7 @@ let g:cmake_default_config='build'
 nmap <silent> gG :CMakeGenerate <CR>
 nmap <silent> gB :CMakeBuild <CR>
 nmap <silent> gC :CMakeOpen <CR>
-nmap <silent> gc :CMakeClose <CR>
+nmap <silent> gc :CMakeToggle <CR>
 nmap <silent> gl :CMakeClean <CR>
 nmap <silent> gL :CMakeTest --output-on-failure <CR>
 
@@ -339,4 +337,3 @@ if has('nvim')
 else
     call setenv('VIM_EDITOR', 'vim')
 endif
-
