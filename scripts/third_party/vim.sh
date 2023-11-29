@@ -2,8 +2,7 @@
 
 source $MDS_SCRIPTS/common.sh
 
-install_packages git python3-distutils python3-dev python2-dev libncurses-dev
-CURRDIR=$(pwd)
+install_packages git python3-distutils python3-dev libncurses-dev
 cd $GIT_REPOS
 
 CPUs=$(( ($(lscpu -p | tail -n 1 | awk -F ',' '{ print $1 }') + 1) / 2 ))
@@ -17,17 +16,17 @@ then
     make distclean
     ./configure --prefix=/usr/local \
         --enable-python3interp \
+        --with-x \
         --with-python3-config-dir=/usr/lib/${PYTHON_VERSION}/config-*
-    cd src
-    make -j $CPUs
 else
     git clone https://github.com/vim/vim.git
     cd vim
     ./configure --prefix=/usr/local \
         --enable-python3interp \
+        --with-x \
         --with-python3-config-dir=/usr/lib/${PYTHON_VERSION}/config-*
-    cd src
-    make -j $CPUs
 fi
 
+cd src
+make -j $CPUs
 sudo make install

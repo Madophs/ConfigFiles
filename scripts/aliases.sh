@@ -50,6 +50,7 @@ alias gpull="${MDS_SCRIPTS}/git.sh pull"
 alias gfetch="${MDS_SCRIPTS}/git.sh fetch"
 alias pdir="source ${MDS_SCRIPTS}/zsh/hotlist.sh; push_directory_to_hotlist \$(pwd)"
 alias rdir="source ${MDS_SCRIPTS}/zsh/hotlist.sh; remove_directory_from_hotlist \$(pwd)"
+alias ncd="n-cd"
 
 if [[ -x $(which minikube) ]]
 then

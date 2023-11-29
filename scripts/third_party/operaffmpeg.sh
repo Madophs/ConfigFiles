@@ -9,29 +9,44 @@ DOWNLOAD_DIR='/tmp/ffmpeg'
 REPO_URL='http://security.ubuntu.com/ubuntu/pool/universe/c/chromium-browser/'
 TARGET_PATH=/usr/lib/x86_64-linux-gnu/opera
 
-function exit_if_opera_running() {
-    OPERA_RUNNING=$(ps -ef | awk '{print $8}' | grep -w opera)
-    if [[ -n ${OPERA_RUNNING} ]]
+function terminate_opera_process_if_possible() {
+    opera_pid=$(ps -ef | grep -e 'opera$' | grep -v grep | awk '{print $2}')
+    if [[ -n ${opera_pid} ]]
     then
-        cout warning "It seems that Opera browser is running..."
-        cout warning "Please consider terminate the process before proceed."
-        exit 0
+        kill -s TERM ${opera_pid}
+        opera_pid=$(ps -ef | grep -e 'opera$' | grep -v grep | awk '{print $2}')
+        local timeout_cnt=3
+        while [[ -n ${opera_pid} ]]
+        do
+            if [[ ${timeout_cnt} == 0 ]]
+            then
+                cout warning "It seems that Opera browser is running..."
+                cout warning "Please consider terminate the process before proceed."
+                exit 1
+            fi
+            sleep 1
+            timeout_cnt=$(( timeout_cnt - 1 ))
+            opera_pid=$(ps -ef | grep -e 'opera$' | grep -v grep | awk '{print $2}')
+        done
     fi
 }
 
 function do_install_ffmpeg_with_snap() {
-    exit_if_opera_running
+    terminate_opera_process_if_possible
     install_package_with_snap ${FFMPEG_PACKAGE}
     LAST_DIR=$(ls -lt ${FFMPEG_PACKAGE_DIR}/${FFMPEG_PACKAGE}* | head -n 1 | awk -F '[/]' '{print $NF}'| sed s/://g)
     FFMPEG_LIBRARY_PATH=${FFMPEG_PACKAGE_DIR}/${LAST_DIR}/${FFMPEG_PACKAGE}/${LIB_NAME}
     sudo cp ${TARGET_PATH}/${LIB_NAME} ${TARGET_PATH}/${LIB_NAME}.backup
     sudo cp -f ${FFMPEG_LIBRARY_PATH} ${TARGET_PATH}
-    if [[ $(any_error $?) == "NO" ]]
+    if [[ $(any_error $?) == "YES" ]]
     then
-        cout success "ffmpeg library installed"
-    else
         cout error "something went wrong"
     fi
+
+    cout success "ffmpeg library installed"
+    cout info "starting opera..."
+    sleep 2
+    opera &> /dev/null &
 }
 
 function do_install_ffmpeg() {

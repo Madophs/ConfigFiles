@@ -3,7 +3,6 @@
 
 function vifm_install_colorschemes() {
     TARGET_DIRECTORY=${HOME}/.config/vifm/colors
-    install_cmd_if_missing git
     rm -rf ${TARGET_DIRECTORY} &> /dev/null
     git clone https://github.com/vifm/vifm-colors ~/.config/vifm/colors
     if [[ $(any_error $?) == "NO" ]]
@@ -28,6 +27,7 @@ function vifm_download_source_code() {
 }
 
 function vifm_install() {
+    set -e
     SOURCE_CODE_LINK=$(get_vifm_source_code_link)
     if [[ -z ${SOURCE_CODE_LINK} ]]
     then
@@ -35,7 +35,7 @@ function vifm_install() {
     fi
 
     vifm_download_source_code
-    tar -xf "${DOWNLOAD_DIR}/$(ls *tar.gz)"
+    tar -xf $(ls ${DOWNLOAD_DIR}/*tar.gz) -C ${DOWNLOAD_DIR}
     SOURCE_CODE_DIR=$(ls -d ${DOWNLOAD_DIR}/*/)
     pushd ${SOURCE_CODE_DIR} &> /dev/null
 

@@ -1,21 +1,20 @@
+# compute base directory
+declare -g real_shell=$(ps -o command $$ | tail -n 1 | awk '{print $0}' | grep -o -e '^[\/a-z]\+' | awk -F '/' '{print $NF}')
+if [[ ${real_shell} == zsh ]]
+then
+    export MDS_CONFIG=$(cd -P -- "$(dirname -- "$0")" && printf '%s\n' "$(pwd -P)/$(basename -- "$0")" | sed 's/\/mds_config\.sh//g')
+else
+    export MDS_CONFIG="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+fi
+
 # Shell configurations
 HISTSIZE=3000
 HISTFILESIZE=3000
-
-setopt HIST_IGNORE_DUPS
-setopt HIST_IGNORE_ALL_DUPS
-setopt HIST_IGNORE_SPACE
-setopt HIST_REDUCE_BLANKS
-setopt HIST_SAVE_NO_DUPS
-setopt HIST_EXPIRE_DUPS_FIRST
-setopt HIST_FIND_NO_DUPS
-setopt EXTENDED_HISTORY
 
 # User VI like map keys
 set -o vi
 
 # env variables
-export MDS_CONFIG=$(cd -P -- "$(dirname -- "$0")" && printf '%s\n' "$(pwd -P)/$(basename -- "$0")" | sed 's/\/mds_config.sh//g')
 export MDS_INPUT=${HOME}/MdsCode/input.txt
 export MDS_OUTPUT=${HOME}/MdsCode/output.txt
 export MDS_SCRIPTS=${MDS_CONFIG}/scripts
@@ -36,10 +35,12 @@ export LD_LIBRARY_PATH=/usr/local/cuda-11.7/lib64${LD_LIBRARY_PATH:+:${LD_LIBRAR
 export GREP_COLORS='ms=01;32'
 export TAGS=${MDS_ROOT}/tags
 export PATH=/usr/local/cuda-11.7/bin${PATH:+:${PATH}}
+export PATH=${HOME}/.local/bin:${PATH}
 export PATH=${MDS_APPS}/lua-language-server/bin:${PATH}
 export PATH=${GIT_REPOS}/MdsCode_Bash:${PATH}
 
 # Small setup
+source ${MDS_SCRIPTS}/zsh/configs.sh
 source ${MDS_SCRIPTS}/shellsetup.sh
 source ${MDS_SCRIPTS}/aliases.sh
 source ${MDS_SCRIPTS}/zsh/zsh_plugins.sh

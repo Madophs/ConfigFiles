@@ -5,9 +5,12 @@ function cout() {
     shift
     message=$@
     case $color in
-        red|error|danger)
+        red|error)
         echo -e "\e[1;31m[ERROR]\e[0m ${message}"
         exit 1
+        ;;
+        danger)
+        echo -e "\e[1;31m[FAULT]\e[0m ${message}"
         ;;
         green|success)
         echo -e "\e[1;32m[SUCCESS]\e[0m ${message}"
@@ -16,7 +19,7 @@ function cout() {
         echo -e "\e[1;33m[WARNING]\e[0m ${message}"
         ;;
         blue|info)
-        echo -e "\e[1;34m[INFO]\e[0m ${message}"
+        echo -e "\e[1;36m[INFO]\e[0m ${message}"
         ;;
     esac
 }
@@ -44,6 +47,15 @@ function any_error() {
     fi
 }
 
+function exit_is_zero() {
+    if [[ $1 == 0 ]]
+    then
+        echo "YES"
+    else
+        echo "NO"
+    fi
+}
+
 function exit_if_failed() {
     ret=$1
     msg=$2
@@ -60,13 +72,9 @@ function is_installed() {
     echo $?
 }
 
-function is_cmd_installed() {
-    if [[ -x $(which $1) ]]
-    then
-        echo "YES"
-    else
-        echo "NO"
-    fi
+function is_package_installed() {
+    apt list -a $1 2> /dev/null | grep installed &> /dev/null
+    exit_is_zero $?
 }
 
 function install_packages() {
@@ -74,10 +82,10 @@ function install_packages() {
     for ((i=0; i < $#; i+=1))
     do
         if [[ $(is_installed ${package_arr[$i]}) == 1 ]]; then
-            cout white "Installing: ${package_arr[$i]}"
+            cout info "Installing: ${package_arr[$i]}"
             sudo apt install -y ${package_arr[$i]}
             exit_if_failed $? "Failed to install ${package_arr[$i]}"
-            cout success "[SUCCESS] Package ${package_arr[$i]} installed."
+            cout success "Package ${package_arr[$i]} installed."
         fi
     done
 }
@@ -146,6 +154,7 @@ function hold_package() {
 
 function install_package() {
     missing_argument_validation 1 $1
+    local exit_on_failure=$2
     if [[ -z ${IS_APT_UPDATE_PERFORMED} ]]
     then
         sudo apt update &> /dev/null
@@ -155,20 +164,26 @@ function install_package() {
     package_name=$1
     cout info "About to install ${package_name}"
     sleep 3
-    sudo apt install ${package_name}
+    sudo apt install -y ${package_name}
     if [[ $(any_error $?) == "YES" ]]
     then
-        cout error "Failed to install ${package_name}"
+        if [[ ${exit_on_failure} == "NO" ]]
+        then
+            cout danger "Failed to install ${package_name}"
+        else
+            cout error "Failed to install ${package_name}"
+        fi
     fi
 }
 
-function install_cmd_if_missing() {
+function install_package_if_missing() {
     missing_argument_validation 1 $1
+    local exit_on_failure=$2
     local package=$1
-    if [[ $(is_cmd_installed ${package}) == "NO" ]]
+    if [[ $(is_package_installed ${package}) == "NO" ]]
     then
         cout info "Package ${package} in not present in the system. Trying to install..."
-        install_package ${package}
+        install_package ${package} ${exit_on_failure}
     fi
 }
 
@@ -200,7 +215,7 @@ function check_required_packages() {
         cout error "No packages specified"
     fi
 
-    package_list=($(echo $@ | paste -d ' '))
+    local package_list=($(echo $@ | paste -d ' '))
     for (( i=0; i < ${#package_list[@]}; i+= 1 ))
     do
         package_name=${package_list[${i}]}
@@ -236,7 +251,7 @@ function download() {
         fi
     fi
 
-
+    install_package_if_missing axel
     axel --alternate --output=${download_dir} ${download_link}
     if [[ $(any_error $?) == "YES" ]]
     then

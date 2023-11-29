@@ -9,8 +9,8 @@ if [[ -f ${MDS_HIDDEN_CONFIGS}/plugins_enabled_user.sh ]]; then
     source ${MDS_HIDDEN_CONFIGS}/plugins_enabled_user.sh
 fi
 
-install_cmd_if_missing git
-install_cmd_if_missing curl
+install_package_if_missing git
+install_package_if_missing curl
 
 if [[ ! -e ~/.vim/autoload/plug.vim ]]; then
     curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim

@@ -23,7 +23,8 @@ case ${SUBJECT} in
         ${SOURCE_PATH}/rust.sh $@
     ;;
     nvim)
-        ${SOURCE_PATH}/nvim.sh
+        shift
+        ${SOURCE_PATH}/nvim.sh $@
     ;;
     vim)
         ${SOURCE_PATH}/vim.sh
@@ -38,6 +39,9 @@ case ${SUBJECT} in
     ;;
     autocomplete)
         sudo ln -s ${MDS_SCRIPTS}/mdssetup_autocomplete.sh /etc/bash_completion.d/mdssetup-prompt
+    ;;
+    deps)
+        ${SOURCE_PATH}/deps.sh
     ;;
     *)
         cout error "Unknown option."

@@ -11,8 +11,10 @@ then
 fi
 
 # Symbolic links
-if [[ ! -h ~/.local/bin/mdssetup ]]; then
-    ln -s ${MDS_SCRIPTS}/mdssetup.sh ~/.local/bin/mdssetup
+if [[ ! -h ~/.local/bin/mdssetup ]]
+then
+    mkdir -p ~/.local/bin
+    ln -s -T ${MDS_SCRIPTS}/mdssetup.sh ~/.local/bin/mdssetup
 fi
 
 # Let's ignore some common commands of being registered from history

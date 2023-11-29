@@ -14,6 +14,13 @@ _mdssetup() {
         return 0
     fi
 
+    if [[ ${prev} == "nvim" ]]
+    then
+        opts="--install --setup"
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+
     if [[ ${prev} == "vifm" ]]
     then
         opts="--install --install-colorschemes"
@@ -30,7 +37,7 @@ _mdssetup() {
 
     if [[ ${cur} == * ]]
     then
-        opts="ACE cuda rust opera vim vifm nvim"
+        opts="ACE cuda rust opera vim vifm nvim deps"
         COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
         return 0
     fi

@@ -1,6 +1,9 @@
 # python3 -m pip install argcomplete
-autoload bashcompinit
-bashcompinit
+if [[ ${real_shell} == zsh ]]
+then
+    autoload bashcompinit
+    bashcompinit
+fi
 
 function load_autocomplete_resource() {
     if [[ -h /etc/bash_completion.d/$1 ]]
