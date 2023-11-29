@@ -7,12 +7,19 @@ GITTOKEN=${MDS_HIDDEN_CONFIGS}/token
 create_token_file() {
     if [[ ! -f ${GITTOKEN} ]]
     then
-        sudo touch ${GITTOKEN} && sudo chown root:root ${GITTOKEN} && sudo chmod 400 ${GITTOKEN} && sudo chattr +i ${GITTOKEN}
+        sudo touch ${GITTOKEN} && sudo chown root:root ${GITTOKEN} && sudo chmod 600 ${GITTOKEN} && sudo chattr +i ${GITTOKEN}
         if [[ $? != 0 ]]; then
             cout error "Wrong password"
         fi
     else
-        cout info "File alrady exists!"
+        cout warning "File already exists!"
+        cout info "Replace? (y/n)"
+        read opt
+        if [[ ${opt} == 'y' ]]
+        then
+            sudo chattr -i ${GITTOKEN} && sudo rm -f ${GITTOKEN}
+            sudo touch ${GITTOKEN} && sudo chown root:root ${GITTOKEN} && sudo chmod 600 ${GITTOKEN} && sudo chattr +i ${GITTOKEN}
+        fi
     fi
 }
 
@@ -27,7 +34,9 @@ delete_token_file() {
 open_token_file() {
     if [[ -f ${GITTOKEN} ]]
     then
-        sudo vim ${GITTOKEN}
+        sudo chattr -i ${GITTOKEN}
+        sudo vim --cmd noswapfile ${GITTOKEN}
+        sudo chattr +i ${GITTOKEN}
     else
         cout error "Git token file doesn't exists"
     fi

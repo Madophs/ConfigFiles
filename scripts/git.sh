@@ -1,25 +1,24 @@
 #!/bin/bash
 
+source ${MDS_SCRIPTS}/common.sh
+
 if [[ $# == 0 ]]
 then
-    echo "[INFO] Invalid params. Params: clone [repo], push, fetch, pull."
-    exit 0
+    cout error "Invalid params. Params: clone [repo], push, fetch, pull."
 fi
 
-TOKEN=$($MDS_CONFIG/scripts/handle_git_token.sh show)
+TOKEN=$(${MDS_CONFIG}/scripts/handle_git_token.sh show)
 
-if [[ $? != 0 || -z $TOKEN ]]
+if [[ $? != 0 || -z ${TOKEN} ]]
 then
-    echo "[ERROR] Make sure that you have a token."
-    exit 1
+    cout error "Make sure that you have a token."
 fi
 
 is_git_repo() {
     git status &> /dev/null
     if [[ $? != 0 ]]
     then
-        echo "[ERROR] Not a git repo."
-        exit 1
+        cout error "Not a git repo"
     fi
 }
 
@@ -28,22 +27,22 @@ case $1 in
     push)
         is_git_repo
         shift
-        $MDS_CONFIG/scripts/git_expect.exp ${TOKEN} push "$@"
+        ${MDS_CONFIG}/scripts/git_expect.exp ${TOKEN} push "$@"
     ;;
     pull)
         is_git_repo
-        $MDS_CONFIG/scripts/git_expect.exp ${TOKEN} pull
+        ${MDS_CONFIG}/scripts/git_expect.exp ${TOKEN} pull
     ;;
     clone)
         if [[ $# != 2 ]]; then echo "[ERROR] Need to specify a repo."; exit 1; fi;
         REPO=$2
-        $MDS_CONFIG/scripts/git_expect.exp ${TOKEN} clone $REPO
+        ${MDS_CONFIG}/scripts/git_expect.exp ${TOKEN} clone ${REPO}
     ;;
     fetch)
         is_git_repo
-        $MDS_CONFIG/scripts/git_expect.exp ${TOKEN} fetch
+        ${MDS_CONFIG}/scripts/git_expect.exp ${TOKEN} fetch
     ;;
     *)
-        echo -n "[ERROR] Unknown option."
+        cout error "Unknown options."
     ;;
 esac
