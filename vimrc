@@ -187,8 +187,8 @@ if has('nvim')
     map <F8> :FloatermSend clear && mdscode -b -n %:p -e <CR> :FloatermToggle <CR>
     nnoremap <silent> <C-N> :BufferNext <CR>
     nnoremap <silent> <C-P> :BufferPrevious <CR>
-    nnoremap <silent> <M-i> <Cmd>BufferMovePrevious<CR>
-    nnoremap <silent> <M-o> <Cmd>BufferMoveNext<CR>
+    nnoremap <silent> <M-{> <Cmd>BufferMovePrevious<CR>
+    nnoremap <silent> <M-}> <Cmd>BufferMoveNext<CR>
     nnoremap <silent> <M-p> <Cmd>BufferPick<CR>
     nnoremap <silent> <M-f> :HopWord<CR>
     omap     <silent> m :<C-U>lua require('tsht').nodes()<CR>

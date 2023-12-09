@@ -125,6 +125,21 @@ function missing_argument_validation() {
     done
 }
 
+function update_repos() {
+    if [[ ${IS_APT_UPDATE_PERFORMED} == YES ]]
+    then
+        return 0
+    fi
+
+    sudo apt update &> /dev/null
+    if [[ $(any_error $?) == NO ]]
+    then
+        IS_APT_UPDATE_PERFORMED="YES"
+    else
+        cout error "Failed to update repos..."
+    fi
+}
+
 function is_package_hold() {
     missing_argument_validation 1 $1
     package_name=$1
@@ -152,13 +167,16 @@ function hold_package() {
     sudo apt-mark hold ${package_name}
 }
 
+function update_package() {
+    sudo apt install --only-upgrade ${1}
+}
+
 function install_package() {
     missing_argument_validation 1 $1
     local exit_on_failure=$2
     if [[ -z ${IS_APT_UPDATE_PERFORMED} ]]
     then
-        sudo apt update &> /dev/null
-        IS_APT_UPDATE_PERFORMED="YES"
+        update_repos
     fi
 
     package_name=$1

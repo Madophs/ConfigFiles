@@ -1,6 +1,7 @@
 #!/bin/bash
 
 source ${MDS_SCRIPTS}/common.sh
+source ${MDS_SCRIPTS}/third_party/operaffmpeg.sh
 PACKAGE_NAME=opera-stable
 
 function get_opera_download_link() {
@@ -12,6 +13,15 @@ function get_opera_download_link() {
 }
 
 function do_opera_install() {
+    if [[ $(is_package_installed ${PACKAGE_NAME}) == YES ]]
+    then
+        terminate_opera_process_if_possible
+        unhold_package ${PACKAGE_NAME}
+        update_package ${PACKAGE_NAME}
+        hold_package ${PACKAGE_NAME}
+        return 0
+    fi
+
     DOWNLOAD_LINK=$(get_opera_download_link)
     DOWNLOAD_DIR=/tmp/opera_tmp
     download ${DOWNLOAD_LINK} ${DOWNLOAD_DIR}
@@ -26,12 +36,10 @@ function do_opera_remove() {
 }
 
 function do_opera_install_ffmpeg() {
-    source ${MDS_SCRIPTS}/third_party/operaffmpeg.sh
     do_install_ffmpeg_with_snap
 }
 
 function do_opera_uninstall_ffmpeg() {
-    source ${MDS_SCRIPTS}/third_party/operaffmpeg.sh
     do_uninstall_ffmpeg
 }
 
@@ -42,13 +50,13 @@ then
 fi
 
 case ${OPTION} in
-    --install|--update)
+    --install)
         do_opera_install
     ;;
     --remove)
         do_opera_remove
     ;;
-    --with-ffmpeg)
+   --with-ffmpeg|--update)
         do_opera_install
         do_opera_install_ffmpeg
     ;;
