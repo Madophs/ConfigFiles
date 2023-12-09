@@ -1,0 +1,21 @@
+IndentWidth: 4
+UseTab: Never
+AllowAllArgumentsOnNextLine: true
+AllowShortEnumsOnASingleLine: false
+AllowShortLambdasOnASingleLine: Empty
+AllowShortFunctionsOnASingleLine: Empty
+PackConstructorInitializers: NextLineOnly
+SpaceBeforeAssignmentOperators: true
+PointerAlignment: Right
+Cpp11BracedListStyle: true
+BreakBeforeBraces: Linux
+BreakConstructorInitializers: BeforeColon
+BreakInheritanceList: AfterColon
+BreakStringLiterals: true
+BraceWrapping:
+  AfterClass: true
+  AfterStruct: true
+  AfterEnum: true
+  AfterFunction: true
+  AfterExternBlock: true
+  BeforeCatch: false
