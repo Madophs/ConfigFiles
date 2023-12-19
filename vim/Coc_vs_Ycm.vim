@@ -90,6 +90,13 @@ function! s:filetype_handler_for_type()
         nmap <silent> gr :YcmCompleter GoToReferences <CR>
         nmap <silent> gk :YcmCompleter GetDoc <CR>
         let g:ycm_key_invoke_completion = '<C-Space>'
+    else
+        inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+                                \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+        inoremap <silent><expr> <TAB>
+            \ coc#pum#visible() ? coc#pum#next(1) :
+            \ CheckBackspace() ? "\<Tab>" :
+            \ coc#refresh()
     endif
 endfunction
 

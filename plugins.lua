@@ -100,6 +100,30 @@ return require('packer').startup(function()
   --use 'nvim-tree/nvim-web-devicons' -- OPTIONAL: for file icons
   use 'romgrk/barbar.nvim'
 
+  use 'rebelot/kanagawa.nvim'
+
+  use 'andersevenrud/nvim_context_vt'
+
+  use({
+      "kylechui/nvim-surround",
+      tag = "*", -- Use for stability; omit to use `main` branch for the latest features
+      config = function()
+          require("nvim-surround").setup({
+              -- Configuration here, or leave empty to use defaults
+          })
+      end
+  })
+
+  use({
+    "nvim-treesitter/nvim-treesitter-textobjects",
+    after = "nvim-treesitter",
+    requires = "nvim-treesitter/nvim-treesitter",
+  })
+
+  use 'Xuyuanp/scrollbar.nvim'
+
+  use { 'm-demare/hlargs.nvim' }
+
   if packer_bootstrap then
     require('packer').sync()
   end

@@ -48,6 +48,10 @@ Plug 'cdelledonne/vim-cmake'
 Plug 'bronson/vim-visual-star-search'
 Plug 'voldikss/vim-floaterm'
 Plug 'rust-lang/rust.vim'
+Plug 'tpope/vim-rhubarb'
+Plug 'ludovicchabant/vim-gutentags'
+Plug 'Shirk/vim-gas'
+
 if ! has('nvim')
     Plug 'vim-airline/vim-airline'
     Plug 'vim-airline/vim-airline-themes'
@@ -58,9 +62,9 @@ filetype plugin indent on
 
 " autocmd section
 
-" Configuration for html files
-autocmd FileType html,typescript,javascript,blade setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab
-autocmd BufEnter,BufNewFile,BufRead *.s,*.asm,*.S set filetype=nasm
+autocmd BufEnter,BufNewFile,BufRead *.asm set filetype=nasm
+autocmd BufEnter,BufNewFile,BufRead *.s,*.S set filetype=gas
+autocmd FileType html,typescript,javascript,blade,nasm,asm setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab
 
 " Set the working directory to the current's file directory
 " Issues with terminal buffer
@@ -94,7 +98,7 @@ syntax on
 highlight link JavaIdentifier NONE
 
 " Search related configs
-set path=.,$MDS_ROOT,$MDS_ROOT/**,$CWRDIR,$CWRDIR/**,
+"set path=.,$MDS_ROOT,$MDS_ROOT/**,$CWRDIR,$CWRDIR/**,
 set hlsearch
 set incsearch
 set ignorecase
@@ -109,7 +113,10 @@ set smartindent
 set shiftround
 
 " Editor related configs
-" set cursorline
+set guicursor=n-v-c:block,i-ci-ve:hor90,r-cr:hor20,o:hor50
+    \,a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor
+    \,sm:block-blinkwait175-blinkoff150-blinkon175
+"set cursorline
 set number
 set relativenumber
 set mouse=ni
@@ -133,7 +140,7 @@ set noshowmode
 set splitbelow
 set splitright
 set confirm
-set completeopt=preview,menuone,noinsert,noselect
+set completeopt=preview,menu,noinsert,noselect
 
 " Terminal related configs
 if !has('nvim')
@@ -145,7 +152,8 @@ set visualbell
 
 " Here start miscellaneous configs
 set wildmenu
-set wildmode=list:longest,full
+set wildmode=list:longest,list:full
+set wildoptions=fuzzy,pum,tagfile
 set title
 set backspace=indent,eol,start
 set noswapfile
@@ -174,8 +182,8 @@ if $MDS_FANCY ==? "YES"
     " Beautiful theme
     colorscheme nightfly
     let g:lightline = { 'colorscheme': 'nightfly' }
-    let g:nightflyUnderlineMatchParen = 1
-    let g:nightflyCursorColor = 1
+    let g:nightflyUnderlineMatchParen = v:true
+    let g:nightflyCursorColor = v:true
 else
     colorscheme torte
     set cursorline&
@@ -191,6 +199,8 @@ if has('nvim')
     nnoremap <silent> <M-}> <Cmd>BufferMoveNext<CR>
     nnoremap <silent> <M-p> <Cmd>BufferPick<CR>
     nnoremap <silent> <M-f> :HopWord<CR>
+    nnoremap <silent> <M-q> :HopPattern<CR>
+    inoremap <silent> <M-BS> <C-W>
     omap     <silent> m :<C-U>lua require('tsht').nodes()<CR>
     xnoremap <silent> m :lua require('tsht').nodes()<CR>
     autocmd VimEnter * silent FloatermNew --silent
@@ -201,6 +211,8 @@ else
     nnoremap <C-P> :bprev <CR>
 endif
 
+map <LeftDrag> ""
+map <LeftRelease> ""
 map <F9> :call ToggleIOBuffers() <CR>
 map <F10> :setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab smartindent <CR>
 let g:floaterm_keymap_toggle = '<F12>'
@@ -210,7 +222,10 @@ let g:floaterm_width=0.9
 map <c-h> :grep -rn $MDS_ROOT --exclude-dir=storage --exclude-dir=vendor --exclude-dir=node_modules --exclude=tags --exclude="*.json" -e
 "map <C-i> :cd $MDS_ROOT <CR>
 nnoremap <leader>n :NERDTreeToggle<CR>
+nnoremap <leader>r :NERDTreeFind<CR>
 map <F4> :TagbarToggle<CR>
+nnoremap <silent> <M-i> <Cmd> TagbarJumpPrev<CR>
+nnoremap <silent> <M-o> <Cmd> TagbarJumpNext<CR>
 nmap <C-J> :Kwbd <CR>
 map <C-L> :Buffers <CR>
 
@@ -262,6 +277,8 @@ nmap <silent> gB :CMakeBuild <CR>
 nmap <silent> gc :CMakeToggle <CR>
 nmap <silent> gl :CMakeClean <CR>
 nmap <silent> gL :CMakeTest --output-on-failure <CR>
+nmap <silent> <leader>t :BTags <CR>
+nmap <silent> <leader>T :GFiles <CR>
 
 " Madophs defined commands
 command Mdsg !mdscode -g
@@ -273,6 +290,11 @@ let g:airline#extensions#tabline#enabled = 1 "Show tabs if only one is enabled.
 let g:airline#extensions#tabline#formatter = 'default'
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
+let g:gutentags_modules = ['ctags']
+let g:gutentags_ctags_extra_args = ['--extra=f']
+let g:gutentags_ctags_exclude = ['storage', 'vendor', '*.out', 'build', '*.o', '*.d', '.dir']
+let g:gutentags_exclude_filetypes = ['markdown', 'log', 'json', 'cmake']
+set statusline+=%{gutentags#statusline()}
 
 " fzf stuff
 command! -bang -nargs=? -complete=dir Files
@@ -314,11 +336,12 @@ let g:tagbar_type_php = {
 
 "command! -bang FFiles call fzf#vim#files($CWRDIR,{'options': ['--layout=reverse', '--info=inline', '--preview', 'bat {}']},<bang>0)
 
+" Key bindings can be changed, see below
 
 let g:ycm_filetype_whitelist = {'python': 1}
 let g:ycm_autoclose_preview_window_after_completion = 1
-let g:coc_filetypes_enable = ['c', 'cpp', 'tpp', 'javascript', 'typescript', 'php', 'bash', 'css', 'html', 'sh', 'vim', 'blade', 'gitcommit', 'rust', 'cmake', 'vim', 'lua', 'gitcommit']
-let g:coc_global_extensions = ['coc-json', 'coc-git', 'coc-angular', 'coc-cmake', 'coc-clangd', 'coc-css', 'coc-cssmodules', 'coc-html-css-support', 'coc-html', 'coc-htmlhint', 'coc-phpactor', 'coc-phpls', 'coc-sh', 'coc-spell-checker', 'coc-tsserver', 'coc-blade-formatter', 'coc-blade-linter', 'coc-blade','coc-pairs', 'coc-yank', 'coc-vimlsp', 'coc-rust-analyzer', 'coc-lua']
+let g:coc_filetypes_enable = ['c', 'cpp', 'tpp', 'javascript', 'typescript', 'php', 'bash', 'css', 'html', 'sh', 'vim', 'blade', 'gitcommit', 'rust', 'cmake', 'vim', 'lua', 'gitcommit', 'nasm', 'gas']
+let g:coc_global_extensions = ['coc-json', 'coc-git', 'coc-angular', 'coc-cmake', 'coc-clangd', 'coc-css', 'coc-cssmodules', 'coc-html-css-support', 'coc-html', 'coc-htmlhint', 'coc-phpactor', 'coc-phpls', 'coc-sh', 'coc-spell-checker', 'coc-tsserver', 'coc-blade-formatter', 'coc-blade-linter', 'coc-blade','coc-pairs', 'coc-yank', 'coc-vimlsp', 'coc-rust-analyzer', 'coc-lua', 'coc-emmet', 'coc-copilot', 'coc-prettier']
 let b:coc_pairs_disabled = ['"', "'"]
 let g:ycm_enabled = v:false
 
@@ -333,6 +356,14 @@ if has('nvim')
     call setenv('EDITOR_COMMAND', "nvr -cc 'FloatermHide!' {{FILE}}")
     call setenv('EDITOR_SPLIT_COMMAND', 'nvim -O2 {{FILE1}} {{FILE2}}')
     call setenv('EDITOR_DIFF_COMMAND', 'nvim -d {{FILE1}} {{FILE2}}')
+    call setenv('EDITOR_DIFF_COMMAND', 'nvim -c "b 1 | set nosplitright | vsplit {{FILE3}} | execute \"normal \<C-w>K \" | resize -5" -d {{FILE1}} {{FILE2}}')
 else
     call setenv('VIM_EDITOR', 'vim')
 endif
+
+augroup ScrollbarInit
+  autocmd!
+  autocmd WinScrolled,VimResized,QuitPre * silent! lua require('scrollbar').show()
+  autocmd WinEnter,FocusGained           * silent! lua require('scrollbar').show()
+  autocmd WinLeave,BufLeave,BufWinLeave,FocusLost * silent! lua require('scrollbar').clear()
+augroup end

@@ -1,6 +1,8 @@
 require('nvim-treesitter.configs').setup {
     ensure_installed = {
-        'c', 'cpp', 'lua', 'vim', 'vimdoc', 'query', 'java', 'rust', 'php', 'javascript', 'json', 'python', 'yaml', 'html', 'cuda', 'bash'
+        'c', 'cpp', 'lua', 'vim', 'vimdoc', 'query', 'java', 'rust', 'php', 'javascript', 'json',
+        'python', 'yaml', 'html', 'cuda', 'bash', 'css', 'gitignore', 'go', 'graphql', 'haskell',
+        'llvm', 'lua', 'make', 'objdump', 'r', 'typescript', 'nasm'
     },
     highlight = {
         enable = true,
@@ -15,6 +17,17 @@ require('nvim-treesitter.configs').setup {
             enable = true,
             -- Set to false if you have an `updatetime` of ~100.
             clear_on_cursor_move = true,
+        },
+    },
+    textobjects = {
+        swap = {
+        enable = true,
+            swap_next = {
+                ["<leader>a"] = "@parameter.inner",
+            },
+            swap_previous = {
+                ["<leader>A"] = "@parameter.inner",
+            },
         },
     },
 }
@@ -68,10 +81,7 @@ end)
 local hop = require('hop')
 local directions = require('hop.hint').HintDirection
 vim.keymap.set('', 'f', function()
-  hop.hint_char1({ direction = directions.AFTER_CURSOR, current_line_only = true })
-end, {remap=true})
-vim.keymap.set('', 'F', function()
-  hop.hint_char1({ direction = directions.BEFORE_CURSOR, current_line_only = true })
+  hop.hint_char1({ current_line_only = false})
 end, {remap=true})
 vim.keymap.set('', 't', function()
   hop.hint_char1({ direction = directions.AFTER_CURSOR, current_line_only = true, hint_offset = -1 })
@@ -86,3 +96,7 @@ require("ibl").setup { indent = { highlight = highlight } }
 require('hop').setup { keys = 'etovxqpdygfblzhckisuran' }
 
 require('lualine').setup()
+
+require('nvim-surround').setup()
+
+require('hlargs').setup()

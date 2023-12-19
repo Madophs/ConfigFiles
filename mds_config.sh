@@ -15,8 +15,6 @@ HISTFILESIZE=3000
 set -o vi
 
 # env variables
-export MDS_INPUT=${HOME}/MdsCode/input.txt
-export MDS_OUTPUT=${HOME}/MdsCode/output.txt
 export MDS_SCRIPTS=${MDS_CONFIG}/scripts
 export MDS_APPS=${HOME}/Documents/apps
 export MDS_ASSETS=${GIT_REPOS}/assets
@@ -25,6 +23,8 @@ export MDS_SESSIONS_DIR=${HOME}/.config/mdsconfig/sessions
 export MDS_ROOT_FILE=${MDS_HIDDEN_CONFIGS}/.path.txt
 export MDS_ROOT=$(cat ${MDS_ROOT_FILE} 2> /dev/null)
 export GIT_REPOS=/home/${USER}/Documents/git
+export MDS_INPUT=${HOME}/.local/share/mdscode/io/input
+export MDS_OUTPUT=${HOME}/.local/share/mdscode/io/output
 export TEST=${HOME}/Documents/test
 export CTEST=${TEST}/cpp
 export PY_IMG=${GIT_REPOS}/Image-Processsing/resources

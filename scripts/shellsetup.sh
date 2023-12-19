@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+source ${MDS_SCRIPTS}/common.sh
 source ${MDS_SCRIPTS}/autocomplete.sh
 
 mkdir -p ${MDS_HIDDEN_CONFIGS}
@@ -16,6 +17,13 @@ then
     mkdir -p ~/.local/bin
     ln -s -T ${MDS_SCRIPTS}/mdssetup.sh ~/.local/bin/mdssetup
 fi
+
+if [[ ! -h /etc/bash_completion.d/mdscode-prompt && -f ${GIT_REPOS}/MdsCode_Bash/src/mds-prompt ]]
+then
+    cout info "Setting up mdscode prompt"
+    sudo ln -s -T ${GIT_REPOS}/MdsCode_Bash/src/mds-prompt /etc/bash_completion.d/mdscode-prompt
+fi
+
 
 # Let's ignore some common commands of being registered from history
 zshaddhistory() {

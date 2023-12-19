@@ -12,5 +12,5 @@ function load_autocomplete_resource() {
     fi
 }
 
-load_autocomplete_resource mds-prompt
+load_autocomplete_resource mdscode-prompt
 load_autocomplete_resource mdssetup-prompt
