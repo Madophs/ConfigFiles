@@ -1,5 +1,5 @@
 # Directories aliases
-alias cdr="cd ${MDS_ROOT}"
+alias cdr="cd \${MDS_ROOT}"
 alias cdgit="cd ${GIT_REPOS}"
 alias lcpp="cd ${GIT_REPOS}/C-CPP-Linux-Programming"
 alias cpp="cd ${CTEST}"
@@ -15,9 +15,9 @@ alias cdapps="cd ${MDS_APPS}"
 
 #command aliases
 alias cpptags="cd ${MDS_ROOT}; rm -f tags; ctags -R --c++-kinds=+p; export TAGS=${MDS_ROOT}/tags"
-alias phptags="cd ${MDS_ROOT}; rm -f tags; ctags -R --languages=php --exclude=storage; export TAGS=${MDS_ROOT}/tags"
-alias setroot="echo \$(pwd) > ${MDS_ROOT_FILE}; export MDS_ROOT=\$(cat ${MDS_ROOT_FILE}); export TAGS=${MDS_ROOT}/tags"
-alias getroot="export MDS_ROOT=\$(cat ${MDS_ROOT_FILE}); echo ${MDS_ROOT}"
+alias phptags="cd ${MDS_ROOT}; rm -f tags; ctags -R --languages=php --exclude=storage; export TAGS=\${MDS_ROOT}/tags"
+alias setroot="echo \$(pwd) > ${MDS_ROOT_FILE}; export MDS_ROOT=\$(cat \${MDS_ROOT_FILE}); export TAGS=\${MDS_ROOT}/tags"
+alias getroot="export MDS_ROOT=\$(cat ${MDS_ROOT_FILE}); echo \${MDS_ROOT}"
 alias upgrade="sudo apt update && sudo apt upgrade -y"
 alias update="sudo apt update"
 alias install="sudo apt install"

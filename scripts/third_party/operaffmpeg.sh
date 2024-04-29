@@ -50,7 +50,7 @@ function do_install_ffmpeg_with_snap() {
 }
 
 function do_install_ffmpeg() {
-    exit_if_opera_running
+    terminate_opera_process_if_possible
     if [[ -x $(which axel) ]]
     then
         mkdir -p ${DOWNLOAD_DIR}
@@ -97,7 +97,7 @@ function do_install_ffmpeg() {
 }
 
 function do_uninstall_ffmpeg() {
-    exit_if_opera_running
+    terminate_opera_process_if_possible
     sudo mv -f  "${TARGET_PATH}/${LIB_NAME}.backup" $TARGET_PATH/$LIB_NAME &> /dev/null
     if [[ $(any_error $?) == "NO" ]]
     then

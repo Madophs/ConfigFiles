@@ -6,20 +6,20 @@ function cout() {
     message=$@
     case $color in
         red|error)
-        echo -e "\e[1;31m[ERROR]\e[0m ${message}"
-        exit 1
+            echo -e "\e[1;31m[ERROR]\e[0m ${message}" 1>&2
+            exit 1
         ;;
         danger)
-        echo -e "\e[1;31m[FAULT]\e[0m ${message}"
+            echo -e "\e[1;31m[FAULT]\e[0m ${message}" 1>&2
         ;;
         green|success)
-        echo -e "\e[1;32m[SUCCESS]\e[0m ${message}"
+            echo -e "\e[1;32m[SUCCESS]\e[0m ${message}" 1>&2
         ;;
         yellow|warning)
-        echo -e "\e[1;33m[WARNING]\e[0m ${message}"
+            echo -e "\e[1;33m[WARNING]\e[0m ${message}" 1>&2
         ;;
         blue|info)
-        echo -e "\e[1;36m[INFO]\e[0m ${message}"
+            echo -e "\e[1;36m[INFO]\e[0m ${message}" 1>&2
         ;;
     esac
 }
@@ -182,7 +182,7 @@ function install_package() {
     package_name=$1
     cout info "About to install ${package_name}"
     sleep 3
-    sudo apt install -y ${package_name}
+    sudo apt install -y --allow-downgrades ${package_name}
     if [[ $(any_error $?) == "YES" ]]
     then
         if [[ ${exit_on_failure} == "NO" ]]

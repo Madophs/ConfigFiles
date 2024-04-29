@@ -9,7 +9,7 @@ _mdssetup() {
 
     if [[ ${prev} == "opera" ]]
     then
-        opts="--install --update --with-ffmpeg --undo-ffmpeg --only-ffmpeg"
+        opts="--install --update --install-with-ffmpeg --undo-ffmpeg --only-ffmpeg --versions"
         COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
         return 0
     fi

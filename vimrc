@@ -64,7 +64,7 @@ filetype plugin indent on
 
 autocmd BufEnter,BufNewFile,BufRead *.asm set filetype=nasm
 autocmd BufEnter,BufNewFile,BufRead *.s,*.S set filetype=gas
-autocmd FileType html,typescript,javascript,blade,nasm,asm setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab
+autocmd FileType html,typescript,javascript,blade,nasm,asm,jst setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab
 
 " Set the working directory to the current's file directory
 " Issues with terminal buffer
@@ -292,8 +292,9 @@ let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 let g:gutentags_modules = ['ctags']
 let g:gutentags_ctags_extra_args = ['--extra=f']
-let g:gutentags_ctags_exclude = ['storage', 'vendor', '*.out', 'build', '*.o', '*.d', '.dir']
-let g:gutentags_exclude_filetypes = ['markdown', 'log', 'json', 'cmake']
+let g:gutentags_ctags_exclude = ['storage', 'vendor', '*.out', 'build', '*.o', '*.d', '.dir', '*min.js', '*mix.js', '*bundle.js', '*esm.js']
+let g:gutentags_exclude_filetypes = ['markdown', 'log', 'json', 'cmake', 'xml', 'css']
+let g:gutentags_generate_on_write = 1
 set statusline+=%{gutentags#statusline()}
 
 " fzf stuff
@@ -320,17 +321,6 @@ let g:tagbar_type_cpp = {
         \ 'm:members:0:0',
         \ 'v:variables:0:0',
         \ '?:unknown',
-    \ ],
-\ }
-
-
-let g:tagbar_type_php = {
-    \ 'kinds' : [
-        \ 'i:interfaces',
-        \ 'c:classes',
-        \ 'd:constant definitions:0:0',
-        \ 'f:functions',
-        \ 'j:javascript functions',
     \ ],
 \ }
 
