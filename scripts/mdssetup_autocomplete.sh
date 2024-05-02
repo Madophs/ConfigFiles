@@ -37,7 +37,7 @@ _mdssetup() {
 
     if [[ ${cur} == * ]]
     then
-        opts="ACE cuda rust opera vim vifm nvim deps"
+        opts="ACE cuda rust opera vim vifm nvim deps ckb-next"
         COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
         return 0
     fi

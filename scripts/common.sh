@@ -81,8 +81,10 @@ function install_packages() {
     package_arr=($@)
     for ((i=0; i < $#; i+=1))
     do
-        if [[ $(is_installed ${package_arr[$i]}) == 1 ]]; then
+        if [[ $(is_installed ${package_arr[$i]}) == 1 ]]
+        then
             cout info "Installing: ${package_arr[$i]}"
+            sleep 0.5
             sudo apt install -y ${package_arr[$i]}
             exit_if_failed $? "Failed to install ${package_arr[$i]}"
             cout success "Package ${package_arr[$i]} installed."

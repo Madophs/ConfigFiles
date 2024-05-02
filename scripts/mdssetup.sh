@@ -7,6 +7,7 @@ source ${MDS_SCRIPTS}/common.sh
 if [[ $# < 1 ]]
 then
     echo "Usage: mdsetup [program] [options]..."
+    echo 'Run "mdssetup autocomplete" for bash autocompletion'
     echo "Jehú Jair Ruiz Villegas"
     exit 0
 fi
@@ -36,6 +37,9 @@ case ${SUBJECT} in
     opera)
         shift
         ${SOURCE_PATH}/opera.sh $@
+    ;;
+    ckb-next)
+        ${SOURCE_PATH}/ckb_next.sh
     ;;
     autocomplete)
         sudo ln -s ${MDS_SCRIPTS}/mdssetup_autocomplete.sh /etc/bash_completion.d/mdssetup-prompt

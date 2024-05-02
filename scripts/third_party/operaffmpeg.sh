@@ -4,7 +4,7 @@
 
 LIB_NAME=libffmpeg.so
 FFMPEG_PACKAGE=chromium-ffmpeg
-FFMPEG_PACKAGE_DIR=/snap/chromium-ffmpeg/current
+FFMPEG_PACKAGE_DIR=${FFMPEG_DEFAULT_PACKAGE_DIR:-'/snap/chromium-ffmpeg/current'}
 DOWNLOAD_DIR='/tmp/ffmpeg'
 REPO_URL='http://security.ubuntu.com/ubuntu/pool/universe/c/chromium-browser/'
 TARGET_PATH=/usr/lib/x86_64-linux-gnu/opera
@@ -31,12 +31,21 @@ function terminate_opera_process_if_possible() {
     fi
 }
 
+function set_ffmpeg_library_path() {
+    if [[ ${FFMPEG_PACKAGE_DIR} == '/snap/chromium-ffmpeg/current' ]]
+    then
+        LAST_DIR=$(ls -lt ${FFMPEG_PACKAGE_DIR}/${FFMPEG_PACKAGE}* | head -n 1 | awk -F '[/]' '{print $NF}'| sed s/://g)
+        FFMPEG_LIBRARY_PATH=${FFMPEG_PACKAGE_DIR}/${LAST_DIR}/${FFMPEG_PACKAGE}/${LIB_NAME}
+    else
+        FFMPEG_LIBRARY_PATH=${FFMPEG_PACKAGE_DIR}
+    fi
+}
+
 function do_install_ffmpeg_with_snap() {
     terminate_opera_process_if_possible
     install_package_with_snap ${FFMPEG_PACKAGE}
-    LAST_DIR=$(ls -lt ${FFMPEG_PACKAGE_DIR}/${FFMPEG_PACKAGE}* | head -n 1 | awk -F '[/]' '{print $NF}'| sed s/://g)
-    FFMPEG_LIBRARY_PATH=${FFMPEG_PACKAGE_DIR}/${LAST_DIR}/${FFMPEG_PACKAGE}/${LIB_NAME}
     sudo cp ${TARGET_PATH}/${LIB_NAME} ${TARGET_PATH}/${LIB_NAME}.backup
+    set_ffmpeg_library_path
     sudo cp -f ${FFMPEG_LIBRARY_PATH} ${TARGET_PATH}
     if [[ $(any_error $?) == "YES" ]]
     then
