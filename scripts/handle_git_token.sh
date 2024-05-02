@@ -69,7 +69,7 @@ main() {
         delete)
             delete_token_file
         ;;
-        open)
+        open|edit)
             open_token_file
         ;;
         show)
@@ -77,6 +77,9 @@ main() {
         ;;
         copy)
             copy_token
+        ;;
+        *)
+            cout info "options {create|delete|open|edit|show|copy}"
         ;;
     esac
 }
