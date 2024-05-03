@@ -7,7 +7,10 @@ FFMPEG_PACKAGE=chromium-ffmpeg
 FFMPEG_PACKAGE_DIR=${FFMPEG_DEFAULT_PACKAGE_DIR:-'/snap/chromium-ffmpeg/current'}
 DOWNLOAD_DIR='/tmp/ffmpeg'
 REPO_URL='http://security.ubuntu.com/ubuntu/pool/universe/c/chromium-browser/'
-TARGET_PATH=/usr/lib/x86_64-linux-gnu/opera
+REPO_ALT_URL='https://github.com/Ld-Hagen/fix-opera-linux-ffmpeg-widevine/releases/latest'
+TARGET_PATH=$(readlink -f $(which opera) | grep -o -e '^/.\+/' | sed 's|/$|/lib_extra|g')
+
+sudo mkdir -p ${TARGET_PATH}
 
 function terminate_opera_process_if_possible() {
     opera_pid=$(ps -ef | grep -e 'opera$' | grep -v grep | awk '{print $2}')
@@ -31,6 +34,18 @@ function terminate_opera_process_if_possible() {
     fi
 }
 
+function do_install_ffmpeg_alt() {
+    local latest_release=$(wget --max-redirect 0 ${REPO_ALT_URL} 2>&1 | grep Location | grep -o 'https:.\+[0-9]')
+    local latest_version=$(echo ${latest_release} | grep -o -e '[0-9]\+\.[0-9]\+\.[0-9]\+$')
+    local filename="${latest_version}-linux-x64.zip"
+    local download_link=$(echo ${latest_release} | sed 's|/tag/|/download/|g')/${filename}
+    local download_tmp_dir='/tmp/tmp_ffmpeg'
+    mkdir -p ${download_tmp_dir}
+    download ${download_link} ${download_tmp_dir}
+    unzip ${download_tmp_dir}/${filename}
+    sudo cp -f ${download_tmp_dir}/${LIB_NAME} ${TARGET_PATH}
+}
+
 function set_ffmpeg_library_path() {
     if [[ ${FFMPEG_PACKAGE_DIR} == '/snap/chromium-ffmpeg/current' ]]
     then
@@ -42,7 +57,6 @@ function set_ffmpeg_library_path() {
 }
 
 function do_install_ffmpeg_with_snap() {
-    terminate_opera_process_if_possible
     install_package_with_snap ${FFMPEG_PACKAGE}
     sudo cp ${TARGET_PATH}/${LIB_NAME} ${TARGET_PATH}/${LIB_NAME}.backup
     set_ffmpeg_library_path
@@ -51,11 +65,6 @@ function do_install_ffmpeg_with_snap() {
     then
         cout error "something went wrong"
     fi
-
-    cout success "ffmpeg library installed"
-    cout info "starting opera..."
-    sleep 2
-    opera &> /dev/null &
 }
 
 function do_install_ffmpeg() {
@@ -68,7 +77,7 @@ function do_install_ffmpeg() {
         sudo rm -rf ${DOWNLOAD_DIR}/*
 
         # Download the deb file
-        PACKAGE=$(wget -qO - $REPO_URL | grep -e "\"chromium-codecs-ffmpeg-extra_[0-9].*amd64\.deb\"" -o | tail -n 1 | sed 's/"//g')
+        PACKAGE=$(wget -qO - ${REPO_URL} | grep -e "\"chromium-codecs-ffmpeg-extra_[0-9].*amd64\.deb\"" -o | tail -n 1 | sed 's/"//g')
         DOWNLOAD_LINK=${REPO_URL}${PACKAGE}
         download ${DOWNLOAD_LINK} ${DOWNLOAD_DIR}
 
@@ -115,3 +124,4 @@ function do_uninstall_ffmpeg() {
         cout error "ffmpeg couldn't be restored"
     fi
 }
+

@@ -294,7 +294,7 @@ let g:gutentags_modules = ['ctags']
 let g:gutentags_ctags_extra_args = ['--extra=f']
 let g:gutentags_ctags_exclude = ['storage', 'vendor', '*.out', 'build', '*.o', '*.d', '.dir', '*min.js', '*mix.js', '*bundle.js', '*esm.js']
 let g:gutentags_exclude_filetypes = ['markdown', 'log', 'json', 'cmake', 'xml', 'css']
-let g:gutentags_generate_on_write = 1
+let g:gutentags_generate_on_write = 0
 set statusline+=%{gutentags#statusline()}
 
 " fzf stuff

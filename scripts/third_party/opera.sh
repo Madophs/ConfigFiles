@@ -47,12 +47,35 @@ function do_opera_update() {
     fi
 }
 
+function do_set_autoupdate() {
+    local apt_opera_autofix='/etc/apt/apt.conf.d/99fix-opera'
+    sudo touch ${apt_opera_autofix}
+    sudo truncate -s 0 ${apt_opera_autofix}
+    echo 'DPkg::Pre-Invoke {"stat -c %Z $(readlink -f $(which opera)) > /tmp/opera.timestamp";};' | sudo tee -a ${apt_opera_autofix}
+    echo 'DPkg::Post-Invoke {"if [ `stat -c %Z $(readlink -f $(which opera))` -ne `cat /tmp/opera.timestamp` ]; then export MDS_SCRIPTS={{}};${MDS_SCRIPTS}/third_party/opera.sh --only-ffmpeg; fi; rm /tmp/opera.timestamp";};' | sed "s|{{}}|${MDS_SCRIPTS}|g"| sudo tee -a ${apt_opera_autofix}
+}
+
 function do_opera_remove() {
     sudo apt remove ${PACKAGE_NAME}
 }
 
 function do_opera_install_ffmpeg() {
-    do_install_ffmpeg_with_snap
+    terminate_opera_process_if_possible
+    do_install_ffmpeg_alt
+    cout success "ffmpeg library installed"
+
+    local ppid=$(ps -o ppid $$ | tail -n 1 | awk '{print $NF}')
+    local ppid_command=$(ps -o command ${ppid} | tail -n 1)
+    echo ${ppid_command}
+    if [[ ${ppid_command:0:8} == "sh -c --" ]]
+    then
+        cout warning "You may start opera manually after system upgrade..."
+        sleep 2
+    else
+        cout info "starting opera..."
+        sleep 2
+        opera &> /dev/null &
+    fi
 }
 
 function do_opera_uninstall_ffmpeg() {
@@ -85,6 +108,9 @@ case ${OPTION} in
     ;;
     --undo-ffmpeg)
         do_opera_uninstall_ffmpeg
+    ;;
+    --set-autoupdate)
+        do_set_autoupdate
     ;;
     --versions)
         do_opera_show_versions

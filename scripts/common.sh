@@ -24,6 +24,10 @@ function cout() {
     esac
 }
 
+function get_shell() {
+    ps -o command $$ | tail -n 1 | awk '{print $1}'
+}
+
 function get_file_extension() {
     missing_argument_validation 1 $1
     filename=$1
