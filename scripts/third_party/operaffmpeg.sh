@@ -42,8 +42,7 @@ function do_install_ffmpeg_alt() {
     local download_tmp_dir='/tmp/tmp_ffmpeg'
     mkdir -p ${download_tmp_dir}
     download ${download_link} ${download_tmp_dir}
-    unzip ${download_tmp_dir}/${filename}
-    sudo cp -f ${download_tmp_dir}/${LIB_NAME} ${TARGET_PATH}
+    sudo unzip -o ${download_tmp_dir}/${filename} -d ${TARGET_PATH}
 }
 
 function set_ffmpeg_library_path() {

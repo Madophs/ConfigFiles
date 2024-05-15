@@ -62,11 +62,10 @@ function do_opera_remove() {
 function do_opera_install_ffmpeg() {
     terminate_opera_process_if_possible
     do_install_ffmpeg_alt
-    cout success "ffmpeg library installed"
+    cout success "libffmpeg library installed"
 
     local ppid=$(ps -o ppid $$ | tail -n 1 | awk '{print $NF}')
     local ppid_command=$(ps -o command ${ppid} | tail -n 1)
-    echo ${ppid_command}
     if [[ ${ppid_command:0:8} == "sh -c --" ]]
     then
         cout warning "You may start opera manually after system upgrade..."
