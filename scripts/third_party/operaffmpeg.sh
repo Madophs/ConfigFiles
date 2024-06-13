@@ -10,7 +10,10 @@ REPO_URL='http://security.ubuntu.com/ubuntu/pool/universe/c/chromium-browser/'
 REPO_ALT_URL='https://github.com/Ld-Hagen/fix-opera-linux-ffmpeg-widevine/releases/latest'
 TARGET_PATH=$(readlink -f $(which opera) | grep -o -e '^/.\+/' | sed 's|/$|/lib_extra|g')
 
-sudo mkdir -p ${TARGET_PATH}
+if [[ ! -d ${TARGET_PATH} ]]
+then
+    sudo mkdir -p ${TARGET_PATH}
+fi
 
 function terminate_opera_process_if_possible() {
     opera_pid=$(ps -ef | grep -e 'opera$' | grep -v grep | awk '{print $2}')

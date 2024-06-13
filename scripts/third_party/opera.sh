@@ -7,7 +7,10 @@ PACKAGE_VERSION=${2}
 OPERA_FTP_URL=https://download5.operacdn.com/ftp/pub/opera/desktop
 
 function do_opera_show_versions() {
-    wget -qO - https://download5.operacdn.com/ftp/pub/opera/desktop/ | grep -o -e '[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*' | sort -k2.2 -t '.' | uniq
+    wget -qO - ${OPERA_FTP_URL} | grep -E '[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*' | \
+        sed -e 's|<.*">||g' -e 's|/<.*a>||g' | awk '{print $1" "$2}' | sort -k2.2 -t '.' | uniq | tail -n 20
+
+    cout info "Current version: " $(opera --version)
 }
 
 function get_opera_download_link() {
