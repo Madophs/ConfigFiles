@@ -6,11 +6,22 @@ PACKAGE_NAME=opera-stable
 PACKAGE_VERSION=${2}
 OPERA_FTP_URL=https://download5.operacdn.com/ftp/pub/opera/desktop
 
-function do_opera_show_versions() {
-    wget -qO - ${OPERA_FTP_URL} | grep -E '[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*' | \
-        sed -e 's|<.*">||g' -e 's|/<.*a>||g' | awk '{print $1" "$2}' | sort -k2.2 -t '.' | uniq | tail -n 20
+function do_opera_get_version() {
+    local current_version=$(opera --version 2> /dev/null)
+    if [[ ${current_version} != "" ]]
+    then
+        echo ${current_version}
+    else
+        echo "NA"
+    fi
+}
 
-    cout info "Current version: " $(opera --version)
+function do_opera_show_versions() {
+    local opera_version=$(do_opera_get_version)
+    wget -qO - ${OPERA_FTP_URL} | grep -E '[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*' | \
+        sed -e 's|<.*">||g' -e 's|/<.*a>||g' | awk '{print $1" "$2}' | sort -k2.2 -t '.' | uniq | tail -n 20 | grep -B20 -A20 -w --color=always ${opera_version}
+
+    cout info "Current version: " ${opera_version}
 }
 
 function get_opera_download_link() {
@@ -99,7 +110,6 @@ case ${OPTION} in
     ;;
    --update)
         do_opera_update
-        do_opera_install_ffmpeg
     ;;
    --install-with-ffmpeg)
         do_opera_install
