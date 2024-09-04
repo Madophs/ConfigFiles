@@ -24,7 +24,6 @@ then
     sudo ln -s -T ${GIT_REPOS}/MdsCode_Bash/src/mds-prompt /etc/bash_completion.d/mdscode-prompt
 fi
 
-
 # Let's ignore some common commands of being registered from history
 zshaddhistory() {
     # Get the command the remove the carriage return

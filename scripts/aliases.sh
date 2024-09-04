@@ -25,7 +25,7 @@ alias reinstall="sudo apt reinstall"
 alias purge="sudo apt purge"
 alias autoremove="sudo apt autoremove"
 alias remove="sudo apt remove"
-alias show="sudo apt show"
+alias show="apt show"
 alias search="sudo apt search"
 alias loadsh="source ~/.zshrc"
 alias zshrc="${EDITOR} ~/.zshrc"
@@ -38,6 +38,8 @@ alias mm="mdscode -f cpp -t -n"
 alias mb="mdscode -b"
 alias me="mdscode -e"
 alias vimc="vim --servername Competitive --remote-silent "
+alias syscalls="batcat \$(find /usr/include -name 'unistd*.h' | xargs grep 'write 1' | head -n 1 | awk -F ':' '{print \$1}')"
+alias bashconfig="source ~/.bashrc"
 
 # Scripts aliases
 alias operaffmpeg="${MDS_SCRIPTS}/operaffmpeg.sh"
@@ -51,6 +53,15 @@ alias gfetch="${MDS_SCRIPTS}/git.sh fetch"
 alias pdir="source ${MDS_SCRIPTS}/zsh/hotlist.sh; push_directory_to_hotlist \$(pwd)"
 alias rdir="source ${MDS_SCRIPTS}/zsh/hotlist.sh; remove_directory_from_hotlist \$(pwd)"
 alias ncd="n-cd"
+
+if [[ -f "${GIT_REPOS}/alias_completion/complete_alias" ]]
+then
+    source "${GIT_REPOS}/alias_completion/complete_alias"
+    complete -F _complete_alias install
+    complete -F _complete_alias remove
+    complete -F _complete_alias show
+fi
+
 
 if [[ -x $(which minikube) ]]
 then

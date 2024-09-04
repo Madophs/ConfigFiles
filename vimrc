@@ -64,7 +64,7 @@ filetype plugin indent on
 
 autocmd BufEnter,BufNewFile,BufRead *.asm set filetype=nasm
 autocmd BufEnter,BufNewFile,BufRead *.s,*.S set filetype=gas
-autocmd FileType html,typescript,javascript,blade,nasm,asm,jst setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab
+autocmd FileType html,typescript,javascript,blade,jst setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab
 
 " Set the working directory to the current's file directory
 " Issues with terminal buffer
@@ -193,8 +193,8 @@ endif
 if has('nvim')
     map <F7> :FloatermSend clear && mdscode -b -n %:p -t <CR> :FloatermToggle <CR>
     map <F8> :FloatermSend clear && mdscode -b -n %:p -e <CR> :FloatermToggle <CR>
-    nnoremap <silent> <C-N> :BufferNext <CR>
-    nnoremap <silent> <C-P> :BufferPrevious <CR>
+    nnoremap <silent> <M-2> :BufferPrevious <CR>
+    nnoremap <silent> <M-3> :BufferNext <CR>
     nnoremap <silent> <M-{> <Cmd>BufferMovePrevious<CR>
     nnoremap <silent> <M-}> <Cmd>BufferMoveNext<CR>
     nnoremap <silent> <M-p> <Cmd>BufferPick<CR>
@@ -207,8 +207,8 @@ if has('nvim')
 else
     map <F7> :!clear && mdscode -b -n %:p -t <CR>
     map <F8> :!clear && mdscode -b -n %:p -e <CR>
-    nnoremap <C-N> :bnext <CR>
-    nnoremap <C-P> :bprev <CR>
+    nnoremap <M-2> :bprev <CR>
+    nnoremap <M-3> :bnext <CR>
 endif
 
 map <LeftDrag> ""
@@ -331,7 +331,7 @@ let g:tagbar_type_cpp = {
 let g:ycm_filetype_whitelist = {'python': 1}
 let g:ycm_autoclose_preview_window_after_completion = 1
 let g:coc_filetypes_enable = ['c', 'cpp', 'tpp', 'javascript', 'typescript', 'php', 'bash', 'css', 'html', 'sh', 'vim', 'blade', 'gitcommit', 'rust', 'cmake', 'vim', 'lua', 'gitcommit', 'nasm', 'gas']
-let g:coc_global_extensions = ['coc-json', 'coc-git', 'coc-angular', 'coc-cmake', 'coc-clangd', 'coc-css', 'coc-cssmodules', 'coc-html-css-support', 'coc-html', 'coc-htmlhint', 'coc-phpactor', 'coc-phpls', 'coc-sh', 'coc-spell-checker', 'coc-tsserver', 'coc-blade-formatter', 'coc-blade-linter', 'coc-blade','coc-pairs', 'coc-yank', 'coc-vimlsp', 'coc-rust-analyzer', 'coc-lua', 'coc-emmet', 'coc-copilot', 'coc-prettier']
+let g:coc_global_extensions = ['coc-json', 'coc-git', 'coc-angular', 'coc-cmake', 'coc-clangd', 'coc-css', 'coc-cssmodules', 'coc-html-css-support', 'coc-html', 'coc-htmlhint', 'coc-phpactor', 'coc-phpls', 'coc-sh', 'coc-spell-checker', 'coc-tsserver', 'coc-blade-formatter', 'coc-blade-linter', 'coc-blade','coc-pairs', 'coc-yank', 'coc-vimlsp', 'coc-rust-analyzer', 'coc-lua', 'coc-emmet', 'coc-copilot', 'coc-prettier', 'coc-java']
 let b:coc_pairs_disabled = ['"', "'"]
 let g:ycm_enabled = v:false
 

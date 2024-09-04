@@ -1,5 +1,15 @@
 #!/bin/bash
 
+function is_sourced() {
+    local cmd=$(ps -ocmd -p $$ | tail -n 1)
+    if [[ "${cmd}" == "bash" || "${cmd}" == "zsh --login" ]]
+    then
+        echo YES
+    else
+        echo NO
+    fi
+}
+
 function cout() {
     color=$1
     shift
@@ -7,16 +17,21 @@ function cout() {
     case $color in
         red|error)
             echo -e "\e[1;31m[ERROR]\e[0m ${message}" 1>&2
-            exit 1
-        ;;
-        danger)
-            echo -e "\e[1;31m[FAULT]\e[0m ${message}" 1>&2
+            if [[ $(is_sourced) == NO ]]
+            then
+                exit 1
+            else
+                return 1
+            fi
         ;;
         green|success)
             echo -e "\e[1;32m[SUCCESS]\e[0m ${message}" 1>&2
         ;;
         yellow|warning)
             echo -e "\e[1;33m[WARNING]\e[0m ${message}" 1>&2
+        ;;
+        debug)
+            echo -e "\e[1;5;35m[DEBUG]\e[0m ${message}" 1>&2
         ;;
         blue|info)
             echo -e "\e[1;36m[INFO]\e[0m ${message}" 1>&2
@@ -31,14 +46,13 @@ function get_shell() {
 function get_file_extension() {
     missing_argument_validation 1 $1
     filename=$1
-    echo $(echo ${filename} | grep -o -e '\..*')
+    echo ${filename} | grep -o -e '\..*' | sed s/^\.//g
 }
 
 function get_filename_without_extension() {
     missing_argument_validation 1 $1
     filename=$1
-    file_extension=$(get_file_extension ${filename})
-    echo $(echo ${filename} | sed s/${file_extension}//g)
+    echo ${filename} | grep -i -o -e '^[a-z_0-9]\+'
 }
 
 function any_error() {
@@ -111,14 +125,14 @@ function missing_argument_validation() {
     local args_required=${1}
     if [[ -z ${args_required} ]]
     then
-        cout error "Missing arguments for ${function_name}"
+        cout error "Missing arguments for ${function_name}" || return $?
     fi
 
     shift
     local args_count=$#
-    if [[ ${args_required} != ${args_count} ]]
+    if (( ${args_required} > ${args_count} ))
     then
-        cout error "Missing arguments for ${function_name} expected ${args_required} provided ${args_count}"
+        cout error "Missing arguments for ${function_name} expected ${args_required} provided ${args_count}" || return $?
     fi
 
     local args_list=($(echo $@ | paste -d ' '))
@@ -126,7 +140,7 @@ function missing_argument_validation() {
     do
         if [[ $(is_cmd_option ${args_list[${i}]}) == "YES" ]]
         then
-            cout error "Invalid argument \"${args_list[${i}]}\" for ${function_name}"
+            cout error "Invalid argument \"${args_list[${i}]}\" for ${function_name}" || return $?
         fi
     done
 }
@@ -269,7 +283,7 @@ function download() {
         else
             file_without_extension=$(get_filename_without_extension ${file_to_download})
             file_extension=$(get_file_extension ${file_to_download})
-            renamed_file=${file_without_extension}_$(date +'%s')${file_extension}
+            renamed_file=${file_without_extension}_$(date +'%s').${file_extension}
             cout warning "Renaming file to ${renamed_file}"
             mv ${download_dir}/${file_to_download} ${download_dir}/${renamed_file}
         fi
@@ -289,3 +303,128 @@ function clean_file() {
     touch ${file_to_empty} &> /dev/null
     truncate -s 0 ${file_to_empty} &> /dev/null
 }
+
+function preparse_args() {
+    declare -n map_ref=${1}
+    shift
+    while (( $# != 0 ))
+    do
+        declare -a arr=($(echo ${1}))
+        local prefix=$(echo "${arr[*]}" | grep -o -e 'prefix=[a-zA-Z_-]\+' | awk -F '=' '{print $NF}')
+        for (( i=0; i<${#arr[@]}; i+=1 ))
+        do
+            declare -a tmp=( $(echo ${arr[${i}]} | tr '=' ' ') )
+            if [[ ${tmp:0:1} != '-' && -n "${prefix}" ]]
+            then
+                map_ref["${prefix}_${tmp[0]}"]="${tmp[1]}"
+            else
+                map_ref["${tmp[0]}"]="${tmp[1]}"
+            fi
+        done
+
+        shift
+    done
+
+}
+
+function print_args() {
+    missing_argument_validation 1 ${1} || return 1
+    declare -n map_ref=${1}
+    cout info printing values
+    local keys=(${!map_ref[*]})
+    for (( i=0; i<${#keys[@]}; i+=1 ))
+    do
+        echo ${keys[i]} "${map_ref[${keys[${i}]}]}"
+    done
+}
+
+function parse_args() {
+    declare -n map_ref=${1}
+    local append_extra_args=${2} # arguments not preceeding an option (n/y)
+    shift
+    shift
+
+    while (( $# != 0 ))
+    do
+        local argval=${1}
+        case ${argval} in
+            -*|--*)
+                if [[ "${argval:0:2}" == '--' && -n "${map_ref[${argval}]}" ]]
+                then
+                    argval="${map_ref[${argval}]}"
+                fi
+
+                if [[ -n ${map_ref[${argval}_prefix]} ]]
+                then
+                    local arg_value=''
+                    if [[ ${map_ref[${argval}_args]} == yes ]]
+                    then
+                        while [[ "${2:0:1}" != '-' && -n "${2:0:1}" ]]
+                        do
+                            arg_value+=$([ -z "${arg_value}" ] && echo "${2}" || echo " ${2}")
+                            shift
+                        done
+
+                        if [[ -z ${arg_value} ]]
+                        then
+                            cout error "Missing value for arg \"${argval}\""
+                        fi
+                    else
+                        arg_value='YES'
+                    fi
+
+                    map_ref["${argval}"]=${arg_value}
+                else
+                    cout error "Unknown argument: ${argval}"
+                fi
+                shift
+                ;;
+            *)
+                if [[ ${append_extra_args} == 'y' ]]
+                then
+                    map_ref["extra"]+="${argval} "
+                else
+                    cout error "Invalid argument: ${argval}"
+                fi
+                shift
+            ;;
+        esac
+    done
+}
+
+function exec_args_flow() {
+    declare -n map_ref=${1}
+    shift
+    while (( $# > 0 ))
+    do
+        local func_ref=${map_ref[${1}_func]}
+        if [[ -n "${func_ref}" ]]
+        then
+            ${func_ref}
+        fi
+        shift
+    done
+}
+
+#function func_t() {
+    #echo "hi i'm in the function T"
+#}
+
+#function func_run() {
+    #echo "About to run the file"
+    #cout info -f value is ${map["-f"]}
+#}
+
+#function some_main() {
+    #declare -A map
+    #preparse_args map \
+        #"args=yes prefix=-t func=func_t --title=-t" \
+        #"args=no func=func_run prefix=-r --run=-r" \
+        #"args=yes prefix=-f --file=-f"
+
+    #parse_args map y "${@}"
+    #exec_args_flow map -t -r
+    #print_args map
+#}
+
+#some_main some values -t title_value -f "filename" --run end

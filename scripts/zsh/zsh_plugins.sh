@@ -1,5 +1,10 @@
 #!/bin/env zsh
 
+if [[ ${real_shell} != 'zsh' ]]
+then
+    return 0
+fi
+
 if [[ -e ${ZSH_CUSTOM}/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
     source ${ZSH_CUSTOM}/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 fi

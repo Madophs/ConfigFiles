@@ -48,6 +48,9 @@ case ${SUBJECT} in
     deps)
         ${SOURCE_PATH}/deps.sh
     ;;
+    alias-completion)
+        ${SOURCE_PATH}/alias_completion.sh
+    ;;
     *)
         cout error "Unknown option."
     ;;

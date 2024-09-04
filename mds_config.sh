@@ -45,3 +45,6 @@ source ${MDS_SCRIPTS}/zsh/configs.sh
 source ${MDS_SCRIPTS}/shellsetup.sh
 source ${MDS_SCRIPTS}/aliases.sh
 source ${MDS_SCRIPTS}/zsh/zsh_plugins.sh
+
+# function commands
+source ${MDS_SCRIPTS}/custom_cmds.sh

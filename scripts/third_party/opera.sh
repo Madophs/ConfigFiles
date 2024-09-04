@@ -5,7 +5,7 @@ source ${MDS_SCRIPTS}/third_party/operaffmpeg.sh
 PACKAGE_NAME=opera-stable
 PACKAGE_VERSION=${2}
 OPERA_FTP_URL=https://download5.operacdn.com/ftp/pub/opera/desktop
-OPERA_ALT_FFMPEG_LIBRARY_REL="https://github.com/Ld-Hagen/fix-opera-linux-ffmpeg-widevine/releases"
+OPERA_FFMPEG_LIBRARY_REL="https://github.com/nwjs-ffmpeg-prebuilt/nwjs-ffmpeg-prebuilt/releases"
 
 function do_opera_get_version() {
     local current_version=$(opera --version 2> /dev/null)
@@ -17,11 +17,11 @@ function do_opera_get_version() {
     fi
 }
 
-function do_opera_show_alt_library_versions() {
-    cout info " ffmpeg library versions (credits to Ld-Hagen on github):"
-    wget -qO - ${OPERA_ALT_FFMPEG_LIBRARY_REL} | grep -A12 datetime |
-        grep -E -o -e '20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]|nwjs-ffmpeg-[0-9]+\.[0-9]+\.[0-9]+' |
-        xargs -L 2 echo | sort | sed 's|\(.\+\)\+|\t\1|g'
+function do_opera_show_library_versions() {
+    cout info " ffmpeg library versions:"
+    wget -qO - ${OPERA_FFMPEG_LIBRARY_REL} | grep -A20 datetime |
+        grep -E -o -e '20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]|[0-9]\.[0-9]+\.[0-9]$' |
+        xargs -L 2 echo | sort | awk -F ' ' '{print "\t"$1" => "$2}'
 }
 
 function do_opera_show_versions() {
@@ -29,7 +29,7 @@ function do_opera_show_versions() {
     local opera_version=$(do_opera_get_version)
     wget -qO - ${OPERA_FTP_URL} | grep -E '[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*' | \
         sed -e 's|<.*">||g' -e 's|/<.*a>||g' | awk '{print $1" "$2}' | sort -k2.2 -t '.' | uniq | tail -n 10 |
-        grep -B10 -A10 -w --color=always ${opera_version} | awk '{print $NF" "$1}' | sed 's|\(.\+\)\+|\t\1|g'
+        grep -B10 -A10 -w --color=always ${opera_version} | awk '{print "\t"$NF" => "$1}'
 
     echo ""
     cout info " Current version: " ${opera_version}
@@ -136,7 +136,7 @@ case ${OPTION} in
         do_set_autoupdate
     ;;
     --versions)
-        do_opera_show_alt_library_versions
+        do_opera_show_library_versions
         echo ""
         do_opera_show_versions
     ;;
