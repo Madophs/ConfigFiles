@@ -13,6 +13,7 @@ HISTFILESIZE=3000
 
 # User VI like map keys
 set -o vi
+set +o noclobber
 
 # env variables
 export MDS_SCRIPTS=${MDS_CONFIG}/scripts
