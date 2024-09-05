@@ -16,12 +16,13 @@ function Asm() {
     preparse_args args_map "prefix=-o args=yes"
     parse_args args_map y "${@}"
 
-    local filename=$(echo "${args_map['extra']}" | awk '{print $NF}')
+    local filename=$(echo "${args_map["extra"]}" | awk '{print $NF}')
     local file_extension=$(get_file_extension ${filename})
-    local output=$([ -z "${args_map['-o']}" ] && get_filename_without_extension ${filename} || echo "${args_map['-o']}")
+    local output=$([ -z "${args_map["-o"]}" ] && get_filename_without_extension ${filename} || echo "${args_map["-o"]}")
+
     case ${file_extension} in
         s)
-            as ${args_map['extra']} -o "${output}.o" \
+            as $(echo ${args_map["extra"]}) -o "${output}.o" \
                 && ld "${output}.o" -o ${output}.out
             ;;
         asm)
@@ -29,13 +30,13 @@ function Asm() {
                 && ld "${output}.o" -o ${output}.out
             ;;
         *)
-            cout error "File extension no recognized" || return $?
+            cout error "File extension no recognized"
             ;;
     esac
 }
 
 function Ppid() {
-    missing_argument_validation 1 ${1} || return $?
+    missing_argument_validation 1 ${1}
     typeset -i pid=${1}
     ps -oppid -opid -ocmd -p ${pid} | head -n 1
     while (( ${pid} != 1 ))
@@ -43,4 +44,13 @@ function Ppid() {
         ps -oppid -opid -ocmd -p ${pid} | tail -n 1
         pid=$(ps -oppid -p ${pid} | tail -n 1)
     done
+}
+
+function yy() {
+	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+	yazi "$@" --cwd-file="$tmp"
+	if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+		builtin cd -- "$cwd"
+	fi
+	rm -f -- "$tmp"
 }

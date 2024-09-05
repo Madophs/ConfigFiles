@@ -1,19 +1,16 @@
+# We can only return from a function or sourced script
+(return 0 2>/dev/null) && declare -g IS_SOURCED=YES || declare -g IS_SOURCED=NO
+
+declare -g -i MYPID=$(ps -opid $$ | tail -n 1)
+
 # compute base directory
-declare -g real_shell=$(ps -o command $$ | tail -n 1 | awk '{print $0}' | grep -o -e '^[\/a-z]\+' | awk -F '/' '{print $NF}')
-if [[ ${real_shell} == zsh ]]
+declare -g REAL_SHELL=$(ps -o command $$ | tail -n 1 | awk '{print $0}' | grep -o -e '^[\/a-z]\+' | awk -F '/' '{print $NF}')
+if [[ ${REAL_SHELL} == zsh ]]
 then
     export MDS_CONFIG=$(cd -P -- "$(dirname -- "$0")" && printf '%s\n' "$(pwd -P)/$(basename -- "$0")" | sed 's/\/mds_config\.sh//g')
 else
     export MDS_CONFIG="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 fi
-
-# Shell configurations
-HISTSIZE=3000
-HISTFILESIZE=3000
-
-# User VI like map keys
-set -o vi
-set +o noclobber
 
 # env variables
 export MDS_SCRIPTS=${MDS_CONFIG}/scripts

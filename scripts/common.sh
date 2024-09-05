@@ -1,40 +1,77 @@
 #!/bin/bash
 
-function is_sourced() {
-    local cmd=$(ps -ocmd -p $$ | tail -n 1)
-    if [[ "${cmd}" == "bash" || "${cmd}" == "zsh --login" ]]
-    then
-        echo YES
-    else
-        echo NO
-    fi
+RED='\e[1;31m'
+GREEN='\e[1;32m'
+GREEN_DARK='\e[0;32m'
+YELLOW='\e[1;33m'
+BROWN='\e[0;33m'
+BLUE='\e[1;34m'
+BLUEG='\e[1;5;34m'
+PURPLE='\e[1;35m'
+PURPLEG='\e[1;5;35m'
+CYAN='\e[1;36m'
+CYAN_DARK='\e[0;36m'
+BLK='\e[0;0m'
+
+function print_stacktrace() {
+    for ((i=1; i<=${#funcfiletrace[@]}; i+=1))
+    do
+        printf "${YELLOW}${funcstack[${i}]}${BROWN}..." >&2
+        if (( i == 1 ))
+        then
+            printf "${GREEN}$(basename "${(%):-%x}")${BLK}\n" >&2
+        else
+            declare -a file_lineno=($(echo ${funcfiletrace[((i - 1))]} | tr ':' ' '))
+            printf "${GREEN}$(basename ${file_lineno[1]}):${CYAN}${file_lineno[2]}${BLK}\n" >&2
+        fi
+    done
+
+    if [[ ${REAL_SHELL} == 'zsh' ]] ; then return 0; fi;
+
+    for ((i=0; i<${#BASH_SOURCE[@]}; i+=1))
+    do
+        printf "${YELLOW}${FUNCNAME[${i}]}${BROWN}...${GREEN}$(basename ${BASH_SOURCE[${i}]})" >&2
+
+        # BASH_LINENO behave very strange when sourcing the scripts
+        # it gives inaccurate lines numbers
+        if [[ ${IS_SOURCED} == NO ]]
+        then
+            printf ":${CYAN}${BASH_LINENO[${i}]}${BLK}" >&2
+        fi
+
+        printf "\n" >&2
+    done
 }
 
 function cout() {
-    color=$1
+    local color=$1
     shift
-    message=$@
-    case $color in
+    local messsage="$@"
+    case ${color} in
         red|error)
-            echo -e "\e[1;31m[ERROR]\e[0m ${message}" 1>&2
-            if [[ $(is_sourced) == NO ]]
+            echo -e "${BLUE}[${RED}ERROR${BLUE}]${BLK} ${messsage}" >&2
+            print_stacktrace
+            if [[ ${IS_SOURCED} == NO ]]
             then
                 exit 1
             else
-                return 1
+                kill -n 2 ${MYPID} # SIGINT
             fi
         ;;
-        green|success)
-            echo -e "\e[1;32m[SUCCESS]\e[0m ${message}" 1>&2
-        ;;
-        yellow|warning)
-            echo -e "\e[1;33m[WARNING]\e[0m ${message}" 1>&2
+        fault)
+            echo -e "${BLUE}[${PURPLE}FAULT${BLUE}]${BLK} ${messsage}" >&2
         ;;
         debug)
-            echo -e "\e[1;5;35m[DEBUG]\e[0m ${message}" 1>&2
+            echo -e "${BLUEG}[${PURPLE}DEBUG${BLUEG}]${BLK} ${messsage}" >&2
+        ;;
+        green|success)
+            echo -e "${BLUE}[${GREEN}SUCCESS${BLUE}]${BLK} ${messsage}" >&2
+        ;;
+        yellow|warning)
+            echo -e "${BLUE}[${YELLOW}WARNING${BLUE}]${BLK} ${messsage}" >&2
         ;;
         blue|info)
-            echo -e "\e[1;36m[INFO]\e[0m ${message}" 1>&2
+            echo -e "${BLUE}[${CYAN}INFO${BLUE}]${BLK} ${messsage}" >&2
         ;;
     esac
 }
@@ -44,7 +81,7 @@ function get_shell() {
 }
 
 function get_file_extension() {
-    missing_argument_validation 1 $1
+    missing_argument_validation 1 $1 || return 1
     filename=$1
     echo ${filename} | grep -o -e '\..*' | sed s/^\.//g
 }
@@ -120,19 +157,28 @@ function is_cmd_option() {
     fi
 }
 
+function get_funcname() {
+    if [[ ${REAL_SHELL} == 'zsh' ]]
+    then
+        echo ${funcstack[3]}
+    else
+        echo ${FUNCNAME[2]}
+    fi
+}
+
 function missing_argument_validation() {
-    local function_name=${FUNCNAME[1]}
+    local function_name=$(get_funcname)
     local args_required=${1}
     if [[ -z ${args_required} ]]
     then
-        cout error "Missing arguments for ${function_name}" || return $?
+        cout error "Missing arguments for ${function_name}"
     fi
 
     shift
     local args_count=$#
     if (( ${args_required} > ${args_count} ))
     then
-        cout error "Missing arguments for ${function_name} expected ${args_required} provided ${args_count}" || return $?
+        cout error "Missing arguments for ${function_name} expected ${args_required} provided ${args_count}"
     fi
 
     local args_list=($(echo $@ | paste -d ' '))
@@ -140,7 +186,7 @@ function missing_argument_validation() {
     do
         if [[ $(is_cmd_option ${args_list[${i}]}) == "YES" ]]
         then
-            cout error "Invalid argument \"${args_list[${i}]}\" for ${function_name}" || return $?
+            cout error "Invalid argument \"${args_list[${i}]}\" for ${function_name}"
         fi
     done
 }
@@ -313,34 +359,44 @@ function preparse_args() {
         local prefix=$(echo "${arr[*]}" | grep -o -e 'prefix=[a-zA-Z_-]\+' | awk -F '=' '{print $NF}')
         for (( i=0; i<${#arr[@]}; i+=1 ))
         do
-            declare -a tmp=( $(echo ${arr[${i}]} | tr '=' ' ') )
+            declare -a tmp=( $(echo ${arr[@]:${i}:1} | tr '=' ' ') )
             if [[ ${tmp:0:1} != '-' && -n "${prefix}" ]]
             then
-                map_ref["${prefix}_${tmp[0]}"]="${tmp[1]}"
+                map_ref["${prefix}_${tmp[@]:0:1}"]="${tmp[@]:1:1}"
             else
-                map_ref["${tmp[0]}"]="${tmp[1]}"
+                map_ref["${tmp[@]:0:1}"]="${tmp[@]:1:1}"
             fi
         done
 
         shift
     done
+}
 
+function get_array_keys() {
+    declare -n array_ref=${1}
+    if [[ ${REAL_SHELL} == 'zsh' ]]
+    then
+        echo ${(@k)array_ref}
+    else
+        echo ${!array_ref[*]}
+    fi
 }
 
 function print_args() {
     missing_argument_validation 1 ${1} || return 1
     declare -n map_ref=${1}
     cout info printing values
-    local keys=(${!map_ref[*]})
+    local keys=($(get_array_keys map_ref))
     for (( i=0; i<${#keys[@]}; i+=1 ))
     do
-        echo ${keys[i]} "${map_ref[${keys[${i}]}]}"
+        echo "${keys[@]:${i}:1}" "${map_ref[${keys[@]:${i}:1}]}"
     done
 }
 
 function parse_args() {
     declare -n map_ref=${1}
     local append_extra_args=${2} # arguments not preceeding an option (n/y)
+    map_ref["extra"]=""
     shift
     shift
 
@@ -354,10 +410,10 @@ function parse_args() {
                     argval="${map_ref[${argval}]}"
                 fi
 
-                if [[ -n ${map_ref[${argval}_prefix]} ]]
+                if [[ -n ${map_ref["${argval}_prefix"]} ]]
                 then
                     local arg_value=''
-                    if [[ ${map_ref[${argval}_args]} == yes ]]
+                    if [[ ${map_ref["${argval}_args"]} == yes ]]
                     then
                         while [[ "${2:0:1}" != '-' && -n "${2:0:1}" ]]
                         do

@@ -1,4 +1,4 @@
-if [[ ${real_shell} != zsh ]]
+if [[ ${REAL_SHELL} != zsh ]]
 then
     return 0;
 fi

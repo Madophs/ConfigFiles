@@ -1,5 +1,5 @@
 # python3 -m pip install argcomplete
-if [[ ${real_shell} == zsh ]]
+if [[ ${REAL_SHELL} == zsh ]]
 then
     autoload bashcompinit
     bashcompinit

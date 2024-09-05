@@ -1,5 +1,21 @@
 #!/usr/bin/env bash
 
+# Shell configurations
+HISTSIZE=3000
+HISTFILESIZE=3000
+
+# User VI like map keys
+set -o vi
+
+# Disable error when overriding a file
+set +o noclobber
+
+if [[ ${REAL_SHELL} == 'bash' ]]
+then
+    set show-all-if-ambiguous on
+    bind 'TAB:menu-complete'
+fi
+
 source ${MDS_SCRIPTS}/common.sh
 source ${MDS_SCRIPTS}/autocomplete.sh
 
@@ -22,6 +38,11 @@ if [[ ! -h /etc/bash_completion.d/mdscode-prompt && -f ${GIT_REPOS}/MdsCode_Bash
 then
     cout info "Setting up mdscode prompt"
     sudo ln -s -T ${GIT_REPOS}/MdsCode_Bash/src/mds-prompt /etc/bash_completion.d/mdscode-prompt
+fi
+
+if [[ -f /usr/share/autojump/autojump.bash ]]
+then
+    source /usr/share/autojump/autojump.bash
 fi
 
 # Let's ignore some common commands of being registered from history

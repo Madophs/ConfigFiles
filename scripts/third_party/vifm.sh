@@ -47,6 +47,7 @@ function vifm_install() {
     cout info "About to install vifm"
     sleep 3
     sudo make install ; RET=$?
+    cp "${SOURCE_CODE_DIR}/data/vifmrc" ~/.config/vifm
     popd &> /dev/null
 
     if [[ $(any_error ${RET}) == "NO" ]]
