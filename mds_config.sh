@@ -36,6 +36,7 @@ export PATH=/usr/local/cuda-11.7/bin${PATH:+:${PATH}}
 export PATH=${HOME}/.local/bin:${PATH}
 export PATH=${MDS_APPS}/lua-language-server/bin:${PATH}
 export PATH=${GIT_REPOS}/MdsCode_Bash:${PATH}
+export APPCWD=/tmp/appcwd
 unset SSH_ASKPASS
 
 # Small setup

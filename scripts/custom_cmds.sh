@@ -47,21 +47,21 @@ function Ppid() {
 }
 
 function yy() {
-	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
-	yazi "$@" --cwd-file="$tmp"
-	if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-		builtin cd -- "$cwd"
+	yazi "$@" --cwd-file="${APPCWD}"
+	if cwd="$(cat -- "${APPCWD}")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]
+    then
+        kill -n 31 ${MYPID}
 	fi
-	rm -f -- "$tmp"
 }
 
-function vicd()
-{
-    local dst="$(command vifm --choose-dir - "$@")"
-    if [ -z "$dst" ]
+function vicd() {
+    vifm --choose-dir - "$@" > "${APPCWD}"
+	if cwd="$(cat -- "${APPCWD}")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]
     then
-        echo 'Directory picking cancelled/failed'
-        return 1
-    fi
-    cd "$dst"
+        kill -n 31 ${MYPID}
+	fi
+}
+
+function cs() {
+    cd "${@}" && ls -lA
 }
