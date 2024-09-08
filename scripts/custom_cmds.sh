@@ -13,7 +13,7 @@ function cdm() {
 
 function Asm() {
     declare -A args_map
-    preparse_args args_map "prefix=-o args=yes"
+    preparse_args args_map "option=-o args=yes"
     parse_args args_map y "${@}"
 
     local filename=$(echo "${args_map["extra"]}" | awk '{print $NF}')
@@ -50,7 +50,7 @@ function yy() {
 	yazi "$@" --cwd-file="${APPCWD}"
 	if cwd="$(cat -- "${APPCWD}")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]
     then
-        kill -n 31 ${MYPID}
+        add_cmd_to_trap ${SHELL_PID} "$(echo "${cwd}" | sed '1s/^\(.*\)/cd "\1"/g')"
 	fi
 }
 
@@ -58,7 +58,7 @@ function vicd() {
     vifm --choose-dir - "$@" > "${APPCWD}"
 	if cwd="$(cat -- "${APPCWD}")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]
     then
-        kill -n 31 ${MYPID}
+        add_cmd_to_trap ${SHELL_PID} "$(echo "${cwd}" | sed '1s/^\(.*\)/cd "\1"/g')"
 	fi
 }
 

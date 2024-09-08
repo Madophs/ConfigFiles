@@ -7,9 +7,11 @@ _mdssetup() {
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
-    if [[ ${prev} == "opera" ]]
+    local picked_arg=${COMP_WORDS[1]}
+
+    if [[ ${prev} == "opera" || ${picked_arg} == "opera" ]]
     then
-        opts="--install --update --install-with-ffmpeg --undo-ffmpeg --only-ffmpeg --set-autoupdate --versions"
+        opts="--install --update --remove-ffmpeg --install-ffmpeg --set-autoupdate --versions"
         COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
         return 0
     fi

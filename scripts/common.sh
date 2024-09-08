@@ -34,9 +34,12 @@ function print_stacktrace() {
 
         # BASH_LINENO behave very strange when sourcing the scripts
         # it gives inaccurate lines numbers
-        if [[ ${IS_SOURCED} == NO ]]
+        if [[ -z ${IS_SOURCED} || ${IS_SOURCED} == NO ]]
         then
-            printf ":${CYAN}${BASH_LINENO[${i}]}${BLK}" >&2
+            if (( i > 0 ))
+            then
+                printf ":${CYAN}${BASH_LINENO[$(( i - 1))]}${BLK}" >&2
+            fi
         fi
 
         printf "\n" >&2
@@ -51,11 +54,11 @@ function cout() {
         red|error)
             echo -e "${BLUE}[${RED}ERROR${BLUE}]${BLK} ${messsage}" >&2
             print_stacktrace
-            if [[ ${IS_SOURCED} == NO ]]
+            if [[ -z ${IS_SOURCED} || ${IS_SOURCED} == NO ]]
             then
                 exit 1
             else
-                kill -n 2 ${MYPID} # SIGINT
+                kill -n 2 ${SHELL_PID} # SIGINT
             fi
         ;;
         fault)
@@ -74,6 +77,52 @@ function cout() {
             echo -e "${BLUE}[${CYAN}INFO${BLUE}]${BLK} ${messsage}" >&2
         ;;
     esac
+}
+
+function on_error() {
+    cout error "${@}"
+}
+
+function get_parent_pid_by_regex() {
+    missing_argument_validation 1 "${1}"
+    local regex="${1}"
+    declare -i expected_matches=$([ -n "${2}" ] && echo ${2} || echo 1)
+    declare -i matches=0
+
+    typeset -i pid=$(ps -opid $$ | tail -n 1)
+    while (( ${pid} != 1 ))
+    do
+        local cmd=$(ps -ocmd -p ${pid} | tail -n 1)
+        echo "${cmd}" | grep -o "${regex}" &> /dev/null
+        if [[ $(exit_is_zero $?) == YES ]]
+        then
+            matches=$(( matches += 1 ))
+        fi
+
+        if (( ${matches} >= ${expected_matches} ))
+        then
+            echo ${pid}
+            return 0
+        fi
+
+        pid=$(ps -oppid -p ${pid} | tail -n 1)
+    done
+    echo ${pid}
+}
+
+function add_cmd_to_trap() {
+    declare -i pid=${1}
+    local trap_cmd="${2}"
+    if [[ "$(cat ${MDS_TRAP_CMD})" == "${trap_cmd}" ]]
+    then
+        return 1
+    fi
+    if [[ ${USER} == 'root' ]]
+    then
+        local sudo_cmd=sudo
+    fi
+    echo -e "${trap_cmd}" > ${MDS_TRAP_CMD}
+    kill -n 35 ${pid}
 }
 
 function get_shell() {
@@ -324,7 +373,7 @@ function download() {
         read -n 1 opt
         if [[ ${opt} != "y" && ${opt} != "Y" ]]
         then
-            cout info "Skiping download step."
+            cout info "Skipping download step."
             return
         else
             file_without_extension=$(get_filename_without_extension ${file_to_download})
@@ -356,17 +405,22 @@ function preparse_args() {
     while (( $# != 0 ))
     do
         declare -a arr=($(echo ${1}))
-        local prefix=$(echo "${arr[*]}" | grep -o -e 'prefix=[a-zA-Z_-]\+' | awk -F '=' '{print $NF}')
+        local option=$(echo "${arr[*]}" | grep -o -e 'option=[a-zA-Z_-]\+' | awk -F '=' '{print $NF}')
         for (( i=0; i<${#arr[@]}; i+=1 ))
         do
             declare -a tmp=( $(echo ${arr[@]:${i}:1} | tr '=' ' ') )
-            if [[ ${tmp:0:1} != '-' && -n "${prefix}" ]]
+            if [[ ${tmp:0:1} != '-' && -n "${option}" ]]
             then
-                map_ref["${prefix}_${tmp[@]:0:1}"]="${tmp[@]:1:1}"
+                map_ref["${option}_${tmp[@]:0:1}"]="${tmp[@]:1:1}"
             else
                 map_ref["${tmp[@]:0:1}"]="${tmp[@]:1:1}"
             fi
         done
+
+        if [[ -n "${option}" ]]
+        then
+            map_ref["${option}_avail"]=NO
+        fi
 
         shift
     done
@@ -405,34 +459,43 @@ function parse_args() {
         local argval=${1}
         case ${argval} in
             -*|--*)
+                # Use short option instead of long option if available e.g use -f instead of --file
                 if [[ "${argval:0:2}" == '--' && -n "${map_ref[${argval}]}" ]]
                 then
                     argval="${map_ref[${argval}]}"
                 fi
 
-                if [[ -n ${map_ref["${argval}_prefix"]} ]]
+                # Check if option is present in map
+                if [[ -z ${map_ref["${argval}_option"]} ]]
                 then
-                    local arg_value=''
-                    if [[ ${map_ref["${argval}_args"]} == yes ]]
-                    then
-                        while [[ "${2:0:1}" != '-' && -n "${2:0:1}" ]]
-                        do
-                            arg_value+=$([ -z "${arg_value}" ] && echo "${2}" || echo " ${2}")
-                            shift
-                        done
-
-                        if [[ -z ${arg_value} ]]
-                        then
-                            cout error "Missing value for arg \"${argval}\""
-                        fi
-                    else
-                        arg_value='YES'
-                    fi
-
-                    map_ref["${argval}"]=${arg_value}
-                else
                     cout error "Unknown argument: ${argval}"
                 fi
+
+                # Mark option as available [avail]
+                if [[ -n ${map_ref["${argval}_avail"]} ]]
+                then
+                    map_ref["${argval}_avail"]=YES
+                fi
+
+                local arg_value=''
+                if [[ ${map_ref["${argval}_args"]} == yes || ${map_ref["${argval}_args"]} == opt ]]
+                then
+                    # All all option's space-separated arguments
+                    while [[ "${2:0:1}" != '-' && -n "${2:0:1}" ]]
+                    do
+                        arg_value+=$([ -z "${arg_value}" ] && echo "${2}" || echo " ${2}")
+                        shift
+                    done
+
+                    if [[ -z ${arg_value} && ${map_ref["${argval}_args"]} == yes ]]
+                    then
+                        cout error "Missing value for arg \"${argval}\""
+                    fi
+                else
+                    arg_value="YES"
+                fi
+
+                map_ref["${argval}"]="${arg_value}"
                 shift
                 ;;
             *)
@@ -453,10 +516,17 @@ function exec_args_flow() {
     shift
     while (( $# > 0 ))
     do
-        local func_ref=${map_ref[${1}_func]}
+        local option=${1}
+        if [[ ${map_ref["${option}_avail"]} == NO ]]
+        then
+            shift
+            continue
+        fi
+
+        local func_ref=${map_ref["${option}_func"]}
         if [[ -n "${func_ref}" ]]
         then
-            ${func_ref}
+            ${func_ref} map_ref
         fi
         shift
     done
@@ -474,9 +544,9 @@ function exec_args_flow() {
 #function some_main() {
     #declare -A map
     #preparse_args map \
-        #"args=yes prefix=-t func=func_t --title=-t" \
-        #"args=no func=func_run prefix=-r --run=-r" \
-        #"args=yes prefix=-f --file=-f"
+        #"args=yes option=-t func=func_t --title=-t" \
+        #"args=no func=func_run option=-r --run=-r" \
+        #"args=yes option=-f --file=-f"
 
     #parse_args map y "${@}"
     #exec_args_flow map -t -r

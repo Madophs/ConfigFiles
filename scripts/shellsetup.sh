@@ -10,8 +10,8 @@ set -o vi
 # Disable error when overriding a file
 set +o noclobber
 
-# trap to change directory on exit (vicd => vifm, yy => yazi)
-trap "cd \"\$(< ${APPCWD})\"" 31
+# trap to execute any command
+trap "eval \"\$(< ${MDS_TRAP_CMD})\"; truncate -s 0 ${MDS_TRAP_CMD}" 35
 
 if [[ ${REAL_SHELL} == 'bash' ]]
 then
@@ -24,6 +24,8 @@ source ${MDS_SCRIPTS}/autocomplete.sh
 
 mkdir -p ${MDS_HIDDEN_CONFIGS}
 mkdir -p ${MDS_SESSIONS_DIR}
+
+touch ${MDS_TRAP_CMD}
 
 if [[ ! -f  ${MDS_ROOT_FILE} ]]
 then
