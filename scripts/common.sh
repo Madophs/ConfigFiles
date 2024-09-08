@@ -117,10 +117,6 @@ function add_cmd_to_trap() {
     then
         return 1
     fi
-    if [[ ${USER} == 'root' ]]
-    then
-        local sudo_cmd=sudo
-    fi
     echo -e "${trap_cmd}" > ${MDS_TRAP_CMD}
     kill -n 35 ${pid}
 }
