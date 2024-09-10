@@ -7,13 +7,8 @@ OPERA_FTP_URL=https://download5.operacdn.com/ftp/pub/opera/desktop
 LIB_NAME=libffmpeg.so
 DOWNLOAD_DIR='/tmp/ffmpeg'
 FFMPEG_REPO="https://github.com/nwjs-ffmpeg-prebuilt/nwjs-ffmpeg-prebuilt/releases"
-OPERA_BIN=$(readlink -f $(which opera))
+OPERA_BIN=$(readlink -f $(which opera) 2> /dev/null)
 TARGET_PATH=$(echo ${OPERA_BIN} | grep -o -e '^/.\+/' | sed 's|/$|/lib_extra|g')
-
-if [[ ! -d ${TARGET_PATH} ]]
-then
-    sudo mkdir -p ${TARGET_PATH}
-fi
 
 function do_opera_get_version() {
     local current_version=$(opera --version 2> /dev/null)
@@ -87,6 +82,11 @@ function do_set_autoupdate() {
     sudo truncate -s 0 ${apt_opera_autofix}
     echo 'DPkg::Pre-Invoke {"stat -c %Z $(readlink -f $(which opera)) > /tmp/opera.timestamp";};' | sudo tee -a ${apt_opera_autofix}
     echo 'DPkg::Post-Invoke {"if [ `stat -c %Z $(readlink -f $(which opera))` -ne `cat /tmp/opera.timestamp` ]; then export MDS_SCRIPTS={{}};export MDS_TRAP_CMD={{trap}};${MDS_SCRIPTS}/third_party/opera.sh --install-ffmpeg; fi; rm /tmp/opera.timestamp";};' | sed -e "s|{{}}|${MDS_SCRIPTS}|g" -e "s|{{trap}}|${MDS_TRAP_CMD}|g" | sudo tee -a ${apt_opera_autofix}
+}
+
+function do_remove_set_autoupdate() {
+    local apt_opera_autofix='/etc/apt/apt.conf.d/99fix-opera'
+    sudo rm -i ${apt_opera_autofix}
 }
 
 function get_opera_pid() {
@@ -190,6 +190,16 @@ function do_opera_remove() {
     sudo apt remove ${PACKAGE_NAME}
 }
 
+if [[ ! -x "$(which opera)" ]]
+then
+    cout warning "Opera is not installed in the system, some commands may not work properly."
+fi
+
+if [[ -n "${TARGET_PATH}" && ! -d ${TARGET_PATH} ]]
+then
+    sudo mkdir -p ${TARGET_PATH}
+fi
+
 declare -i calling_pid=$(get_parent_pid_by_regex "/bin/bash /[/a-zA-Z_]\+/opera.sh" 2)
 if (( ${calling_pid} != 1 ))
 then
@@ -199,12 +209,13 @@ fi
 
 declare -A args_map
 preparse_args args_map \
-    "option=--install           args=opt    func=do_opera_install_with_ffmpeg" \
-    "option=--remove            args=no     func=do_opera_remove" \
-    "option=--update            args=no     func=do_opera_update" \
-    "option=--install-ffmpeg    args=opt    func=do_opera_install_ffmpeg" \
-    "option=--remove-ffmpeg     args=no     func=do_remove_ffmpeg" \
-    "option=--set-autoupdate    args=no     func=do_set_autoupdate" \
-    "option=--versions          args=no     func=do_opera_list_all_versions"
+    "option=--install               args=opt    func=do_opera_install_with_ffmpeg" \
+    "option=--remove                args=no     func=do_opera_remove" \
+    "option=--update                args=no     func=do_opera_update" \
+    "option=--install-ffmpeg        args=opt    func=do_opera_install_ffmpeg" \
+    "option=--remove-ffmpeg         args=no     func=do_remove_ffmpeg" \
+    "option=--set-autoupdate        args=no     func=do_set_autoupdate" \
+    "option=--remove-set-autoupdate args=no     func=do_remove_set_autoupdate" \
+    "option=--versions              args=no     func=do_opera_list_all_versions"
 parse_args args_map n "${@}"
-exec_args_flow args_map --install --update --install-ffmpeg --versions --remove-ffmpeg --remove --set-autoupdate
+exec_args_flow args_map --install --update --install-ffmpeg --versions --remove-ffmpeg --remove --set-autoupdate --remove-set-autoupdate
