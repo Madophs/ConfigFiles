@@ -169,7 +169,7 @@ function do_opera_install_ffmpeg() {
 
 function do_remove_ffmpeg() {
     kill_opera
-    sudo rm -ri  "${TARGET_PATH}"
+    sudo rm -ri "${TARGET_PATH}"
     start_opera
 }
 

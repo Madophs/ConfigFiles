@@ -200,7 +200,7 @@ if has('nvim')
     nnoremap <silent> <M-p> <Cmd>BufferPick<CR>
     nnoremap <silent> <M-f> :HopWord<CR>
     nnoremap <silent> <M-q> :HopPattern<CR>
-    inoremap <silent> <M-BS> <C-W>
+    nnoremap <silent> <M-w> :HopWordCurrentLine <CR>
     omap     <silent> m :<C-U>lua require('tsht').nodes()<CR>
     xnoremap <silent> m :lua require('tsht').nodes()<CR>
     autocmd VimEnter * silent FloatermNew --silent
@@ -294,7 +294,7 @@ let g:gutentags_modules = ['ctags']
 let g:gutentags_ctags_extra_args = ['--extra=f']
 let g:gutentags_ctags_exclude = ['storage', 'vendor', '*.out', 'build', '*.o', '*.d', '.dir', '*min.js', '*mix.js', '*bundle.js', '*esm.js']
 let g:gutentags_exclude_filetypes = ['markdown', 'log', 'json', 'cmake', 'xml', 'css']
-let g:gutentags_generate_on_write = 0
+let g:gutentags_generate_on_write = 1
 set statusline+=%{gutentags#statusline()}
 
 " fzf stuff
@@ -330,8 +330,8 @@ let g:tagbar_type_cpp = {
 
 let g:ycm_filetype_whitelist = {'python': 1}
 let g:ycm_autoclose_preview_window_after_completion = 1
-let g:coc_filetypes_enable = ['c', 'cpp', 'tpp', 'javascript', 'typescript', 'php', 'bash', 'css', 'html', 'sh', 'vim', 'blade', 'gitcommit', 'rust', 'cmake', 'vim', 'lua', 'gitcommit', 'nasm', 'gas']
-let g:coc_global_extensions = ['coc-json', 'coc-git', 'coc-angular', 'coc-cmake', 'coc-clangd', 'coc-css', 'coc-cssmodules', 'coc-html-css-support', 'coc-html', 'coc-htmlhint', 'coc-phpactor', 'coc-phpls', 'coc-sh', 'coc-spell-checker', 'coc-tsserver', 'coc-blade-formatter', 'coc-blade-linter', 'coc-blade','coc-pairs', 'coc-yank', 'coc-vimlsp', 'coc-rust-analyzer', 'coc-lua', 'coc-emmet', 'coc-copilot', 'coc-prettier', 'coc-java']
+let g:coc_filetypes_enable = ['c', 'cpp', 'tpp', 'javascript', 'typescript', 'php', 'bash', 'css', 'html', 'sh', 'vim', 'blade', 'gitcommit', 'rust', 'cmake', 'vim', 'lua', 'gitcommit', 'nasm', 'gas', 'python']
+let g:coc_global_extensions = ['coc-json', 'coc-git', 'coc-angular', 'coc-cmake', 'coc-clangd', 'coc-css', 'coc-cssmodules', 'coc-html-css-support', 'coc-html', 'coc-htmlhint', 'coc-phpactor', 'coc-phpls', 'coc-sh', 'coc-spell-checker', 'coc-tsserver', 'coc-blade-formatter', 'coc-blade-linter', 'coc-blade','coc-pairs', 'coc-yank', 'coc-vimlsp', 'coc-rust-analyzer', 'coc-lua', 'coc-emmet', 'coc-copilot', 'coc-prettier', 'coc-java', 'coc-pyright']
 let b:coc_pairs_disabled = ['"', "'"]
 let g:ycm_enabled = v:false
 
