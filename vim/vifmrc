@@ -422,6 +422,7 @@ fileviewer *.s,*.asm highlight -O xterm256 -s molokai --syntax asm
 fileviewer *.sh highlight -O xterm256 -s molokai --syntax sh
 fileviewer *.php highlight -O xterm256 -s molokai --syntax php
 fileviewer *.lua highlight -O xterm256 -s molokai --syntax lua
+fileviewer *.java highlight -O xterm256 -s molokai --syntax java
 " fileviewer Makefile,Makefile.* highlight -O xterm256 -s dante --syntax make %c
 fileviewer *.html,*.go,*.css,*.c highlight -O xterm256 -s molokai %c
 "
@@ -451,7 +452,8 @@ fileviewer *.html,*.go,*.css,*.c highlight -O xterm256 -s molokai %c
 " ------------------------------------------------------------------------------
 "
 highlight /^.*\.(deb|tar|zip|rar|7z|jar)$/ ctermfg=lightred
-highlight /^.*\.(h|hpp|html|blade)$/ ctermfg=143
+highlight /^.*\.(blade.php)$/ ctermfg=161
+highlight /^.*\.(h|hpp|html|)$/ ctermfg=143
 highlight /^.*\.(cpp|c|cc|php)$/ ctermfg=51
 highlight /^.*\.(s|asm)$/ ctermfg=200
 highlight /^.*\.(so|o|obj|class)$/ ctermfg=99
@@ -604,3 +606,5 @@ nnoremap <c-u> <c-w>x
 
 " https://github.com/cirala/vifm_devicons
 set findprg="find %s -iname \"\*%A\*\" -print , -type d \\( ! -readable -o ! -executable \\) -prune"
+
+source "$MDS_CONFIG/vim/favicons.vifm"
