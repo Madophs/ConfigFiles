@@ -65,6 +65,7 @@ filetype plugin indent on
 autocmd BufEnter,BufNewFile,BufRead *.asm set filetype=nasm
 autocmd BufEnter,BufNewFile,BufRead *.s,*.S set filetype=gas
 autocmd FileType html,typescript,javascript,blade,jst setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab
+autocmd FileType make setlocal tabstop=4 shiftwidth=4 softtabstop=0 noexpandtab
 
 " Set the working directory to the current's file directory
 " Issues with terminal buffer

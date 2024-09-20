@@ -16,7 +16,12 @@ trap "eval \"\$(< ${MDS_TRAP_CMD})\"; truncate -s 0 ${MDS_TRAP_CMD}" 35
 if [[ ${REAL_SHELL} == 'bash' ]]
 then
     set show-all-if-ambiguous on
+    bind 'set completion-ignore-case on'
     bind 'TAB:menu-complete'
+    bind '"\e[A": history-search-backward'
+    bind '"\e[B": history-search-forward'
+    export HISTCONTROL='erasedups:ignoreboth'
+    unset -v HISTTIMEFORMAT  # %F %T
 fi
 
 source ${MDS_SCRIPTS}/common.sh
