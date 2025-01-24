@@ -192,8 +192,10 @@ endif
 
 " Mappings
 if has('nvim')
-    map <F7> :FloatermSend clear && mdscode -b -n %:p -t <CR> :FloatermToggle <CR>
-    map <F8> :FloatermSend clear && mdscode -b -n %:p -e <CR> :FloatermToggle <CR>
+    if $COMPETITIVE_MODE ==? "Y"
+        map <F7> :FloatermSend clear && mdscode -b -n %:p -t <CR> :FloatermToggle <CR>
+        map <F8> :FloatermSend clear && mdscode -b -n %:p -e <CR> :FloatermToggle <CR>
+    endif
     nnoremap <silent> <M-2> :BufferPrevious <CR>
     nnoremap <silent> <M-3> :BufferNext <CR>
     nnoremap <silent> <M-{> <Cmd>BufferMovePrevious<CR>
@@ -206,8 +208,10 @@ if has('nvim')
     xnoremap <silent> m :lua require('tsht').nodes()<CR>
     autocmd VimEnter * silent FloatermNew --silent
 else
-    map <F7> :!clear && mdscode -b -n %:p -t <CR>
-    map <F8> :!clear && mdscode -b -n %:p -e <CR>
+    if $COMPETITIVE_MODE ==? "Y"
+        map <F7> :!clear && mdscode -b -n %:p -t <CR>
+        map <F8> :!clear && mdscode -b -n %:p -e <CR>
+    endif
     nnoremap <M-2> :bprev <CR>
     nnoremap <M-3> :bnext <CR>
 endif

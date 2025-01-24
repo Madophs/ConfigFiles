@@ -242,6 +242,12 @@ function update_repos() {
         return 0
     fi
 
+    if (( $(get_parent_pid_by_regex "sudo apt update") != 1 ))
+    then
+        IS_APT_UPDATE_PERFORMED="YES"
+        return 0
+    fi
+
     sudo apt update &> /dev/null
     if [[ $(any_error $?) == NO ]]
     then
@@ -393,6 +399,25 @@ function clean_file() {
     file_to_empty=$1
     touch ${file_to_empty} &> /dev/null
     truncate -s 0 ${file_to_empty} &> /dev/null
+}
+
+function set_apt_hook() {
+    missing_argument_validation 2 ${1} "${2}"
+    local package_name=${1}
+    local option="${2}"
+    local apt_hook="/etc/apt/apt.conf.d/05hook-${package_name}"
+    sudo touch ${apt_hook}
+    sudo truncate -s 0 ${apt_hook}
+    echo 'APT::Update::Post-Invoke {"export MDS_SCRIPTS={{scripts}};export MDS_TRAP_CMD={{trap}};${MDS_SCRIPTS}/third_party/{{package}}.sh {{option}};";};' \
+        | sed -e "s|{{package}}|${package_name}|g" -e "s|{{option}}|${option}|g" -e "s|{{scripts}}|${MDS_SCRIPTS}|g" -e "s|{{trap}}|${MDS_TRAP_CMD}|g" \
+        | sudo tee -a ${apt_hook} &> /dev/null
+}
+
+function remove_apt_hook() {
+    missing_argument_validation 1 ${1}
+    local package_name="${1}"
+    local apt_hook="/etc/apt/apt.conf.d/05hook-${package_name}"
+    sudo rm "${apt_hook}"
 }
 
 function preparse_args() {

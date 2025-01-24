@@ -37,9 +37,16 @@ _mdssetup() {
         return 0
     fi
 
+    if [[ ${prev} == "discord" ]]
+    then
+        opts="--install --update --remove --version"
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+
     if [[ ${cur} == * ]]
     then
-        opts="ACE cuda rust opera vim vifm nvim deps ckb-next alias-completion"
+        opts="ACE cuda rust opera vim vifm nvim deps ckb-next alias-completion discord"
         COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
         return 0
     fi

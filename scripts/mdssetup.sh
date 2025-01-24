@@ -42,6 +42,10 @@ case ${SUBJECT} in
     ckb-next)
         ${SOURCE_PATH}/ckb_next.sh
     ;;
+    discord)
+        shift
+        ${SOURCE_PATH}/discord.sh $@
+    ;;
     autocomplete)
         sudo ln -s ${MDS_SCRIPTS}/mdssetup_autocomplete.sh /etc/bash_completion.d/mdssetup-prompt
     ;;

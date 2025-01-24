@@ -3,12 +3,16 @@
 source ${MDS_SCRIPTS}/common.sh
 
 function cdm() {
+    if (( $# < 1 )); then return; fi;
     local problem_id=$(( ${1} ))
     local id_suffix=$(( problem_id / 100 ))
     local target_directory="${GIT_REPOS}/UVA_Online_Judge_Solutions/volume_${id_suffix}"
     mkdir -p "${target_directory}"
     cd "${target_directory}"
-    mdscode -g -n "${@}"
+    if (( ${problem_id} != 0 && $# >= 2 ))
+    then
+        mdscode -g -n "${@}"
+    fi
 }
 
 function Asm() {
