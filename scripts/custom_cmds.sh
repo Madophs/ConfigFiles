@@ -15,6 +15,20 @@ function cdm() {
     fi
 }
 
+function cl() {
+    if [[ "${1}" != "" ]]
+    then
+        cd "${1}" && lsd -l
+        return 0
+    fi
+
+    local target_directory="$(ls -F | grep -o -e '.\+\/$' | fzf)"
+    if [[ "${target_directory}" != "" ]]
+    then
+        cd "${target_directory}" && lsd -l
+    fi
+}
+
 function Asm() {
     declare -A args_map
     preparse_args args_map "option=-o args=yes"
@@ -66,6 +80,14 @@ function vicd() {
 	fi
 }
 
-function cs() {
-    cd "${@}" && ls -lA
+function goodreads() {
+    local total_pages=$( (( ${1} > ${2} )) && echo ${1} || echo ${2})
+    local read_pages=$( (( ${1} < ${2} )) && echo ${1} || echo ${2})
+    echo "${read_pages} / ${total_pages} * 100" | genius --floatresult
+}
+
+function __custcmds() {
+    local curr_script="${MDS_SCRIPTS}/custom_cmds.sh"
+    cout info "List of commands"
+    grep -e '^function.*{' "${curr_script}" | awk -F'[ ()]' '{print $2}' | sort
 }

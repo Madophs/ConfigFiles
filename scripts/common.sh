@@ -237,7 +237,7 @@ function missing_argument_validation() {
 }
 
 function update_repos() {
-    if [[ ${IS_APT_UPDATE_PERFORMED} == YES ]]
+    if [[ "${IS_APT_UPDATE_PERFORMED}" == YES ]]
     then
         return 0
     fi
@@ -248,7 +248,8 @@ function update_repos() {
         return 0
     fi
 
-    sudo apt update &> /dev/null
+    cout info "Refreshing the repositories..."
+    sudo apt update
     if [[ $(any_error $?) == NO ]]
     then
         IS_APT_UPDATE_PERFORMED="YES"
@@ -359,6 +360,12 @@ function check_required_packages() {
             install_package ${package_name}
         fi
     done
+}
+
+function getWebsiteDOM() {
+    missing_argument_validation 1 "${1}"
+    local link="${1}"
+    google-chrome --headless --disable-gpu --log-level=3 --disable-extensions --no-sandbox --enable-unsafe-swiftshader --password-store=basic --virtual-time-budget=10000 --dump-dom "${link}"
 }
 
 function download() {

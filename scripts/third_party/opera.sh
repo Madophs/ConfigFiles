@@ -7,8 +7,17 @@ OPERA_FTP_URL=https://download5.operacdn.com/ftp/pub/opera/desktop
 LIB_NAME=libffmpeg.so
 DOWNLOAD_DIR='/tmp/ffmpeg'
 FFMPEG_REPO="https://github.com/nwjs-ffmpeg-prebuilt/nwjs-ffmpeg-prebuilt/releases"
-OPERA_BIN=$(readlink -f $(which opera) 2> /dev/null)
-TARGET_PATH=$(echo ${OPERA_BIN} | grep -o -e '^/.\+/' | sed 's|/$|/lib_extra|g')
+
+function do_opera_set_vars_and_paths() {
+    declare -g OPERA_BIN=$(readlink -f $(which opera) 2> /dev/null)
+    declare -g TARGET_PATH=$(echo ${OPERA_BIN} | grep -o -e '^/.\+/' | sed 's|/$|/lib_extra|g')
+    declare -g IS_OPERA_INSTALLED="$([ -n "${OPERA_BIN}" ] && echo YES || echo NO)"
+
+    if [[ -n "${TARGET_PATH}" && ! -d ${TARGET_PATH} ]]
+    then
+        sudo mkdir -p ${TARGET_PATH}
+    fi
+}
 
 function do_opera_get_version() {
     local current_version=$(opera --version 2> /dev/null)
@@ -62,6 +71,13 @@ function do_opera_install() {
     unhold_package ${PACKAGE_NAME}
     install_package ${package_path}
     hold_package ${PACKAGE_NAME}
+
+    set_opera_vars_and_paths
+
+    if [[ "${IS_OPERA_INSTALLED}" == NO ]]
+    then
+        cout error "Failed to install opera"
+    fi
 }
 
 function do_opera_update() {
@@ -101,8 +117,14 @@ function start_opera() {
 }
 
 function kill_opera() {
+    if [[ "${IS_OPERA_INSTALLED}" == "NO" ]]
+    then
+        return 0
+    fi
+
     local opera_pid=$(get_opera_pid)
     if [[ -z ${opera_pid} ]] ; then return 0; fi;
+
 
     kill -s TERM ${opera_pid}
 
@@ -190,14 +212,15 @@ function do_opera_remove() {
     sudo apt remove ${PACKAGE_NAME}
 }
 
-if [[ ! -x "$(which opera)" ]]
+################################################################
+#                           MAIN
+################################################################
+
+do_opera_set_vars_and_paths
+
+if [[ "${IS_OPERA_INSTALLED}" == NO ]]
 then
     cout warning "Opera is not installed in the system, some commands may not work properly."
-fi
-
-if [[ -n "${TARGET_PATH}" && ! -d ${TARGET_PATH} ]]
-then
-    sudo mkdir -p ${TARGET_PATH}
 fi
 
 declare -i calling_pid=$(get_parent_pid_by_regex "/bin/bash /[/a-zA-Z_]\+/opera.sh" 2)
