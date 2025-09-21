@@ -193,8 +193,8 @@ endif
 " Mappings
 if has('nvim')
     if $COMPETITIVE_MODE ==? "Y"
-        map <F7> :FloatermSend clear && mdscode -b -n %:p -t <CR> :FloatermToggle <CR>
-        map <F8> :FloatermSend clear && mdscode -b -n %:p -e <CR> :FloatermToggle <CR>
+        map <F7> :call MdsCode("t") <CR> :FloatermToggle <CR>
+        map <F8> :call MdsCode("e") <CR>
     endif
     nnoremap <silent> <M-2> :BufferPrevious <CR>
     nnoremap <silent> <M-3> :BufferNext <CR>
@@ -345,6 +345,7 @@ source $MDS_CONFIG/vim/ToggleIOBuffers.vim
 source $MDS_CONFIG/vim/Kwbd.vim
 source $MDS_CONFIG/vim/Coc_vs_Ycm.vim
 source $MDS_CONFIG/vim/SessionManager.vim
+source $MDS_CONFIG/vim/MdsCode.vim
 
 if has('nvim')
     call setenv('VIM_EDITOR', 'nvim')

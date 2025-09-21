@@ -385,9 +385,9 @@ function download() {
             cout info "Skipping download step."
             return
         else
-            file_without_extension=$(get_filename_without_extension ${file_to_download})
-            file_extension=$(get_file_extension ${file_to_download})
-            renamed_file=${file_without_extension}_$(date +'%s').${file_extension}
+            file_without_extension="$(get_filename_without_extension ${file_to_download})"
+            file_extension="$(get_file_extension ${file_to_download})"
+            renamed_file="${file_without_extension}_$(date +'%s').${file_extension}"
             cout warning "Renaming file to ${renamed_file}"
             mv ${download_dir}/${file_to_download} ${download_dir}/${renamed_file}
         fi
@@ -409,7 +409,7 @@ function clean_file() {
 }
 
 function set_apt_hook() {
-    missing_argument_validation 2 ${1} "${2}"
+    missing_argument_validation 2 "${1}" "${2}"
     local package_name=${1}
     local option="${2}"
     local apt_hook="/etc/apt/apt.conf.d/05hook-${package_name}"

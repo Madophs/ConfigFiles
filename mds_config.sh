@@ -31,6 +31,7 @@ export TEST=${HOME}/Documents/test
 export CTEST=${TEST}/cpp
 export PY_IMG=${GIT_REPOS}/Image-Processsing/resources
 export EDITOR=nvim
+export EDITOR_COMMAND="nvr -s {{FILE}}"
 export PAGER=less
 export LD_LIBRARY_PATH=/usr/local/cuda-11.7/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
 export GREP_COLORS='ms=01;32'
