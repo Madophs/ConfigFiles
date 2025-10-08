@@ -12,6 +12,7 @@ function do_opera_set_vars_and_paths() {
     declare -g OPERA_BIN=$(readlink -f $(which opera) 2> /dev/null)
     declare -g TARGET_PATH=$(echo ${OPERA_BIN} | grep -o -e '^/.\+/' | sed 's|/$|/lib_extra|g')
     declare -g IS_OPERA_INSTALLED="$([ -n "${OPERA_BIN}" ] && echo YES || echo NO)"
+    declare -g FFMPEG_CURRENT_VERSION_FILE="${TARGET_PATH}/version.txt"
 
     if [[ -n "${TARGET_PATH}" && ! -d ${TARGET_PATH} ]]
     then
@@ -33,7 +34,7 @@ function do_opera_show_ffmpeg_lib_versions() {
     cout info " ffmpeg library versions:"
     wget -qO - ${FFMPEG_REPO} | grep -A10 '<section aria-labelledby="hd' |
         grep -E -o -e '20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]|[0-9]\.[0-9]+\.[0-9]' |
-        xargs -L 2 echo | sort | awk -F ' ' '{print "\t"$2" => "$1}' | grep -B10 -A10 -w --color=always "$(< ${TARGET_PATH}/version.txt)"
+        xargs -L 2 echo | sort | awk -F ' ' '{print "\t"$2" => "$1}' | grep -B10 -A10 -w --color=always "$(< ${FFMPEG_CURRENT_VERSION_FILE})"
 }
 
 function do_opera_show_versions() {
@@ -72,7 +73,7 @@ function do_opera_install() {
     install_package ${package_path}
     hold_package ${PACKAGE_NAME}
 
-    set_opera_vars_and_paths
+    do_opera_set_vars_and_paths
 
     if [[ "${IS_OPERA_INSTALLED}" == NO ]]
     then
@@ -164,7 +165,7 @@ function do_opera_install_ffmpeg() {
         local ffmpeg_lib_version=$(echo ${latest_release} | grep -o -e '[0-9]\+\.[0-9]\+\.[0-9]\+$')
     fi
 
-    if [[ -f "${TARGET_PATH}/version.txt" && "${ffmpeg_lib_version}" == "$(<${TARGET_PATH}/version.txt)" ]]
+    if [[ -f "${FFMPEG_CURRENT_VERSION_FILE}" && "${ffmpeg_lib_version}" == "$(<${FFMPEG_CURRENT_VERSION_FILE})" ]]
     then
         cout info "ffmpeg ${ffmpeg_lib_version}: nothing to update."
         return 0
