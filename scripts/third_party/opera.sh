@@ -31,9 +31,9 @@ function do_opera_get_version() {
 
 function do_opera_show_ffmpeg_lib_versions() {
     cout info " ffmpeg library versions:"
-    wget -qO - ${FFMPEG_REPO} | grep -A20 datetime |
-        grep -E -o -e '20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]|[0-9]\.[0-9]+\.[0-9]$' |
-        xargs -L 2 echo | sort | awk -F ' ' '{print "\t"$1" => "$2}' | grep -B10 -A10 -w --color=always "$(< ${TARGET_PATH}/version.txt)"
+    wget -qO - ${FFMPEG_REPO} | grep -A10 '<section aria-labelledby="hd' |
+        grep -E -o -e '20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]|[0-9]\.[0-9]+\.[0-9]' |
+        xargs -L 2 echo | sort | awk -F ' ' '{print "\t"$2" => "$1}' | grep -B10 -A10 -w --color=always "$(< ${TARGET_PATH}/version.txt)"
 }
 
 function do_opera_show_versions() {
