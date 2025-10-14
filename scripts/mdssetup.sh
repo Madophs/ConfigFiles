@@ -46,6 +46,10 @@ case ${SUBJECT} in
         shift
         ${SOURCE_PATH}/discord.sh $@
     ;;
+    gitkraken)
+        shift
+        ${SOURCE_PATH}/gitkraken.sh $@
+    ;;
     autocomplete)
         sudo ln -s ${MDS_SCRIPTS}/mdssetup_autocomplete.sh /etc/bash_completion.d/mdssetup-prompt
     ;;

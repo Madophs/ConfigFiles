@@ -44,9 +44,16 @@ _mdssetup() {
         return 0
     fi
 
+    if [[ ${prev} == "gitkraken" ]]
+    then
+        opts="--install --update --current-version --latest-version"
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+
     if [[ ${cur} == * ]]
     then
-        opts="ACE cuda rust opera vim vifm nvim deps ckb-next alias-completion discord"
+        opts="ACE cuda rust opera vim vifm nvim deps ckb-next alias-completion discord gitkraken"
         COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
         return 0
     fi

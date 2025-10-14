@@ -225,15 +225,6 @@ function missing_argument_validation() {
     then
         cout error "Missing arguments for ${function_name} expected ${args_required} provided ${args_count}"
     fi
-
-    local args_list=($(echo $@ | paste -d ' '))
-    for (( i=0; i < ${#args_list[@]}; i+=1 ))
-    do
-        if [[ $(is_cmd_option ${args_list[${i}]}) == "YES" ]]
-        then
-            cout error "Invalid argument \"${args_list[${i}]}\" for ${function_name}"
-        fi
-    done
 }
 
 function update_repos() {
