@@ -56,7 +56,7 @@ function get_opera_download_link() {
 }
 
 function do_opera_install() {
-    local package_version=${args_map["--install"]}
+    local package_version=${args_map["install"]}
     if [[ -z ${package_version} ]]
     then
         package_version=$(wget -qO - ${OPERA_FTP_URL} | grep -o -e '[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*' | sort -k2.2 -t '.' | uniq | tail -n 1)
@@ -155,11 +155,11 @@ function kill_opera() {
 # By default Opera doesn't own some media codecs permissions to play some video formats on the internet
 function do_opera_install_ffmpeg() {
     # Avoid executing twice
-    args_map["--install-ffmpeg_avail"]=NO
+    args_map["install-ffmpeg_avail"]=NO
 
-    if [[ -n ${args_map["--install-ffmpeg"]} ]]
+    if [[ -n ${args_map["install-ffmpeg"]} ]]
     then
-        local ffmpeg_lib_version="${args_map["--install-ffmpeg"]}"
+        local ffmpeg_lib_version="${args_map["install-ffmpeg"]}"
     else
         local latest_release=$(wget --max-redirect 0 ${FFMPEG_REPO}/latest 2>&1 | grep Location | grep -o 'https:.\+[0-9]')
         local ffmpeg_lib_version=$(echo ${latest_release} | grep -o -e '[0-9]\+\.[0-9]\+\.[0-9]\+$')
@@ -233,13 +233,13 @@ fi
 
 declare -A args_map
 preparse_args args_map \
-    "option=--install               args=opt    func=do_opera_install_with_ffmpeg" \
-    "option=--remove                args=no     func=do_opera_remove" \
-    "option=--update                args=no     func=do_opera_update" \
-    "option=--install-ffmpeg        args=opt    func=do_opera_install_ffmpeg" \
-    "option=--remove-ffmpeg         args=no     func=do_remove_ffmpeg" \
-    "option=--set-autoupdate        args=no     func=do_set_autoupdate" \
-    "option=--remove-set-autoupdate args=no     func=do_remove_set_autoupdate" \
-    "option=--versions              args=no     func=do_opera_list_all_versions"
+    "name=install               args=opt    function=do_opera_install_with_ffmpeg" \
+    "name=remove                args=no     function=do_opera_remove" \
+    "name=update                args=no     function=do_opera_update" \
+    "name=install-ffmpeg        args=opt    function=do_opera_install_ffmpeg" \
+    "name=remove-ffmpeg         args=no     function=do_remove_ffmpeg" \
+    "name=set-autoupdate        args=no     function=do_set_autoupdate" \
+    "name=remove-set-autoupdate args=no     function=do_remove_set_autoupdate" \
+    "name=versions              args=no     function=do_opera_list_all_versions"
 parse_args args_map n "${@}"
-exec_args_flow args_map --install --update --install-ffmpeg --versions --remove-ffmpeg --remove --set-autoupdate --remove-set-autoupdate
+exec_args_flow args_map install update install-ffmpeg versions remove-ffmpeg remove set-autoupdate remove-set-autoupdate

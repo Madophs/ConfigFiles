@@ -427,30 +427,52 @@ function remove_apt_hook() {
     sudo rm "${apt_hook}"
 }
 
+# map_ref => Hashtable to hold option values
 function preparse_args() {
     declare -n map_ref=${1}
+    declare -i counter=1
     shift
     while (( $# != 0 ))
     do
         declare -a arr=($(echo ${1}))
-        local option=$(echo "${arr[*]}" | grep -o -e 'option=[a-zA-Z_-]\+' | awk -F '=' '{print $NF}')
-        for (( i=0; i<${#arr[@]}; i+=1 ))
+
+        # Check for mandatory arguments
+        for mandatory_arg in "name" "args";
         do
-            declare -a tmp=( $(echo ${arr[@]:${i}:1} | tr '=' ' ') )
-            if [[ ${tmp:0:1} != '-' && -n "${option}" ]]
+            local ret="$(echo ${arr[*]} | grep -E -o -e "${mandatory_arg}")"
+            if [[ -z "${ret}" ]]
             then
-                map_ref["${option}_${tmp[@]:0:1}"]="${tmp[@]:1:1}"
-            else
-                map_ref["${tmp[@]:0:1}"]="${tmp[@]:1:1}"
+                cout error "Missing mandatory argument [${mandatory_arg}] in #${counter} parameter."
             fi
         done
 
-        if [[ -n "${option}" ]]
+        local option_name=$(echo "${arr[*]}" | grep -o -e "name=[a-zA-Z_-]\+" | awk -F '=' '{print $NF}')
+        map_ref["${option_name}_avail"]=NO
+        map_ref["--${option_name}"]="${option_name}"
+
+        # key=value tokenization
+        for (( i=0; i<${#arr[@]}; i+=1 ))
+        do
+            declare -a tmp=( $(echo ${arr[@]:${i}:1} | tr '=' ' ') )
+            map_ref["${option_name}_${tmp[@]:0:1}"]="${tmp[@]:1:1}"
+        done
+
+        # Set short option value entry
+        local option_name_value=$(echo "${arr[*]}" | grep -o -e "short_option=[a-zA-Z_-]\+" | awk -F '=' '{print $NF}')
+        if [[ -n "${option_name_value}" ]]
         then
-            map_ref["${option}_avail"]=NO
+            map_ref["${option_name_value}"]="${option_name}"
+        fi
+
+        map_ref["${option_name}"]="${map_ref[${option_name}_default]}"
+        if [[ -z "${map_ref[${option_name}]}" && ("${map_ref[${option_name}_args]}" == "opt" || "${map_ref[${option_name}_args]}" == "no") ]]
+        then
+            map_ref["${option_name}"]=NO
         fi
 
         shift
+
+        counter+=1
     done
 }
 
@@ -468,10 +490,10 @@ function print_args() {
     missing_argument_validation 1 ${1} || return 1
     declare -n map_ref=${1}
     cout info printing values
-    local keys=($(get_array_keys map_ref))
+    local keys=( $(echo "$(get_array_keys map_ref)" | tr ' ' '\n' | sort) )
     for (( i=0; i<${#keys[@]}; i+=1 ))
     do
-        echo "${keys[@]:${i}:1}" "${map_ref[${keys[@]:${i}:1}]}"
+        echo "${keys[@]:${i}:1} = ${map_ref[${keys[@]:${i}:1}]}"
     done
 }
 
@@ -487,43 +509,41 @@ function parse_args() {
         local argval=${1}
         case ${argval} in
             -*|--*)
-                # Use short option instead of long option if available e.g use -f instead of --file
-                if [[ "${argval:0:2}" == '--' && -n "${map_ref[${argval}]}" ]]
-                then
-                    argval="${map_ref[${argval}]}"
-                fi
+                local option_name="${map_ref[${argval}]}"
 
-                # Check if option is present in map
-                if [[ -z ${map_ref["${argval}_option"]} ]]
+                # Check if option (key) is present in map
+                if [[ -z "${option_name}" ]]
                 then
                     cout error "Unknown argument: ${argval}"
                 fi
 
                 # Mark option as available [avail]
-                if [[ -n ${map_ref["${argval}_avail"]} ]]
-                then
-                    map_ref["${argval}_avail"]=YES
-                fi
+                map_ref["${option_name}_avail"]=YES
 
                 local arg_value=''
-                if [[ ${map_ref["${argval}_args"]} == yes || ${map_ref["${argval}_args"]} == opt ]]
+                if [[ ${map_ref["${option_name}_args"]} == yes || ${map_ref["${option_name}_args"]} == opt ]]
                 then
-                    # All all option's space-separated arguments
+                    # All option's space-separated arguments
                     while [[ "${2:0:1}" != '-' && -n "${2:0:1}" ]]
                     do
                         arg_value+=$([ -z "${arg_value}" ] && echo "${2}" || echo " ${2}")
                         shift
                     done
 
-                    if [[ -z ${arg_value} && ${map_ref["${argval}_args"]} == yes ]]
+                    if [[ -z "${arg_value}" && ${map_ref["${option_name}_args"]} == yes ]]
                     then
-                        cout error "Missing value for arg \"${argval}\""
+                        cout error 'Missing value for arg "${argval}"'
                     fi
                 else
                     arg_value="YES"
                 fi
 
-                map_ref["${argval}"]="${arg_value}"
+                # Set values to argument's name entry
+                if [[ -n "${arg_value}" ]]
+                then
+                    map_ref["${option_name}"]="${arg_value}"
+                fi
+
                 shift
                 ;;
             *)
@@ -539,19 +559,21 @@ function parse_args() {
     done
 }
 
+# parameter order in which options will be executed
 function exec_args_flow() {
     declare -n map_ref=${1}
     shift
     while (( $# > 0 ))
     do
-        local option=${1}
-        if [[ ${map_ref["${option}_avail"]} == NO ]]
+        local option_name=${1}
+
+        if [[ ${map_ref["${option_name}_avail"]} == NO ]]
         then
             shift
             continue
         fi
 
-        local func_ref=${map_ref["${option}_func"]}
+        local func_ref=${map_ref["${option_name}_function"]}
         if [[ -n "${func_ref}" ]]
         then
             ${func_ref} map_ref
