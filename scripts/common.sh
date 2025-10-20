@@ -574,24 +574,27 @@ function exec_args_flow() {
 }
 
 #function func_t() {
-    #echo "hi i'm in the function T"
+    #cout info "function [func_t]"
+    #cout info -t value is ${map["title"]}
+    #cout info "create value is ${map["create"]}"
 #}
 
 #function func_run() {
-    #echo "About to run the file"
-    #cout info -f value is ${map["-f"]}
+    #cout info "function [func_run]"
+    #cout info -f value is ${map["file"]}
 #}
 
 #function some_main() {
     #declare -A map
     #preparse_args map \
-        #"args=yes option=-t func=func_t --title=-t" \
-        #"args=no func=func_run option=-r --run=-r" \
-        #"args=yes option=-f --file=-f"
+        #"name=title     args=yes    short_option=-t     function=func_t" \
+        #"name=run       args=no     short_option=-r     function=func_run" \
+        #"name=file      args=opt    short_option=-f     default=default_file" \
+        #"name=create    args=no"
 
     #parse_args map y "${@}"
-    #exec_args_flow map -t -r
     #print_args map
+    #exec_args_flow map title run
 #}
 
-#some_main some values -t title_value -f "filename" --run end
+#some_main some values -t title_value -f --run
