@@ -20,6 +20,9 @@ then
     bind 'TAB:menu-complete'
     bind '"\e[A": history-search-backward'
     bind '"\e[B": history-search-forward'
+    bind 'set show-mode-in-prompt on'
+    bind 'set vi-ins-mode-string "\e[1;35mI\e[0;0m"'
+    bind 'set vi-cmd-mode-string "\e[1;35mC\e[0;0m"'
     export HISTCONTROL='erasedups:ignoreboth'
     unset -v HISTTIMEFORMAT  # %F %T
 fi
