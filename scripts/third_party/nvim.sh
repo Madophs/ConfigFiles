@@ -2,23 +2,29 @@
 
 source ${MDS_SCRIPTS}/common.sh
 
+function nvim_latest_version() {
+    wget -qO - https://github.com/neovim/neovim/releases | grep -o -e 'Nvim [0-9]\+\.[0-9]\+\.[0-9]' | grep -m 1 -o -e '[0-9]\+\.[0-9]\+\.[0-9]'
+}
+
 function nvim_install() {
     local download_dir='/tmp/nvim/'
+    local filename="nvim-linux-x86_64.appimage"
     mkdir -p ${download_dir}
 
     cout info "Installing Neovim"
-    download https://github.com/neovim/neovim/releases/latest/download/nvim.appimage  ${download_dir}
-    sudo chmod +x ${download_dir}nvim.appimage
-    sudo chown $USER:$USER ${download_dir}nvim.appimage
+    download "https://github.com/neovim/neovim/releases/download/v$(nvim_latest_version)/${filename}" ${download_dir}
+    sudo chmod +x ${download_dir}${filename}
+    sudo chown $USER:$USER ${download_dir}${filename}
 
     if [[ -f /usr/bin/nvim ]]; then
         sudo rm /usr/bin/nvim
     fi
 
-    sudo cp -f ${download_dir}nvim.appimage /usr/bin/nvim
+    sudo cp -f "${download_dir}${filename}" /usr/bin/nvim
 
     if [[ $? == 0 ]]; then
         cout success "NeoVim installed successfully."
+        set_apt_hook nvim --update
     else
         cout error "Something went wrong."
     fi
@@ -49,14 +55,32 @@ function nvim_setup() {
     echo "lua require('init')" >> ~/.config/nvim/init.vim
 }
 
+function nvim_update() {
+    if [[ ! -x "$(which nvim)" ]]
+    then
+        cout error "Nvim not installed"
+    fi
+    local latest_version=$(nvim_latest_version)
+    local current_version=$(nvim -v | grep -m 1 -o -e '[0-9]\+\.[0-9]\+.[0-9]\+')
+    if [[ "${current_version}" != "${latest_version}" ]]
+    then
+        nvim_install
+    fi
+}
+
 OPTION=$1
 : ${OPTION:="--install"}
 case ${OPTION} in
     --install)
         nvim_install
-    ;;
+        ;;
+    --update)
+        nvim_update
+        ;;
     --setup)
         nvim_setup
-    ;;
+        ;;
+    --latest-version)
+        nvim_latest_version
+        ;;
 esac
-

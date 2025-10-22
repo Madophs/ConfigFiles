@@ -18,7 +18,7 @@ _mdssetup() {
 
     if [[ ${prev} == "nvim" ]]
     then
-        opts="--install --setup"
+        opts="--install --setup --update --latest-version"
         COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
         return 0
     fi
