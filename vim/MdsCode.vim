@@ -9,13 +9,8 @@ function! MdsCodeIsFileTypeValid(filename)
     return -1
 endfunction
 
-" Actions: t = test, e = run
-function! g:MdsCode(action)
-    if a:action != 'e' && a:action != 't'
-        echo "[ERROR] Invalid argument"
-        return 1
-    endif
-
+function! g:MdsCode(...)
+    let l:joined_args = join(a:000, " ")
     let l:currentBuffers = execute("buffers")
     let l:tokens = split(l:currentBuffers)
     let l:tokensLen = len(l:tokens)
@@ -30,7 +25,7 @@ function! g:MdsCode(action)
         " Consider only buffers displayed on window
         if match(l:bufferStatus, 'a') != -1
             if MdsCodeIsFileTypeValid(l:bufferName) == 0
-                execute("FloatermSend clear && mdscode -b -n " .. l:bufferName .. " -" .. a:action .. " || nvim --server /tmp/nvimsocket --remote-send ':FloatermShow <CR>'")
+                execute("FloatermSend clear && mdscode -n " .. l:bufferName .. " " .. l:joined_args .. " || nvim --server /tmp/nvimsocket --remote-send ':FloatermShow <CR>'")
                 return 0
             endif
         endif
@@ -40,3 +35,5 @@ function! g:MdsCode(action)
     echo "[ERROR] No valid file for building..."
     return 1
 endfunction
+
+command! -nargs=* Mdscode call g:MdsCode(<f-args>)

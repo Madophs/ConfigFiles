@@ -193,8 +193,9 @@ endif
 " Mappings
 if has('nvim')
     if $COMPETITIVE_MODE ==? "Y"
-        map <F7> :call MdsCode("t") <CR> :FloatermToggle <CR>
-        map <F8> :call MdsCode("e") <CR>
+        map <F6> :call MdsCode("-s") <CR> :FloatermToggle <CR>
+        map <F7> :call MdsCode("-b -t") <CR> :FloatermToggle <CR>
+        map <F8> :call MdsCode("-b -e") <CR>
     endif
     nnoremap <silent> <M-2> :BufferPrevious <CR>
     nnoremap <silent> <M-3> :BufferNext <CR>
@@ -284,11 +285,6 @@ nmap <silent> gl :CMakeClean <CR>
 nmap <silent> gL :CMakeTest --output-on-failure <CR>
 nmap <silent> <leader>t :BTags <CR>
 nmap <silent> <leader>T :GFiles <CR>
-
-" Madophs defined commands
-command Mdsg !mdscode -g
-command Mdss !mdscode -s
-command Mdsr !mdscode --exer
 
 " Airline configurations
 let g:airline#extensions#tabline#enabled = 1 "Show tabs if only one is enabled.

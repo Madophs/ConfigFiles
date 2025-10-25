@@ -3,16 +3,44 @@
 source ${MDS_SCRIPTS}/common.sh
 
 function cdm() {
-    if (( $# < 1 )); then return; fi;
-    local problem_id=$(( ${1} ))
-    local id_suffix=$(( problem_id / 100 ))
-    local target_directory="${GIT_REPOS}/UVA_Online_Judge_Solutions/volume_${id_suffix}"
+    if (( $# != 1 ))
+    then
+        cout error "Usage: cdm [problem_url]"
+        return
+    fi
+
+    local problem_url="${1}"
+    local online_judge="$(echo "${problem_url}" | grep -o -e '[a-z]\+\.\(com\|org\)')"
+    case "${online_judge}" in
+        "onlinejudge.org")
+            local is_uva_pdf_url=$(echo "${problem_url}" | grep -e '^https:.\+\.pdf$')
+            if [[ -n "${is_uva_pdf_url}" ]]
+            then
+                local -i problem_id=$(echo "${problem_url}" | grep -o -e '[0-9]\+.pdf$' | grep -o -e '^[0-9]\+')
+            else
+                local -i problem_id=$(curl -L -s "${problem_url}" | grep -e '<h3>[0-9]\+ - .\+<\/h3>' | awk -F '[<>]' '{print $3}' | grep -o -e '^[0-9]\+')
+            fi
+            local -i id_suffix=$(( problem_id / 100 ))
+            local target_directory="${GIT_REPOS}/UVA_Online_Judge_Solutions/volume_${id_suffix}"
+            ;;
+        "aceptaelreto.com")
+            local -i problem_id=$(curl -L -s "${problem_url}" | grep -e 'setDocumentTitle' | awk -F '[/]' '{print $2}' | grep -o -e '[0-9]\+')
+            local -i id_suffix=$(( problem_id / 100 ))
+            local target_directory="${GIT_REPOS}/Competitive-Programming/Acepta el reto/Volumen ${id_suffix}"
+            ;;
+        *)
+            if [[ -n "${online_judge}" ]]
+            then
+                cout error "Unsupported online judge <${online_judge}>"
+            else
+                cout error "Invalid arguments"
+            fi
+            ;;
+    esac
+
     mkdir -p "${target_directory}"
     cd "${target_directory}"
-    if (( ${problem_id} != 0 && $# >= 2 ))
-    then
-        mdscode -g -n "${@}"
-    fi
+    mdscode -g -u "${problem_url}"
 }
 
 function cl() {
