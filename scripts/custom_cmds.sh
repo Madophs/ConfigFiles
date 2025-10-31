@@ -59,7 +59,7 @@ function cl() {
 
 function Asm() {
     declare -A args_map
-    preparse_args args_map "option=-o args=yes"
+    preparse_args args_map "name=output short_option=-o args=yes"
     parse_args args_map y "${@}"
 
     local filename=$(echo "${args_map["extra"]}" | awk '{print $NF}')

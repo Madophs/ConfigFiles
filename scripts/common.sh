@@ -456,7 +456,7 @@ function preparse_args() {
         fi
 
         map_ref["${option_name}"]="${map_ref[${option_name}_default]}"
-        if [[ -z "${map_ref[${option_name}]}" && ("${map_ref[${option_name}_args]}" == "opt" || "${map_ref[${option_name}_args]}" == "no") ]]
+        if [[ -z "${map_ref[${option_name}]}" && "${map_ref[${option_name}_args]}" == "no" ]]
         then
             map_ref["${option_name}"]=NO
         fi

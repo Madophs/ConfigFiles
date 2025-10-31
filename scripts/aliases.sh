@@ -11,6 +11,7 @@ alias cdconfig="cd ${MDS_CONFIG}"
 alias cdscripts="cd ${MDS_SCRIPTS}"
 alias cdw="cd ${HOME}/Downloads"
 alias cdd="cd ${HOME}/Documents"
+alias cdg='TMPGITDIR=$(git rev-parse --show-toplevel 2> /dev/null) && cd ${TMPGITDIR}; unset TMPGITDIR'
 alias cdapps="cd ${MDS_APPS}"
 
 #command aliases

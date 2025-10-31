@@ -92,14 +92,14 @@ function DelTrailingEmptyChars()
 endfunction
 
 autocmd BufWritePre * call DelTrailingEmptyChars()
-call setenv('CWRDIR', getcwd())
+call setenv('CWRDIR', system('CWRDIR=$(git rev-parse --show-toplevel 2> /dev/null || pwd) ; echo -n $CWRDIR'))
 
 " Global configurations
 syntax on
 highlight link JavaIdentifier NONE
 
 " Search related configs
-"set path=.,$MDS_ROOT,$MDS_ROOT/**,$CWRDIR,$CWRDIR/**,
+set path=.,$CWRDIR,$CWRDIR/**,
 set hlsearch
 set incsearch
 set ignorecase
@@ -303,7 +303,7 @@ command! -bang -nargs=? -complete=dir Files
     \ call fzf#vim#files(<q-args>, {'options': ['--layout=reverse', '--info=inline', '--preview', '~/.vim/plugged/fzf.vim/bin/preview.sh {}']}, <bang>0)
 command! -bang -nargs=* Rg
   \ call fzf#vim#grep(
-  \   'rg --column --line-number --no-heading --color=always --smart-case -- '.shellescape(<q-args>), 1,
+  \   'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>).' '.shellescape($CWRDIR), 1,
   \   fzf#vim#with_preview(), <bang>0)
 
 " Tagbar kinds configuration
