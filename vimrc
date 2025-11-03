@@ -325,10 +325,6 @@ let g:tagbar_type_cpp = {
     \ ],
 \ }
 
-"command! -bang FFiles call fzf#vim#files($CWRDIR,{'options': ['--layout=reverse', '--info=inline', '--preview', 'bat {}']},<bang>0)
-
-" Key bindings can be changed, see below
-
 let g:ycm_filetype_whitelist = {'python': 1}
 let g:ycm_autoclose_preview_window_after_completion = 1
 let g:coc_filetypes_enable = ['c', 'cpp', 'tpp', 'javascript', 'typescript', 'php', 'bash', 'css', 'html', 'sh', 'vim', 'blade', 'gitcommit', 'rust', 'cmake', 'vim', 'lua', 'gitcommit', 'nasm', 'gas', 'python']

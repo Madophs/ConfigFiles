@@ -114,6 +114,29 @@ function goodreads() {
     echo "${read_pages} / ${total_pages} * 100" | genius --floatresult
 }
 
+function gdiff() {
+    local git_status=$(git status -u 2> /dev/null)
+    local -i git_status_lines=$(echo "${git_status}" | wc -l)
+    local not_staged_files=$(echo "${git_status}" | grep -m 1 -A${git_status_lines} 'not staged for commit')
+    local -a modified_files=( $(echo "${not_staged_files}" | grep 'modified:' | sed 's|modified:||g;s|^[[:space:]]\+||g') )
+    if [[ -n "${modified_files}" ]]
+    then
+        local -i counter=1
+        for item in "${modified_files[@]}"
+        do
+            cout info "View file(${counter}/${#modified_files[@]}) '${item}' (y/n)"
+            read option
+            if [[ "${option}" =~ [yY] ]]
+            then
+                nvim "${item}" -c Gdiffsplit
+            fi
+            counter+=1
+        done
+    else
+        cout info "No non-staged modified files."
+    fi
+}
+
 function __custcmds() {
     local curr_script="${MDS_SCRIPTS}/custom_cmds.sh"
     cout info "List of commands"
