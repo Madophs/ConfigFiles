@@ -62,7 +62,7 @@ function nvim_update() {
     fi
     local latest_version=$(nvim_latest_version)
     local current_version=$(nvim -v | grep -m 1 -o -e '[0-9]\+\.[0-9]\+.[0-9]\+')
-    if [[ "${current_version}" != "${latest_version}" ]]
+    if [[ "${current_version}" != "${latest_version}" && -n "${latest_version}" ]]
     then
         nvim_install
     fi
