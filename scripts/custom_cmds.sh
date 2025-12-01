@@ -137,6 +137,11 @@ function gdiff() {
     fi
 }
 
+function okular_clear_old_pages_history() {
+    local okular_docdata="${HOME}/.local/share/okular/docdata"
+    find "${okular_docdata}" -name "*.xml" | xargs -d '\n' -L 1 sed -i '/oldPage/d'
+}
+
 function __custcmds() {
     local curr_script="${MDS_SCRIPTS}/custom_cmds.sh"
     cout info "List of commands"

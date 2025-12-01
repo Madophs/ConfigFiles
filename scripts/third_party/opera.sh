@@ -12,6 +12,7 @@ function do_opera_set_vars_and_paths() {
     declare -g OPERA_BIN=$(readlink -f $(which opera) 2> /dev/null)
     declare -g TARGET_PATH=$(echo ${OPERA_BIN} | grep -o -e '^/.\+/' | sed 's|/$|/lib_extra|g')
     declare -g IS_OPERA_INSTALLED="$([ -n "${OPERA_BIN}" ] && echo YES || echo NO)"
+    declare -g WAS_OPERA_KILLED=NO
     declare -g FFMPEG_CURRENT_VERSION_FILE="${TARGET_PATH}/version.txt"
 
     if [[ -n "${TARGET_PATH}" && ! -d ${TARGET_PATH} ]]
@@ -84,7 +85,7 @@ function do_opera_install() {
 function do_opera_update() {
     if [[ $(is_package_installed ${PACKAGE_NAME}) == YES ]]
     then
-        kill_opera
+        do_opera_kill
         unhold_package ${PACKAGE_NAME}
         update_package ${PACKAGE_NAME}
         hold_package ${PACKAGE_NAME}
@@ -110,21 +111,27 @@ function get_opera_pid() {
     ps -ef | grep -e "${OPERA_BIN}$" | grep -v grep | awk '{print $2}'
 }
 
-function start_opera() {
+function do_opera_start() {
     local opera_pid=$(get_opera_pid)
-    if [[ -n "${opera_pid}" ]] ; then return 0; fi;
+    if [[ -n "${opera_pid}" || "${WAS_OPERA_KILLED}" == NO ]]
+    then
+        return 0
+    fi
 
     add_cmd_to_trap $(get_parent_pid_by_regex "^[a-z/]*\(zsh\|bash\)$") "cout info 'starting opera...'; opera &> /dev/null &"
 }
 
-function kill_opera() {
+function do_opera_kill() {
     if [[ "${IS_OPERA_INSTALLED}" == "NO" ]]
     then
         return 0
     fi
 
     local opera_pid=$(get_opera_pid)
-    if [[ -z ${opera_pid} ]] ; then return 0; fi;
+    if [[ -z ${opera_pid} ]]
+    then
+        return 0
+    fi
 
 
     kill -s TERM ${opera_pid}
@@ -150,6 +157,8 @@ function kill_opera() {
         timeout_cnt=$(( timeout_cnt - 1 ))
         opera_pid=$(get_opera_pid)
     done
+
+    WAS_OPERA_KILLED=YES
 }
 
 # By default Opera doesn't own some media codecs permissions to play some video formats on the internet
@@ -186,21 +195,19 @@ function do_opera_install_ffmpeg() {
     sudo mv ${download_tmp_dir}/version.txt ${TARGET_PATH}
 
     rm -rf ${download_tmp_dir}
-
-    start_opera
 }
 
 function do_remove_ffmpeg() {
-    kill_opera
+    do_opera_kill
     sudo rm -ri "${TARGET_PATH}"
-    start_opera
+    do_opera_start
 }
 
 function do_opera_install_with_ffmpeg() {
-    kill_opera
+    do_opera_kill
     do_opera_install
     do_opera_install_ffmpeg
-    start_opera
+    do_opera_start
 }
 
 function do_opera_list_all_versions() {
