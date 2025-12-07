@@ -143,9 +143,9 @@ function okular_clear_old_pages_history() {
 }
 
 # Only works with cambride dictionary
-# Args: [-a => Download any]
+# Args: [lang (us, uk) => preferred language dialect pronunciation for immediate download]
 function gaudio() {
-    local arg="${1}"
+    local lang="${1}"
     local audio_url="$(xclip -selection clipboard -o)"
     local base_domain="$(echo "${audio_url}" | grep -o -e "https://[a-zA-Z\._]\+\.\(org\|com\)")"
     test "${base_domain}" != "https://dictionary.cambridge.org" && cout error "Invalid URL"
@@ -187,6 +187,7 @@ function gaudio() {
             d|D)
                 wget -nc -qq "${base_domain}/${mp3_audio}" -P '/tmp/audios' || cout error "Download failed"
                 cp "/tmp/audios/${mp3_filename}" "${target_dir}/${searched_word}.mp3"
+                play "${target_dir}/${searched_word}.mp3" &> /dev/null
                 break
                 ;;
             p|P)
@@ -199,17 +200,18 @@ function gaudio() {
         esac
     done
 
-    case "${arg}" in
-        -a) # Download any
-            local mp3_audio="${mp3_list[-2]}"
-            local mp3_filename="$(echo "${mp3_audio}" | awk -F '/' '{print $NF}')"
-            wget -nc -qq "${base_domain}/${mp3_audio}" -P '/tmp/audios' || cout error "Download failed"
-            cp "/tmp/audios/${mp3_filename}" "${target_dir}/${searched_word}.mp3"
-            ;;
-        -*)
-            cout error "Unknown args: <${arg}>"
-            ;;
-    esac
+    if [[ -n "${lang}" ]]
+    then
+        local lang_pron="${lang}_pron"
+        mp3_list=($(echo "${mp3_list}" | tr ' ' '\n' | grep "${lang_pron}"))
+        [[ ${#mp3_list[@]} -eq 0 ]] && cout error "No audios found for <${lang}>"
+
+        local mp3_audio="${mp3_list[1]}"
+        local mp3_filename="$(echo "${mp3_audio}" | awk -F '/' '{print $NF}')"
+        wget -nc -qq "${base_domain}/${mp3_audio}" -P '/tmp/audios' || cout error "Download failed"
+        cp "/tmp/audios/${mp3_filename}" "${target_dir}/${searched_word}.mp3"
+        play "${target_dir}/${searched_word}.mp3" &> /dev/null
+    fi
 }
 
 function __custcmds() {
