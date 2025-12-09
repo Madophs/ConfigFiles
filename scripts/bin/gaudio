@@ -1,0 +1,44 @@
+#!/bin/bash
+
+source "${MDS_SCRIPTS}/utils/ascii_menu.sh"
+
+function audio_callback() {
+    local key=${1}
+    local mp3_audio="${2}"
+    local mp3_filename="$(echo "${mp3_audio}" | awk -F '/' '{print $NF}')"
+    wget -nc -qq "${base_domain}/${mp3_audio}" -P '/tmp/audios' || cout error "Download failed"
+    case ${key} in
+        [pP])
+            play "/tmp/audios/${mp3_filename}" &> /dev/null
+            ;;
+        [dD]|"")
+            cp "/tmp/audios/${mp3_filename}" "${target_dir}/${searched_word}.mp3"
+            play "${target_dir}/${searched_word}.mp3" &> /dev/null
+            cout info "Saving '${searched_word}.mp3' to '${target_dir}'"
+            return 1
+            ;;
+    esac
+}
+
+function gaudio() {
+    local audio_url="$(xclip -selection clipboard -o)"
+    local base_domain="$(echo "${audio_url}" | grep -o -e "https://[a-zA-Z\._]\+\.\(org\|com\)")"
+    test "${base_domain}" != "https://dictionary.cambridge.org" && cout error "Invalid URL"
+
+    local target_dir="/home/madophs/Downloads/language audios/english"
+    local searched_word=$(echo "${audio_url}" | grep -o -e '[^\/]\+$')
+    local html_dom="$(curl -L -s "${audio_url}")"
+
+    # Trim word of the day
+    local wotd_line_number=$(echo "${html_dom}" | grep -m 1 -n -i 'word of the day' | grep -o '^[0-9]\+')
+    if [[ -n "${wotd_line_number}" ]]
+    then
+        html_dom=$(echo "${html_dom}" | sed -n "1,${wotd_line_number}{p}")
+    fi
+
+    local -a mp3_list=( $(echo "${html_dom}" | grep -o '\/media.*\.mp3' | sort | uniq) )
+    ascii_menu_add_trap
+    ascii_menu_create "Choose audio:" mp3_list audio_callback "(P)lay (D)ownload (Q)uit"
+}
+
+gaudio
