@@ -11,7 +11,12 @@ PURPLE='\e[1;35m'
 PURPLEG='\e[1;5;35m'
 CYAN='\e[1;36m'
 CYAN_DARK='\e[0;36m'
+INVERT='\e[7m'
 BLK='\e[0;0m'
+
+TOPLEFT='\e[0;0H'            ## Move cursor to top left corner of window
+NOCURSOR='\e[?25l'           ## Make cursor invisible
+NORMAL_OP='\e[0m\e[?12l\e[?25h'   ## Resume normal operation
 
 function print_stacktrace() {
     for ((i=1; i<=${#funcfiletrace[@]}; i+=1))

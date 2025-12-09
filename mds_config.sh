@@ -16,6 +16,7 @@ fi
 # env variables
 export SHELL_PID
 export MDS_SCRIPTS=${MDS_CONFIG}/scripts
+export MDS_SCRIPTS_BIN=${MDS_CONFIG}/scripts/bin
 export MDS_APPS=${HOME}/Documents/apps
 export MDS_ASSETS=${GIT_REPOS}/assets
 export MDS_HIDDEN_CONFIGS=${HOME}/.config/mdsconfig
@@ -40,6 +41,7 @@ export PATH=/usr/local/cuda-11.7/bin${PATH:+:${PATH}}
 export PATH=${HOME}/.local/bin:${PATH}
 export PATH=${MDS_APPS}/lua-language-server/bin:${PATH}
 export PATH=${GIT_REPOS}/MdsCode_Bash:${PATH}
+export PATH=${MDS_SCRIPTS_BIN}:${PATH}
 export APPCWD=/tmp/appcwd
 unset SSH_ASKPASS
 
