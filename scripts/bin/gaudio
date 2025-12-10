@@ -2,6 +2,7 @@
 
 source "${MDS_SCRIPTS}/utils/ascii_menu.sh"
 
+TARGET_DIR="/home/madophs/Downloads/language audios"
 FORVO_MP3_BASE_URL="https://audio12.forvo.com/audios/mp3/"
 BASE_AUDIO_DOMAIN=""
 BASE_DOMAIN=""
@@ -11,7 +12,6 @@ declare -a MENU=()
 declare -a AUDIO_URL_LIST=()
 
 function gaudio_callback() {
-    local target_dir="/home/madophs/Downloads/language audios/english"
     local mp3_audio_url="${AUDIO_URL_LIST[${menu_index}]}"
     local mp3_filename="$(echo "${mp3_audio_url}" | awk -F '/' '{print $NF}')"
     wget -nc -qq "${mp3_audio_url}" -P '/tmp/audios' || cout error "Download failed"
@@ -20,9 +20,9 @@ function gaudio_callback() {
             play "/tmp/audios/${mp3_filename}" &> /dev/null
             ;;
         [dD]|"")
-            cp "/tmp/audios/${mp3_filename}" "${target_dir}/${SEARCHED_WORD}.mp3"
-            play "${target_dir}/${SEARCHED_WORD}.mp3" &> /dev/null
-            cout info "Saving '${SEARCHED_WORD}.mp3' to '${target_dir}'"
+            cp "/tmp/audios/${mp3_filename}" "${TARGET_DIR}/${SEARCHED_WORD}.mp3"
+            play "${TARGET_DIR}/${SEARCHED_WORD}.mp3" &> /dev/null
+            cout info "Saving '${SEARCHED_WORD}.mp3' to '${TARGET_DIR}'"
             return 1
             ;;
     esac
