@@ -70,11 +70,7 @@ function gaudio_set_vars() {
             local -a pronun_users=( $(echo "${pronun_lang_blocks}" | grep -i -A2 -e 'pronunciation by' | grep 'data-p2' | sed 's|.*\(data-p2="\)\(.*\)\("\).*|\2|g') )
             local -a pronun_users_country=()
             mapfile -t pronun_users_country < <( echo "${pronun_lang_blocks}" | grep -o '(\(Male\|Female\) from.*)' | tr -d "()" )
-            for (( i=0; i<${#pronun_users[@]}; i+=1 ))
-            do
-                MENU+=( "${pronun_users[${i}]} ${pronun_users_country[${i}]}" )
-            done
-
+            mapfile -t MENU < <( paste -d " " <(printf "%s\n" "${pronun_users[@]}") <(printf "%s\n" "${pronun_users_country[@]}"))
             AUDIO_URL_LIST=( $(echo "${pronun_lang_blocks}" | grep -o 'Play(.*)' | cut -d ',' -f 5 | sed "s/'//g" | base64 --decode | sed "s|mp3|mp3\n|g" | sed "s|\(.*\)mp3|${BASE_AUDIO_DOMAIN}\1mp3|g") )
             ;;
         *)
