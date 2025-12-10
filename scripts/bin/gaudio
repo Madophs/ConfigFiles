@@ -2,43 +2,93 @@
 
 source "${MDS_SCRIPTS}/utils/ascii_menu.sh"
 
-function audio_callback() {
-    local key=${1}
-    local mp3_audio="${2}"
-    local mp3_filename="$(echo "${mp3_audio}" | awk -F '/' '{print $NF}')"
-    wget -nc -qq "${base_domain}/${mp3_audio}" -P '/tmp/audios' || cout error "Download failed"
+FORVO_MP3_BASE_URL="https://audio12.forvo.com/audios/mp3/"
+BASE_AUDIO_DOMAIN=""
+BASE_DOMAIN=""
+HTML_DOM=""
+SEARCHED_WORD=""
+declare -a MENU=()
+declare -a AUDIO_URL_LIST=()
+
+function gaudio_callback() {
+    local target_dir="/home/madophs/Downloads/language audios/english"
+    local mp3_audio_url="${AUDIO_URL_LIST[${menu_index}]}"
+    local mp3_filename="$(echo "${mp3_audio_url}" | awk -F '/' '{print $NF}')"
+    wget -nc -qq "${mp3_audio_url}" -P '/tmp/audios' || cout error "Download failed"
     case ${key} in
         [pP])
             play "/tmp/audios/${mp3_filename}" &> /dev/null
             ;;
         [dD]|"")
-            cp "/tmp/audios/${mp3_filename}" "${target_dir}/${searched_word}.mp3"
-            play "${target_dir}/${searched_word}.mp3" &> /dev/null
-            cout info "Saving '${searched_word}.mp3' to '${target_dir}'"
+            cp "/tmp/audios/${mp3_filename}" "${target_dir}/${SEARCHED_WORD}.mp3"
+            play "${target_dir}/${SEARCHED_WORD}.mp3" &> /dev/null
+            cout info "Saving '${SEARCHED_WORD}.mp3' to '${target_dir}'"
             return 1
+            ;;
+    esac
+}
+
+function gaudio_set_domain() {
+    BASE_DOMAIN="$(echo "${audio_url}" | grep -o -e "https://[a-zA-Z\._]\+\.\(org\|com\)")"
+    case "${BASE_DOMAIN}" in
+        "https://dictionary.cambridge.org")
+            BASE_AUDIO_DOMAIN="${BASE_DOMAIN}"
+            return
+            ;;
+        "https://forvo.com")
+            BASE_AUDIO_DOMAIN="${FORVO_MP3_BASE_URL}"
+            ;;
+        *)
+            cout error "Invalid URL"
+            ;;
+    esac
+}
+
+function gaudio_set_vars() {
+    case "${BASE_DOMAIN}" in
+        *cambridge*)
+            HTML_DOM="$(lynx -source "${audio_url}")"
+            # Trim word of the day
+            local wotd_line_number=$(echo "${HTML_DOM}" | grep -m 1 -n -i 'word of the day' | grep -o '^[0-9]\+')
+            if [[ -n "${wotd_line_number}" ]]
+            then
+                HTML_DOM=$(echo "${HTML_DOM}" | sed -n "1,${wotd_line_number}{p}")
+            fi
+
+            SEARCHED_WORD=$(echo "${audio_url}" | grep -o -e '[^\/]\+$')
+
+            MENU=( $(echo "${HTML_DOM}" | grep -o '\/media.*\.mp3' | sort | uniq | sed "s|\(.*\)|${BASE_AUDIO_DOMAIN}\1|g") )
+            AUDIO_URL_LIST=( "${MENU[@]}" )
+            ;;
+        *forvo*)
+            HTML_DOM="$(lynx -source "${audio_url}")"
+
+            SEARCHED_WORD=$(echo "${audio_url}" | sed 's|\(.*\)\/word\/\([a-z]\+\).*|\2|g')
+
+            local -a pronun_lang_list=( $(echo "${HTML_DOM}" | grep -o '"pronunciations-list-[a-z_]\+"' | uniq) )
+            local pronun_lang_blocks=$(echo "${HTML_DOM}" | sed -n '/"pronunciations-list-[a-z_]\+"/,/<\/ul>/p')
+            local -a pronun_users=( $(echo "${pronun_lang_blocks}" | grep -i -A2 -e 'pronunciation by' | grep 'data-p2' | sed 's|.*\(data-p2="\)\(.*\)\("\).*|\2|g') )
+            local -a pronun_users_country=()
+            mapfile -t pronun_users_country < <( echo "${pronun_lang_blocks}" | grep -o '(\(Male\|Female\) from.*)' | tr -d "()" )
+            for (( i=0; i<${#pronun_users[@]}; i+=1 ))
+            do
+                MENU+=( "${pronun_users[${i}]} ${pronun_users_country[${i}]}" )
+            done
+
+            AUDIO_URL_LIST=( $(echo "${pronun_lang_blocks}" | grep -o 'Play(.*)' | cut -d ',' -f 5 | sed "s/'//g" | base64 --decode | sed "s|mp3|mp3\n|g" | sed "s|\(.*\)mp3|${BASE_AUDIO_DOMAIN}\1mp3|g") )
+            ;;
+        *)
+            cout error "Invalid URL"
             ;;
     esac
 }
 
 function gaudio() {
     local audio_url="$(xclip -selection clipboard -o)"
-    local base_domain="$(echo "${audio_url}" | grep -o -e "https://[a-zA-Z\._]\+\.\(org\|com\)")"
-    test "${base_domain}" != "https://dictionary.cambridge.org" && cout error "Invalid URL"
-
-    local target_dir="/home/madophs/Downloads/language audios/english"
-    local searched_word=$(echo "${audio_url}" | grep -o -e '[^\/]\+$')
-    local html_dom="$(curl -L -s "${audio_url}")"
-
-    # Trim word of the day
-    local wotd_line_number=$(echo "${html_dom}" | grep -m 1 -n -i 'word of the day' | grep -o '^[0-9]\+')
-    if [[ -n "${wotd_line_number}" ]]
-    then
-        html_dom=$(echo "${html_dom}" | sed -n "1,${wotd_line_number}{p}")
-    fi
-
-    local -a mp3_list=( $(echo "${html_dom}" | grep -o '\/media.*\.mp3' | sort | uniq) )
+    gaudio_set_domain
+    gaudio_set_vars
     ascii_menu_add_trap
-    ascii_menu_create "Choose audio:" mp3_list audio_callback "(P)lay (D)ownload (Q)uit"
+    ascii_menu_create "Choose audio for '${SEARCHED_WORD}':" MENU "(P)lay (D)ownload (Q)uit" gaudio_callback
 }
 
 gaudio

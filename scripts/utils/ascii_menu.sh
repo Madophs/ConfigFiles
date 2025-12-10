@@ -17,21 +17,21 @@ function ascii_menu_show() {
     local -n menu_index_ref=${1}
     shift
     local menu_items=("${@}")
-    for (( i=0; i<${#menu_items[@]}; i+=1 ))
+    for (( i=0; i<${#menu_ref[@]}; i+=1 ))
     do
         if (( i == menu_index_ref ))
         then
-            printf "%4s ${INVERT}%s\n${BLK}" "$((i+1))." "${menu_items[@]:${i}:1}"
+            printf "%4s ${INVERT}%s\n${BLK}" "$((i+1))." "${menu_ref[${i}]}"
         else
-            printf "%4s %s\n" "$((i+1))." "${menu_items[@]:${i}:1}"
+            printf "%4s %s\n" "$((i+1))." "${menu_ref[${i}]}"
         fi
     done
 }
 
 function ascii_menu_handle_key() {
     local -n index_ref=${1}
-    local -i menu_size=${2}
-    local callback_func=${3:-printf ""}
+    local callback_func=${2:-printf ""}
+    local -i menu_size=${#menu_ref[@]}
 
     # Read a single character
     read -s -n 1 key
@@ -53,7 +53,7 @@ function ascii_menu_handle_key() {
             return 1
             ;;
         *)
-            ${callback_func} "${key}" "${menu_ref[@]:${index_ref}:1}"
+            ${callback_func} "${key}" "${menu_ref[${index_ref}]}"
             ;;
     esac
     return $?
@@ -62,16 +62,16 @@ function ascii_menu_handle_key() {
 function ascii_menu_create() {
     local title="${1}"
     local -n menu_ref=${2}
-    local callback_input=${3}
-    local menu_options=${4}
+    local menu_footer=${3}
+    local callback_input=${4}
     local -i menu_index=0
     clear
     while (( $? == 0 ))
     do
         printf "${TOPLEFT}${NOCURSOR}${title}\n"
-        ascii_menu_show menu_index "${menu_ref[@]}"
-        ascii_menu_print_options "${menu_options}"
-        ascii_menu_handle_key menu_index ${#menu_ref[@]} ${callback_input}
+        ascii_menu_show menu_index
+        ascii_menu_print_options "${menu_footer}"
+        ascii_menu_handle_key menu_index ${callback_input}
     done
     return 0 #Ignore #?
 }
