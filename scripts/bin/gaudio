@@ -28,25 +28,12 @@ function gaudio_callback() {
     esac
 }
 
-function gaudio_set_domain() {
+function gaudio_set_vars() {
     BASE_DOMAIN="$(echo "${audio_url}" | grep -o -e "https://[a-zA-Z\._]\+\.\(org\|com\)")"
     case "${BASE_DOMAIN}" in
-        "https://dictionary.cambridge.org")
-            BASE_AUDIO_DOMAIN="${BASE_DOMAIN}"
-            return
-            ;;
-        "https://forvo.com")
-            BASE_AUDIO_DOMAIN="${FORVO_MP3_BASE_URL}"
-            ;;
-        *)
-            cout error "Invalid URL"
-            ;;
-    esac
-}
-
-function gaudio_set_vars() {
-    case "${BASE_DOMAIN}" in
         *cambridge*)
+            BASE_AUDIO_DOMAIN="${BASE_DOMAIN}"
+
             HTML_DOM="$(lynx -source "${audio_url}")"
             # Trim word of the day
             local wotd_line_number=$(echo "${HTML_DOM}" | grep -m 1 -n -i 'word of the day' | grep -o '^[0-9]\+')
@@ -61,6 +48,8 @@ function gaudio_set_vars() {
             AUDIO_URL_LIST=( "${MENU[@]}" )
             ;;
         *forvo*)
+            BASE_AUDIO_DOMAIN="${FORVO_MP3_BASE_URL}"
+
             HTML_DOM="$(lynx -source "${audio_url}")"
 
             SEARCHED_WORD=$(echo "${audio_url}" | sed 's|\(.*\)\/word\/\([a-z]\+\).*|\2|g')
@@ -81,7 +70,6 @@ function gaudio_set_vars() {
 
 function gaudio() {
     local audio_url="$(xclip -selection clipboard -o)"
-    gaudio_set_domain
     gaudio_set_vars
     ascii_menu_add_trap
     ascii_menu_create "Choose audio for '${SEARCHED_WORD}':" MENU "(P)lay (D)ownload (Q)uit" gaudio_callback
