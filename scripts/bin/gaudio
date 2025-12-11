@@ -12,16 +12,16 @@ declare -a MENU=()
 declare -a AUDIO_URL_LIST=()
 
 function gaudio_callback() {
-    local mp3_audio_url="${AUDIO_URL_LIST[${menu_index}]}"
+    local mp3_audio_url="${AUDIO_URL_LIST[${index_ref}]}"
     local mp3_filename="$(echo "${mp3_audio_url}" | awk -F '/' '{print $NF}')"
-    wget -nc -qq "${mp3_audio_url}" -P '/tmp/audios' || cout error "Download failed"
+    wget -nc -qq "${mp3_audio_url}" -P '/tmp/audios' || cout error "Failed to download audio"
     case ${key} in
         [pP])
-            play "/tmp/audios/${mp3_filename}" &> /dev/null
+            (play "/tmp/audios/${mp3_filename}" &> /dev/null &)
             ;;
         [dD]|"")
             cp "/tmp/audios/${mp3_filename}" "${TARGET_DIR}/${SEARCHED_WORD}.mp3"
-            play "${TARGET_DIR}/${SEARCHED_WORD}.mp3" &> /dev/null
+            (play "${TARGET_DIR}/${SEARCHED_WORD}.mp3" &> /dev/null &)
             cout info "Saving '${SEARCHED_WORD}.mp3' to '${TARGET_DIR}'"
             return 1
             ;;
@@ -30,11 +30,11 @@ function gaudio_callback() {
 
 function gaudio_set_vars() {
     BASE_DOMAIN="$(echo "${audio_url}" | grep -o -e "https://[a-zA-Z\._]\+\.\(org\|com\)")"
+    HTML_DOM="$(lynx -connect-timeout=5000 -source "${audio_url}")" || cout error "Connection error"
     case "${BASE_DOMAIN}" in
         *cambridge*)
             BASE_AUDIO_DOMAIN="${BASE_DOMAIN}"
 
-            HTML_DOM="$(lynx -source "${audio_url}")"
             # Trim word of the day
             local wotd_line_number=$(echo "${HTML_DOM}" | grep -m 1 -n -i 'word of the day' | grep -o '^[0-9]\+')
             if [[ -n "${wotd_line_number}" ]]
@@ -49,8 +49,6 @@ function gaudio_set_vars() {
             ;;
         *forvo*)
             BASE_AUDIO_DOMAIN="${FORVO_MP3_BASE_URL}"
-
-            HTML_DOM="$(lynx -source "${audio_url}")"
 
             SEARCHED_WORD=$(echo "${audio_url}" | sed 's|\(.*\)\/word\/\([a-z]\+\).*|\2|g')
 

@@ -30,7 +30,7 @@ function ascii_menu_show() {
 
 function ascii_menu_handle_key() {
     local -n index_ref=${1}
-    local callback_func=${2:-printf ""}
+    local callback_func=${2}
     local -i menu_size=${#menu_ref[@]}
 
     # Read a single character
@@ -53,7 +53,7 @@ function ascii_menu_handle_key() {
             return 1
             ;;
         *)
-            ${callback_func} "${key}" "${menu_ref[${index_ref}]}"
+            [[ -n "${callback_func}" ]] && ${callback_func}
             ;;
     esac
     return $?
