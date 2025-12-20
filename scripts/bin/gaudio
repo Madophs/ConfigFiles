@@ -69,7 +69,6 @@ function gaudio_set_vars() {
 function gaudio() {
     local audio_url="$(xclip -selection clipboard -o)"
     gaudio_set_vars
-    ascii_menu_add_trap
     ascii_menu_create "Choose audio for '${SEARCHED_WORD}':" MENU "(P)lay (D)ownload (Q)uit" gaudio_callback
 }
 

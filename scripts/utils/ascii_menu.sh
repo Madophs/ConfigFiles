@@ -2,8 +2,14 @@
 
 source "${MDS_SCRIPTS}/common.sh"
 
-function ascii_menu_add_trap() {
-    trap 'printf "$NORMAL_OP"' EXIT                  ## return terminal to normal state on exit
+declare -g IS_TRAPED_SETUP=N
+
+function ascii_menu_set_trap() {
+    if [[ "${IS_TRAPED_SETUP}" == N ]]
+    then
+        trap 'printf "$NORMAL_OP"' EXIT                  ## return terminal to normal state (reset cursor's visibility and position) on exit
+    fi
+    IS_TRAPED_SETUP=Y
 }
 
 function ascii_menu_print_options() {
@@ -60,6 +66,7 @@ function ascii_menu_handle_key() {
 }
 
 function ascii_menu_create() {
+    ascii_menu_set_trap
     local title="${1}"
     local -n menu_ref=${2}
     local menu_footer=${3}
