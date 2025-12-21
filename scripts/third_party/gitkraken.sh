@@ -2,11 +2,11 @@
 
 source "${MDS_SCRIPTS}/common.sh"
 DOWNLOAD_PAGE_URL=https://www.gitkraken.com/download
-GITKRAKEN_DOM=$(wget -qO - "${DOWNLOAD_PAGE_URL}")
+GIKTRAKEN_CURRENT_RELEASE_URL=https://help.gitkraken.com/gitkraken-desktop/current/
 GITKRAKEN_DOWNLOAD_URL="https://api.gitkraken.dev/releases/production/linux/x64/active/gitkraken-amd64.deb"
 
 function gitkraken_get_latest_version() {
-    echo "${GITKRAKEN_DOM}" | grep 'Latest release' | grep -o -e '[0-9]\+\.[0-9]\+\.[0-9]\+'
+    curl -L -s "${GIKTRAKEN_CURRENT_RELEASE_URL}" | grep -m 1 '#version' | grep -E -o '[0-9]+\.[0-9]+\.[0-9]+' | tail -n 1
 }
 
 function gitkraken_get_current_version() {
