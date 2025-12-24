@@ -1,0 +1,40 @@
+#!/bin/bash
+
+source "${MDS_SCRIPTS}/utils/ascii_menu.sh"
+
+function get_nonstaged_files() {
+    local -n non_staged_files_list_ref=${1}
+    local git_status=$(git status -u 2> /dev/null) || cout fail "Not a git repository"
+    declare -i git_status_lines=$(echo "${git_status}" | wc -l)
+    local not_staged_files=$(echo "${git_status}" | grep -m 1 -A${git_status_lines} 'not staged for commit')
+    modified_files=( $(echo "${not_staged_files}" | grep 'modified:' | sed 's|modified:||g;s|^[[:space:]]\+||g') )
+}
+
+function gdiff_callback() {
+    case ${key} in
+        [dD]|"")
+            nvim "${menu_item_selected}" -c Gdiffsplit
+            ;;
+        [aA])
+            git add "${menu_item_selected}"
+            ;;
+    esac
+
+    get_nonstaged_files menu_ref
+    if (( menu_index >= ${#menu_ref[@]} ))
+    then
+        menu_index=0
+    fi
+}
+
+set_real_shell
+
+declare -a modified_files=()
+get_nonstaged_files modified_files
+
+if [[ ${#modified_files[@]} != 0 ]]
+then
+    ascii_menu_create "Changes not staged for commit:" modified_files "(A)dd (D)iff (U)pdate (Q)uit" gdiff_callback
+else
+    cout info "No non-staged modified files."
+fi

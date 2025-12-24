@@ -18,6 +18,10 @@ TOPLEFT='\e[0;0H'            ## Move cursor to top left corner of window
 NOCURSOR='\e[?25l'           ## Make cursor invisible
 NORMAL_OP='\e[0m\e[?12l\e[?25h'   ## Resume normal operation
 
+function set_real_shell() {
+    declare -g REAL_SHELL=$(ps -o command $$ | tail -n 1 | awk '{print $0}' | grep -o -e '^[\/a-z]\+' | awk -F '/' '{print $NF}')
+}
+
 function print_stacktrace() {
     for ((i=1; i<=${#funcfiletrace[@]}; i+=1))
     do
@@ -31,7 +35,7 @@ function print_stacktrace() {
         fi
     done
 
-    if [[ ${REAL_SHELL} == 'zsh' ]] ; then return 0; fi;
+    [[ ${REAL_SHELL} == 'zsh' ]] && return 0
 
     for ((i=0; i<${#BASH_SOURCE[@]}; i+=1))
     do
@@ -52,13 +56,16 @@ function print_stacktrace() {
 }
 
 function cout() {
-    local color=$1
+    local type=${1}
+    [[ "${REAL_SHELL}" == bash ]] && type="${type^^}"
+    [[ "${REAL_SHELL}" == zsh ]] && type="${(U)type}"
     shift
+
     local messsage="$@"
-    case ${color} in
-        red|error)
-            echo -e "${BLUE}[${RED}ERROR${BLUE}]${BLK} ${messsage}" >&2
-            print_stacktrace
+    case ${type} in
+        ERROR|FAIL)
+            echo -e "${BLUE}[${RED}${type}${BLUE}]${BLK} ${messsage}" >&2
+            [[ "${type}" == ERROR ]] && print_stacktrace
             if [[ -z ${IS_SOURCED} || ${IS_SOURCED} == NO ]]
             then
                 exit 1
@@ -66,26 +73,22 @@ function cout() {
                 kill -n 2 ${SHELL_PID} # SIGINT
             fi
         ;;
-        fault)
+        FAULT)
             echo -e "${BLUE}[${PURPLE}FAULT${BLUE}]${BLK} ${messsage}" >&2
         ;;
-        debug)
+        DEBUG)
             echo -e "${BLUEG}[${PURPLE}DEBUG${BLUEG}]${BLK} ${messsage}" >&2
         ;;
-        green|success)
+        SUCCESS)
             echo -e "${BLUE}[${GREEN}SUCCESS${BLUE}]${BLK} ${messsage}" >&2
         ;;
-        yellow|warning)
+        WARNING)
             echo -e "${BLUE}[${YELLOW}WARNING${BLUE}]${BLK} ${messsage}" >&2
         ;;
-        blue|info)
+        INFO)
             echo -e "${BLUE}[${CYAN}INFO${BLUE}]${BLK} ${messsage}" >&2
         ;;
     esac
-}
-
-function on_error() {
-    cout error "${@}"
 }
 
 function get_parent_pid_by_regex() {

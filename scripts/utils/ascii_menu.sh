@@ -96,6 +96,12 @@ function ascii_menu_create() {
     while (( $? == 0 ))
     do
         clear
+
+        if (( ${#menu_ref[@]} == 0 ))
+        then
+            cout error "No menu items provided"
+        fi
+
         printf "${TOPLEFT}${NOCURSOR}${title}\n"
         ascii_menu_show menu_index
         ascii_menu_print_options "${menu_footer}"
