@@ -22,8 +22,28 @@ function ascii_menu_print_options() {
 function ascii_menu_show() {
     local -n menu_index_ref=${1}
     shift
-    local menu_items=("${@}")
-    for (( i=0; i<${#menu_ref[@]}; i+=1 ))
+    local -i menu_size=${#menu_ref[@]}
+    local -i window_size=$(( LINES - 4 )) # tty height
+    local -i menu_scroll_size=menu_size
+
+    # If items outsize scroll view, set scroll view to shell height (window_size)
+    (( menu_scroll_size > window_size )) && menu_scroll_size=window_size
+
+    local -i menu_item_index_start=0
+    local -i menu_item_index_end=menu_size
+
+    # upper/lower item padding
+    local -i menu_scroll_slice=$(( menu_scroll_size / 2 ))
+
+    # update start index if position is beyond scroll slice (upper bound)
+    (( menu_index_ref - menu_scroll_slice > 0 )) && menu_item_index_start=$(( menu_index_ref - menu_scroll_slice ))
+
+    menu_item_index_end=$(( menu_item_index_start + menu_scroll_size ))
+
+    # Print all possible items above index in case we're near end of the list
+    (( menu_item_index_end > menu_size )) && menu_item_index_start=$(( menu_size - menu_scroll_size ))
+
+    for (( i=menu_item_index_start; i<menu_item_index_end && i<menu_size; i+=1 ))
     do
         if (( i == menu_index_ref ))
         then
@@ -59,6 +79,7 @@ function ascii_menu_handle_key() {
             return 1
             ;;
         *)
+            local menu_item_selected="${menu_ref[${index_ref}]}"
             [[ -n "${callback_func}" ]] && ${callback_func}
             ;;
     esac
@@ -72,9 +93,9 @@ function ascii_menu_create() {
     local menu_footer=${3}
     local callback_input=${4}
     local -i menu_index=0
-    clear
     while (( $? == 0 ))
     do
+        clear
         printf "${TOPLEFT}${NOCURSOR}${title}\n"
         ascii_menu_show menu_index
         ascii_menu_print_options "${menu_footer}"
