@@ -34,8 +34,6 @@ function gdiff_callback() {
     fi
 }
 
-set_real_shell
-
 declare -a modified_files=()
 get_nonstaged_files modified_files
 

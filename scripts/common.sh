@@ -18,9 +18,7 @@ TOPLEFT='\e[0;0H'            ## Move cursor to top left corner of window
 NOCURSOR='\e[?25l'           ## Make cursor invisible
 NORMAL_OP='\e[0m\e[?12l\e[?25h'   ## Resume normal operation
 
-function set_real_shell() {
-    declare -g REAL_SHELL=$(ps -o command $$ | tail -n 1 | awk '{print $0}' | grep -o -e '^[\/a-z]\+' | awk -F '/' '{print $NF}')
-}
+[ ! -v REAL_SHELL ] && declare -g REAL_SHELL=$(ps -o command $$ | tail -n 1 | awk '{print $0}' | grep -o -e '^[\/a-z]\+' | awk -F '/' '{print $NF}')
 
 function print_stacktrace() {
     for ((i=1; i<=${#funcfiletrace[@]}; i+=1))
