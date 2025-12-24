@@ -86,3 +86,6 @@ then
     alias lla='lsd -la'
     alias lt='lsd --tree'
 fi
+
+unalias gk
+unalias gke
