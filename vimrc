@@ -338,6 +338,7 @@ source $MDS_CONFIG/vim/Kwbd.vim
 source $MDS_CONFIG/vim/Coc_vs_Ycm.vim
 source $MDS_CONFIG/vim/SessionManager.vim
 source $MDS_CONFIG/vim/MdsCode.vim
+source $MDS_CONFIG/vim/cmds.vim
 
 if has('nvim')
     call setenv('VIM_EDITOR', 'nvim')

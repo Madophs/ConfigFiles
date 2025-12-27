@@ -41,5 +41,5 @@ if [[ ${#modified_files[@]} != 0 ]]
 then
     ascii_menu_create "Changes not staged for commit:" modified_files "(A)dd (D)iff (U)pdate (Q)uit" gdiff_callback
 else
-    cout info "No non-staged modified files."
+    cout info "No unstaged files"
 fi
