@@ -30,9 +30,9 @@ function gaudio_callback() {
 
 function gaudio_set_vars() {
     BASE_DOMAIN="$(echo "${audio_url}" | grep -o -e "https://[a-zA-Z\._]\+\.\(org\|com\)")"
-    HTML_DOM="$(lynx -connect-timeout=5000 -source "${audio_url}")" || cout error "Connection error"
     case "${BASE_DOMAIN}" in
         *cambridge*)
+            HTML_DOM="$(lynx -connect-timeout=5000 -source "${audio_url}")" || cout error "Connection error"
             BASE_AUDIO_DOMAIN="${BASE_DOMAIN}"
 
             # Trim word of the day
@@ -48,6 +48,7 @@ function gaudio_set_vars() {
             AUDIO_URL_LIST=( "${MENU[@]}" )
             ;;
         *forvo*)
+            HTML_DOM="$(lynx -connect-timeout=5000 -source "${audio_url}")" || cout error "Connection error"
             BASE_AUDIO_DOMAIN="${FORVO_MP3_BASE_URL}"
 
             SEARCHED_WORD=$(echo "${audio_url}" | sed 's|\(.*\)\/word\/\([a-z]\+\).*|\2|g')
