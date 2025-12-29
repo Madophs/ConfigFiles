@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source "${MDS_SCRIPTS}/common.sh"
+source "${MDS_SCRIPTS}/utils/cout.sh"
 
 declare -g IS_TRAPED_SETUP=N
 
