@@ -18,6 +18,9 @@ function gdiff_callback() {
         [aA])
             git add "${menu_item_selected}"
             ;;
+        [eE])
+            ${EDITOR} "${menu_item_selected}"
+            ;;
     esac
 
     get_nonstaged_files menu_ref
@@ -39,7 +42,7 @@ get_nonstaged_files modified_files
 
 if [[ ${#modified_files[@]} != 0 ]]
 then
-    ascii_menu_create "Changes not staged for commit:" modified_files "(A)dd (D)iff (U)pdate (Q)uit" gdiff_callback
+    ascii_menu_create "Changes not staged for commit:" modified_files "(A)dd (D)iff (E)dit (U)pdate (Q)uit" gdiff_callback
 else
     cout info "No unstaged files"
 fi
