@@ -13,7 +13,7 @@ set +o noclobber
 # trap to execute any command
 trap "eval \"\$(< ${MDS_TRAP_CMD})\"; truncate -s 0 ${MDS_TRAP_CMD}" 35
 
-if [[ ${REAL_SHELL} == 'bashs' ]]
+if [[ ${REAL_SHELL} == 'bash' ]]
 then
     set show-all-if-ambiguous on
     set completion-ignore-case on

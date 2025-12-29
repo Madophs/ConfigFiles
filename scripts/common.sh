@@ -1,9 +1,5 @@
 #!/bin/bash
 
-TOPLEFT='\e[0;0H'            ## Move cursor to top left corner of window
-NOCURSOR='\e[?25l'           ## Make cursor invisible
-NORMAL_OP='\e[0m\e[?12l\e[?25h'   ## Resume normal operation
-
 source "${MDS_SCRIPTS}/utils/cout.sh"
 
 [ ! -v REAL_SHELL ] && declare -g REAL_SHELL=$(ps -o command $$ | tail -n 1 | awk '{print $0}' | grep -o -e '^[\/a-z]\+' | awk -F '/' '{print $NF}')

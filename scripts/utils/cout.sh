@@ -1,18 +1,26 @@
 #!/bin/bash
 
 export RED='\e[1;31m'
+export RED_DARK='\e[0;31m'
 export GREEN='\e[1;32m'
 export GREEN_DARK='\e[0;32m'
 export YELLOW='\e[1;33m'
 export BROWN='\e[0;33m'
 export BLUE='\e[1;34m'
-export BLUEG='\e[1;5;34m'
+export BLUE_DARK='\e[0;34m'
 export PURPLE='\e[1;35m'
-export PURPLEG='\e[1;5;35m'
+export PURPLE_DARK='\e[0;35m'
 export CYAN='\e[1;36m'
 export CYAN_DARK='\e[0;36m'
+export WHITE='\e[1;37m'
+export GREY='\e[0;37m'
 export INVERT='\e[7m'
+export UNDERLINE='\e[4m'
 export BLK='\e[0;0m'
+
+TOPLEFT='\e[0;0H'            ## Move cursor to top left corner of window
+NOCURSOR='\e[?25l'           ## Make cursor invisible
+NORMAL_OP='\e[0m\e[?12l\e[?25h'   ## Resume normal operation
 
 function print_stacktrace() {
     for ((i=1; i<=${#funcfiletrace[@]}; i+=1))

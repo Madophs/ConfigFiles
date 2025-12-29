@@ -47,10 +47,11 @@ function ascii_menu_show() {
     do
         if (( i == menu_index_ref ))
         then
-            printf "%4s ${INVERT}%s\n${BLK}" "$((i+1))." "${menu_ref[${i}]}"
+            printf -v menu_line "${BLK}%4s ${UNDERLINE}%s${BLK}\n" "$((i+1))." "${menu_ref[${i}]}"
         else
-            printf "%4s %s\n" "$((i+1))." "${menu_ref[${i}]}"
+            printf -v menu_line "${BLK}%4s %s${BLK}\n" "$((i+1))." "${menu_ref[${i}]}"
         fi
+        printf "${menu_line}"
     done
 }
 
