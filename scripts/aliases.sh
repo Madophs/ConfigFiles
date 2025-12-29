@@ -87,5 +87,5 @@ then
     alias lt='lsd --tree'
 fi
 
-unalias gk
-unalias gke
+unalias gk &> /dev/null
+unalias gke &> /dev/null

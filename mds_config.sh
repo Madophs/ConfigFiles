@@ -46,6 +46,8 @@ export APPCWD=/tmp/appcwd
 unset SSH_ASKPASS
 
 # Small setup
+source ${MDS_SCRIPTS}/utils/cout.sh
+source ${MDS_SCRIPTS}/utils/clock_timer.sh
 source ${MDS_SCRIPTS}/zsh/configs.sh
 source ${MDS_SCRIPTS}/shellsetup.sh
 source ${MDS_SCRIPTS}/aliases.sh

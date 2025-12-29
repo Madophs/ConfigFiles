@@ -13,21 +13,20 @@ set +o noclobber
 # trap to execute any command
 trap "eval \"\$(< ${MDS_TRAP_CMD})\"; truncate -s 0 ${MDS_TRAP_CMD}" 35
 
-if [[ ${REAL_SHELL} == 'bash' ]]
+if [[ ${REAL_SHELL} == 'bashs' ]]
 then
     set show-all-if-ambiguous on
-    bind 'set completion-ignore-case on'
+    set completion-ignore-case on
     bind 'TAB:menu-complete'
-    bind '"\e[A": history-search-backward'
-    bind '"\e[B": history-search-forward'
-    bind 'set show-mode-in-prompt on'
-    bind 'set vi-ins-mode-string "\e[1;35mI\e[0;0m"'
-    bind 'set vi-cmd-mode-string "\e[1;35mC\e[0;0m"'
+    #bind '"\e[A": history-search-backward'
+    #bind '"\e[B": history-search-forward'
+    #bind 'set show-mode-in-prompt on'
+    #bind 'set vi-ins-mode-string "\e[1;35mI\e[0;0m"'
+    #bind 'set vi-cmd-mode-string "\e[1;35mC\e[0;0m"'
     export HISTCONTROL='erasedups:ignoreboth'
     unset -v HISTTIMEFORMAT  # %F %T
 fi
 
-source ${MDS_SCRIPTS}/common.sh
 source ${MDS_SCRIPTS}/autocomplete.sh
 
 mkdir -p ${MDS_HIDDEN_CONFIGS}

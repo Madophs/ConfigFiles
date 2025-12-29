@@ -1,6 +1,6 @@
 if [[ ${REAL_SHELL} != zsh ]]
 then
-    return 0;
+    return 0
 fi
 
 setopt HIST_IGNORE_DUPS
