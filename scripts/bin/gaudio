@@ -12,7 +12,7 @@ declare -a MENU=()
 declare -a AUDIO_URL_LIST=()
 
 function gaudio_callback() {
-    local mp3_audio_url="${AUDIO_URL_LIST[${index_ref}]}"
+    local mp3_audio_url="${menu_item_key_selected}"
     local mp3_filename="$(echo "${mp3_audio_url}" | awk -F '/' '{print $NF}')"
     wget -nc -qq "${mp3_audio_url}" -P '/tmp/audios' || cout error "Failed to download audio"
     case ${key} in
@@ -70,7 +70,7 @@ function gaudio_set_vars() {
 function gaudio() {
     local audio_url="$(xclip -selection clipboard -o)"
     gaudio_set_vars
-    ascii_menu_create "Choose audio for '${SEARCHED_WORD}':" MENU "(P)lay (D)ownload (Q)uit" gaudio_callback
+    ascii_menu_create MENU AUDIO_URL_LIST "Choose audio for '${SEARCHED_WORD}':" "(P)lay (D)ownload (Q)uit" gaudio_callback
 }
 
 gaudio

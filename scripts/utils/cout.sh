@@ -1,22 +1,50 @@
 #!/bin/bash
 
-export RED='\e[1;31m'
-export RED_DARK='\e[0;31m'
-export GREEN='\e[1;32m'
-export GREEN_DARK='\e[0;32m'
-export YELLOW='\e[1;33m'
-export BROWN='\e[0;33m'
-export BLUE='\e[1;34m'
-export BLUE_DARK='\e[0;34m'
-export PURPLE='\e[1;35m'
-export PURPLE_DARK='\e[0;35m'
-export CYAN='\e[1;36m'
-export CYAN_DARK='\e[0;36m'
-export WHITE='\e[1;37m'
-export GREY='\e[0;37m'
-export INVERT='\e[7m'
-export UNDERLINE='\e[4m'
-export BLK='\e[0;0m'
+[[ ! -v MDS_DEBUG ]] && export MDS_DEBUG=""
+
+function export_colors() {
+    export RED='\e[1;31m'
+    export RED_DARK='\e[0;31m'
+    export GREEN='\e[1;32m'
+    export GREEN_DARK='\e[0;32m'
+    export YELLOW='\e[1;33m'
+    export BROWN='\e[0;33m'
+    export BLUE='\e[1;34m'
+    export BLUE_DARK='\e[0;34m'
+    export PURPLE='\e[1;35m'
+    export PURPLE_DARK='\e[0;35m'
+    export CYAN='\e[1;36m'
+    export CYAN_DARK='\e[0;36m'
+    export WHITE='\e[1;37m'
+    export GREY='\e[0;37m'
+    export INVERT='\e[7m'
+    export INVERT_BLK='\e[27m'
+    export UNDERLINE='\e[4m'
+    export UNDERLINE_BLK='\e[24m'
+    export BLK='\e[0;0m'
+}
+
+function unset_colors() {
+    unset RED
+    unset RED_DARK
+    unset GREEN
+    unset GREEN_DARK
+    unset YELLOW
+    unset BROWN
+    unset BLUE
+    unset BLUE_DARK
+    unset PURPLE
+    unset PURPLE_DARK
+    unset CYAN
+    unset CYAN_DARK
+    unset WHITE
+    unset GREY
+    unset INVERT
+    unset INVERT_BLK
+    unset UNDERLINE
+    unset UNDERLINE_BLK
+    unset BLK
+}
 
 TOPLEFT='\e[0;0H'            ## Move cursor to top left corner of window
 NOCURSOR='\e[?25l'           ## Make cursor invisible
@@ -75,7 +103,12 @@ function cout() {
             echo -e "${BLUE}[${PURPLE}FAULT${BLUE}]${BLK} ${messsage}" >&2
         ;;
         DEBUG)
-            echo -e "${BLUE}[${PURPLE}DEBUG${BLUE}]${BLK} ${messsage}" >&2
+            if [[ -n "${MDS_DEBUG}" ]]
+            then
+                echo -e "${BLUE}[${PURPLE}DEBUG${BLUE}]${BLK} ${messsage}" 2>> "${MDS_DEBUG}" >&2
+            else
+                echo -e "${BLUE}[${PURPLE}DEBUG${BLUE}]${BLK} ${messsage}" >&2
+            fi
         ;;
         SUCCESS)
             echo -e "${BLUE}[${GREEN}SUCCESS${BLUE}]${BLK} ${messsage}" >&2
@@ -89,11 +122,17 @@ function cout() {
     esac
 }
 
+export_colors
+
 if [[ "${REAL_SHELL}" == "zsh" ]]
 then
     export cout
     export print_stacktrace
+    export export_colors
+    export unset_colors
 else
     export -f cout
     export -f print_stacktrace
+    export -f export_colors
+    export -f unset_colors
 fi

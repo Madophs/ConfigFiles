@@ -4,15 +4,13 @@ source "${MDS_SCRIPTS}/utils/ascii_menu.sh"
 
 declare -i rev_chuck_size=${1:-50}
 
-mapfile -t lines < <( printf "%s" "$(git log -${rev_chuck_size} --abbrev-commit 2> /dev/null | grep -A 4 'commit' | sed -E '/^( |-)*$/d;s/^ *//g')")
+mapfile -t lines < <( printf "%s" "$(git log -${rev_chuck_size} --abbrev-commit 2> /dev/null | grep -A 4 '^commit [a-z0-9]\+$' | sed -E '/^( |-)*$/d;s/^ *//g')")
 declare -i log_size=${#lines[@]}
 if (( log_size == 0))
 then
     cout fail "Couldn't retrieve revision log"
 fi
 
-#for line in $(git log -${rev_chuck_size} --abbrev-commit | grep -A 4 'commit')
-#for line in "${lines[@]}"
 declare -a commits_menu=()
 declare -g -a commit_hashes=()
 for (( i=0; i<log_size; i+=4 ))
@@ -32,11 +30,11 @@ function modified_files_callback() {
 
 function modified_files_menu() {
     local -a files_menu=( $(git diff-tree --no-commit-id --name-only -r ${hash_selected}) )
-    ascii_menu_create "Git log <${menu_item_selected}>" files_menu "(V)iew (Q)uit" modified_files_callback
+    ascii_menu_create files_menu files_menu "Git log <${menu_item_selected}>" "(V)iew (Q)uit" modified_files_callback
 }
 
 function gldiff_callback() {
-    local hash_selected=${commit_hashes[${index_ref}]}
+    local hash_selected="${menu_item_key_selected}"
     case ${key} in
         [vV]|"")
             modified_files_menu
@@ -44,4 +42,4 @@ function gldiff_callback() {
     esac
 }
 
-ascii_menu_create "Git log" commits_menu "(V)iew (Q)uit" gldiff_callback
+ascii_menu_create commits_menu commit_hashes "Git log" "(V)iew (Q)uit" gldiff_callback

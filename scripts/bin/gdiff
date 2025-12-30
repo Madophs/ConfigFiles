@@ -8,6 +8,7 @@ function get_nonstaged_files() {
     declare -i git_status_lines=$(echo "${git_status}" | wc -l)
     local not_staged_files=$(echo "${git_status}" | grep -m 1 -A${git_status_lines} 'not staged for commit')
     modified_files=( $(echo "${not_staged_files}" | grep 'modified:' | sed 's|modified:||g;s|^[[:space:]]\+||g') )
+    menu_obj=( "${modified_files[@]}" )
 }
 
 function gdiff_callback() {
@@ -42,7 +43,7 @@ get_nonstaged_files modified_files
 
 if [[ ${#modified_files[@]} != 0 ]]
 then
-    ascii_menu_create "Changes not staged for commit:" modified_files "(A)dd (D)iff (E)dit (U)pdate (Q)uit" gdiff_callback
+    ascii_menu_create modified_files modified_files "Changes not staged for commit:" "(A)dd (D)iff (E)dit (U)pdate (Q)uit" gdiff_callback
 else
     cout info "No unstaged files"
 fi
