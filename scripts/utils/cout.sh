@@ -12,7 +12,7 @@ function export_colors() {
     export BLUE='\e[1;34m'
     export BLUE_DARK='\e[0;34m'
     export PURPLE='\e[1;35m'
-    export PURPLE_DARK='\e[0;35m'
+    export PINK='\e[0;35m'
     export CYAN='\e[1;36m'
     export CYAN_DARK='\e[0;36m'
     export WHITE='\e[1;37m'
@@ -34,7 +34,7 @@ function unset_colors() {
     unset BLUE
     unset BLUE_DARK
     unset PURPLE
-    unset PURPLE_DARK
+    unset PINK
     unset CYAN
     unset CYAN_DARK
     unset WHITE
@@ -105,9 +105,9 @@ function cout() {
         DEBUG)
             if [[ -n "${MDS_DEBUG}" ]]
             then
-                echo -e "${BLUE}[${PURPLE}DEBUG${BLUE}]${BLK} ${messsage}" 2>> "${MDS_DEBUG}" >&2
+                echo -e "${BLUE}[${PURPLE}DEBUG${BLUE}]${BLK} «${PURPLE_DARK}$(date '+%T %d-%m-%Y')${BLK}» ${messsage}" 2>> "${MDS_DEBUG}" >&2
             else
-                echo -e "${BLUE}[${PURPLE}DEBUG${BLUE}]${BLK} ${messsage}" >&2
+                echo -e "${BLUE}[${PURPLE}DEBUG${BLUE}]${BLK} «${PURPLE_DARK}$(date '+%T %d-%m-%Y')${BLK}» ${messsage}" >&2
             fi
         ;;
         SUCCESS)

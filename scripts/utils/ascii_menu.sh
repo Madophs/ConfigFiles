@@ -46,6 +46,7 @@ function ascii_menu_filter() {
     done
 
     filter_word_prev="${filter_word}"
+    menu_index=0
 }
 
 function ascii_menu_show() {

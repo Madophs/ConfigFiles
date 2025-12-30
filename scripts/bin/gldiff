@@ -23,7 +23,7 @@ done
 function modified_files_callback() {
     case ${key} in
         [vV]|"")
-            git difftool --tool=nvimdiff -y ${hash_selected}~ ${hash_selected} ${menu_item_selected}
+            git difftool --tool=nvimdiff -y ${hash_selected}~ ${hash_selected} "${menu_item_key_selected}"
             ;;
     esac
 }
