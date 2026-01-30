@@ -7,6 +7,7 @@ DISCORD_API_LINK=https://discord.com/api/download\?platform\=linux\&format\=deb
 function discord_get_link() {
     curl "${DISCORD_API_LINK}" 2> /dev/null | grep -o -e 'https[^>]*\.deb' | head -n 1
 }
+
 function discord_install() {
     if [[ $(is_package_installed discord) == YES ]]
     then
@@ -14,7 +15,7 @@ function discord_install() {
         return 0
     else
         mkdir -p /tmp/discord
-        download $(discord_get_link) /tmp/discord
+        download "$(discord_get_link)" "/tmp/discord"
         install_package "$(ls /tmp/discord/discord*deb | head -n 1)"
     fi
     set_apt_hook discord --update
@@ -36,7 +37,7 @@ function discord_update() {
     if [[ "${latest_version}" != "${current_version}" ]]
     then
         mkdir -p /tmp/discord
-        download $(discord_get_link) /tmp/discord
+        download "$(discord_get_link)" "/tmp/discord"
         install_package "$(ls /tmp/discord/discord*deb | head -n 1)"
         cout info "Discord updated..."
     fi

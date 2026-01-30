@@ -282,35 +282,9 @@ function getWebsiteDOM() {
 
 function download() {
     missing_argument_validation 2 $1 $2
-    local download_link=$1
-    local download_dir=$2
-    mkdir -p ${download_dir}
-
-    local file_to_download=$(echo ${download_link} | awk -F '/' '{print $NF}')
-    if [[ -f ${download_dir}/${file_to_download} ]]
-    then
-        cout info "File ${file_to_download} already exists."
-        cout warning "Download again? (y/n)"
-        read -n 1 opt
-        if [[ ${opt} != "y" && ${opt} != "Y" ]]
-        then
-            cout info "Skipping download step."
-            return
-        else
-            file_without_extension="$(get_filename_without_extension ${file_to_download})"
-            file_extension="$(get_file_extension ${file_to_download})"
-            renamed_file="${file_without_extension}_$(date +'%s').${file_extension}"
-            cout warning "Renaming file to ${renamed_file}"
-            mv ${download_dir}/${file_to_download} ${download_dir}/${renamed_file}
-        fi
-    fi
-
-    install_package_if_missing axel
-    axel --alternate --output=${download_dir} ${download_link}
-    if [[ $(any_error $?) == "YES" ]]
-    then
-        cout error "Failed to download ${download_link}"
-    fi
+    local download_link=${1}
+    local download_dir=${2}
+    wget -qq --no-clobber "${download_link}" -P "${download_dir}" || cout error "Failed to download: ${download_link}"
 }
 
 function clean_file() {
