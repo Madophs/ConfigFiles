@@ -25,12 +25,15 @@ function modified_files_callback() {
         [vV]|"")
             git difftool --tool=nvimdiff -y ${hash_selected}~ ${hash_selected} "${menu_item_key_selected}"
             ;;
+        [oO])
+            nvim -R "${menu_item_key_selected}"
+            ;;
     esac
 }
 
 function modified_files_menu() {
     local -a files_menu=( $(git diff-tree --no-commit-id --name-only -r ${hash_selected}) )
-    ascii_menu_create files_menu files_menu "Git log <${menu_item_selected}>" "(V)iew (Q)uit" modified_files_callback
+    ascii_menu_create files_menu files_menu "Git log <${menu_item_selected}>" "(V)iew (O)pen (Q)uit" modified_files_callback
 }
 
 function gldiff_callback() {
