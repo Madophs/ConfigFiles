@@ -53,12 +53,6 @@ function gdiff_callback() {
 
     get_nonstaged_files menu_ref menu_keys_ref
 
-    if (( ${#menu_ref[@]} == 0 ))
-    then
-        cout info "No more items to check"
-        exit 0
-    fi
-
     if (( menu_index >= ${#menu_ref[@]} ))
     then
         menu_index=0
