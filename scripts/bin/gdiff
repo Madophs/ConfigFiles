@@ -2,29 +2,56 @@
 
 source "${MDS_SCRIPTS}/utils/ascii_menu.sh"
 
+git status -u &> /dev/null || cout fail "Not a git repository"
+
 function get_nonstaged_files() {
-    local -n non_staged_files_list_ref=${1}
-    local git_status=$(git status -u 2> /dev/null) || cout fail "Not a git repository"
-    declare -i git_status_lines=$(echo "${git_status}" | wc -l)
-    local not_staged_files=$(echo "${git_status}" | grep -m 1 -A${git_status_lines} 'not staged for commit')
-    modified_files=( $(echo "${not_staged_files}" | grep 'modified:' | sed 's|modified:||g;s|^[[:space:]]\+||g') )
-    menu_obj=( "${modified_files[@]}" )
+    local -n untracked_files_menu_ref=${1}
+    local -n untracked_files_keys_ref=${2}
+    local git_status=$(git status -u -s 2> /dev/null | sort -k 2)
+    [[ -z "${git_status}" ]] && cout info "No untracked files available" && exit 0
+
+    mapfile -t untracked_files_menu_ref < <(echo "${git_status}")
+    local action filename item
+    for (( i=0; i<${#untracked_files_menu_ref[@]}; i+=1 ))
+    do
+        item="${untracked_files_menu_ref[${i}]}"
+        action="${item:0:3}"
+        filename="${item##${action}}"
+        [[ "${action}" == "M  " ]] && untracked_files_menu_ref[${i}]="${filename} (${GREEN}Staged${WHITE})"
+        [[ "${action}" == " M " ]] && untracked_files_menu_ref[${i}]="${filename} (${YELLOW}Modified${WHITE})"
+        [[ "${action}" == "MM " ]] && untracked_files_menu_ref[${i}]="${filename} (${GREEN}Hunk Staged${WHITE})"
+        [[ "${action}" == "A  " ]] && untracked_files_menu_ref[${i}]="${filename} (${GREEN}Added${WHITE})"
+        [[ "${action}" == "?? " ]] && untracked_files_menu_ref[${i}]="${filename} (${CYAN}New${WHITE})"
+        [[ "${action}" == "D  " ]] && untracked_files_menu_ref[${i}]="${filename} (${PURPLE}Deleted${WHITE})"
+        [[ "${action}" == " D " ]] && untracked_files_menu_ref[${i}]="${filename} (${RED}Delete${WHITE})"
+
+        untracked_files_keys_ref[${i}]="${filename}"
+    done
 }
 
 function gdiff_callback() {
     case ${key} in
         [dD]|"")
-            nvim "${menu_item_selected}" -c Gdiffsplit
+            nvim "${menu_item_key_selected}" -c Gdiffsplit
             ;;
         [aA])
-            git add "${menu_item_selected}"
+            git add "${menu_item_key_selected}"
+            ;;
+        [uU])
+            git reset "${menu_item_key_selected}"
+            ;;
+        [cC])
+            git commit
+            ;;
+        [rR])
+            git checkout HEAD "${menu_item_key_selected}"
             ;;
         [eE])
-            ${EDITOR} "${menu_item_selected}"
+            ${EDITOR} "${menu_item_key_selected}"
             ;;
     esac
 
-    get_nonstaged_files menu_ref
+    get_nonstaged_files menu_ref menu_keys_ref
 
     if (( ${#menu_ref[@]} == 0 ))
     then
@@ -38,12 +65,7 @@ function gdiff_callback() {
     fi
 }
 
-declare -a modified_files=()
-get_nonstaged_files modified_files
-
-if [[ ${#modified_files[@]} != 0 ]]
-then
-    ascii_menu_create modified_files modified_files "Changes not staged for commit:" "(A)dd (D)iff (E)dit (U)pdate (Q)uit" gdiff_callback
-else
-    cout info "No unstaged files"
-fi
+declare -a untracked_files_menu=()
+declare -a untracked_files_keys=()
+get_nonstaged_files untracked_files_menu untracked_files_keys
+ascii_menu_create untracked_files_menu untracked_files_keys "Changes not staged for commit:" "(A)dd (D)iff (R)estore (C)ommit (E)dit (U)nstage (Q)uit" gdiff_callback
