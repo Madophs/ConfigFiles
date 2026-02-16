@@ -43,6 +43,10 @@ function cdm() {
     mdscode -g -u "${problem_url}"
 }
 
+function sfind() {
+    find . -iname "*${1}*"
+}
+
 function cl() {
     if [[ "${1}" != "" ]]
     then
