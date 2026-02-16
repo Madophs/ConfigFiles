@@ -3,11 +3,12 @@
 source "${MDS_SCRIPTS}/utils/ascii_menu.sh"
 
 git status -u &> /dev/null || cout fail "Not a git repository"
+GIT_BASE_DIR="$(git rev-parse --show-toplevel 2> /dev/null)"
 
 function get_nonstaged_files() {
     local -n untracked_files_menu_ref=${1}
     local -n untracked_files_keys_ref=${2}
-    local git_status=$(git status -u -s 2> /dev/null | sort -k 2)
+    local git_status=$(git status -u -s -z | xargs -L 1 -0 echo 2> /dev/null | sort -k 2)
     [[ -z "${git_status}" ]] && cout info "No untracked files available" && exit 0
 
     mapfile -t untracked_files_menu_ref < <(echo "${git_status}")
@@ -30,24 +31,28 @@ function get_nonstaged_files() {
 }
 
 function gdiff_callback() {
+    local git_file="${GIT_BASE_DIR}/${menu_item_key_selected}"
     case ${key} in
-        [dD]|"")
-            nvim "${menu_item_key_selected}" -c Gdiffsplit
+        [vV]|"")
+            nvim "${git_file}" -c Gdiffsplit
             ;;
         [aA])
-            git add "${menu_item_key_selected}"
+            git add "${git_file}"
             ;;
         [uU])
-            git reset "${menu_item_key_selected}"
+            git reset "${git_file}"
             ;;
         [cC])
             git commit
             ;;
         [rR])
-            git checkout HEAD "${menu_item_key_selected}"
+            git checkout HEAD "${git_file}"
+            ;;
+        [dD])
+            rm -f "${git_file}"
             ;;
         [eE])
-            ${EDITOR} "${menu_item_key_selected}"
+            ${EDITOR} "${git_file}"
             ;;
     esac
 
@@ -62,4 +67,4 @@ function gdiff_callback() {
 declare -a untracked_files_menu=()
 declare -a untracked_files_keys=()
 get_nonstaged_files untracked_files_menu untracked_files_keys
-ascii_menu_create untracked_files_menu untracked_files_keys "Changes not staged for commit:" "(A)dd (D)iff (R)estore (C)ommit (E)dit (U)nstage (Q)uit" gdiff_callback
+ascii_menu_create untracked_files_menu untracked_files_keys "Changes not staged for commit:" "(A)dd (V)iew (R)estore (C)ommit (E)dit (U)nstage (D)elete (Q)uit" gdiff_callback
