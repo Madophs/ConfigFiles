@@ -127,7 +127,7 @@ function ascii_menu_create() {
     ascii_menu_set_trap
     local -n menu_ref=${1}
     local -n menu_keys_ref=${2}
-    local -a menu_keys_obj=( "${menu_keys_ref[@]}" )
+    local -a menu_keys_obj=()
     local -a menu_obj=()
     local title="${3}"
     local menu_footer=${4}
@@ -144,7 +144,8 @@ function ascii_menu_create() {
             cout error "No menu items provided"
         fi
 
-        local menu_obj=( "${menu_ref[@]}" )
+        menu_obj=( "${menu_ref[@]}" )
+        menu_keys_obj=( "${menu_keys_ref[@]}" )
 
         printf "${TOPLEFT}${NOCURSOR}${title}\n"
         ascii_menu_filter
