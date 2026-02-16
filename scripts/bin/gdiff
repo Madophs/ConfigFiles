@@ -12,19 +12,20 @@ function get_nonstaged_files() {
     [[ -z "${git_status}" ]] && cout info "No untracked files available" && exit 0
 
     mapfile -t untracked_files_menu_ref < <(echo "${git_status}")
-    local action filename item
+    local status filename item
     for (( i=0; i<${#untracked_files_menu_ref[@]}; i+=1 ))
     do
         item="${untracked_files_menu_ref[${i}]}"
-        action="${item:0:3}"
-        filename="${item##${action}}"
-        [[ "${action}" == "M  " ]] && untracked_files_menu_ref[${i}]="${filename} (${GREEN}Staged${WHITE})"
-        [[ "${action}" == " M " ]] && untracked_files_menu_ref[${i}]="${filename} (${YELLOW}Modified${WHITE})"
-        [[ "${action}" == "MM " ]] && untracked_files_menu_ref[${i}]="${filename} (${GREEN}Hunk Staged${WHITE})"
-        [[ "${action}" == "A  " ]] && untracked_files_menu_ref[${i}]="${filename} (${GREEN}Added${WHITE})"
-        [[ "${action}" == "?? " ]] && untracked_files_menu_ref[${i}]="${filename} (${CYAN}New${WHITE})"
-        [[ "${action}" == "D  " ]] && untracked_files_menu_ref[${i}]="${filename} (${PURPLE}Deleted${WHITE})"
-        [[ "${action}" == " D " ]] && untracked_files_menu_ref[${i}]="${filename} (${RED}Delete${WHITE})"
+        status="${item:0:3}"
+        filename="${item##${status}}"
+        [[ "${status}" == "M  " ]] && untracked_files_menu_ref[${i}]="${filename} (${GREEN}Staged${WHITE})"
+        [[ "${status}" == " M " ]] && untracked_files_menu_ref[${i}]="${filename} (${YELLOW}Modified${WHITE})"
+        [[ "${status}" == "MM " ]] && untracked_files_menu_ref[${i}]="${filename} (${GREEN}Staged Hunks${WHITE})"
+        [[ "${status}" == "AM " ]] && untracked_files_menu_ref[${i}]="${filename} (${YELLOW}Added With Unstaged Mofications${WHITE})"
+        [[ "${status}" == "A  " ]] && untracked_files_menu_ref[${i}]="${filename} (${GREEN}Added${WHITE})"
+        [[ "${status}" == "?? " ]] && untracked_files_menu_ref[${i}]="${filename} (${CYAN}New${WHITE})"
+        [[ "${status}" == "D  " ]] && untracked_files_menu_ref[${i}]="${filename} (${PURPLE}Deleted${WHITE})"
+        [[ "${status}" == " D " ]] && untracked_files_menu_ref[${i}]="${filename} (${RED}Delete${WHITE})"
 
         untracked_files_keys_ref[${i}]="${filename}"
     done
