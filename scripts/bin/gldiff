@@ -2,6 +2,9 @@
 
 source "${MDS_SCRIPTS}/utils/ascii_menu.sh"
 
+GIT_BASE_DIR="$(git rev-parse --show-toplevel 2> /dev/null)"
+[[ -z "${GIT_BASE_DIR}" ]] && cout fail "Not a git repository"
+
 declare -i rev_chuck_size=${1:-50}
 
 mapfile -t lines < <( printf "%s" "$(git log -${rev_chuck_size} --abbrev-commit 2> /dev/null | grep -A 4 '^commit [a-z0-9]\+$' | sed -E '/^( |-)*$/d;s/^ *//g')")
@@ -23,10 +26,10 @@ done
 function modified_files_callback() {
     case ${key} in
         [vV]|"")
-            git difftool --tool=nvimdiff -y ${hash_selected}~ ${hash_selected} "${menu_item_key_selected}"
+            git difftool --tool=nvimdiff -y ${hash_selected}~ ${hash_selected} "${GIT_BASE_DIR}/${menu_item_key_selected}"
             ;;
         [oO])
-            nvim -R "${menu_item_key_selected}"
+            nvim -R "${GIT_BASE_DIR}/${menu_item_key_selected}"
             ;;
     esac
 }
