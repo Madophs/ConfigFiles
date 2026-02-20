@@ -7,16 +7,9 @@ declare -g IS_TRAPED_SETUP=N
 function ascii_menu_set_trap() {
     if [[ "${IS_TRAPED_SETUP}" == N ]]
     then
-        trap 'printf "$NORMAL_OP"' EXIT                  ## return terminal to normal state (reset cursor's visibility and position) on exit
+        trap 'printf "$NORMAL_OP"' EXIT # return terminal to normal state (reset cursor's visibility and position) on exit
     fi
     IS_TRAPED_SETUP=Y
-}
-
-function ascii_menu_print_options() {
-    if [[ -n "${1}" ]]
-    then
-        printf "\n${1}\n"
-    fi
 }
 
 # @brief filter menu items
@@ -70,7 +63,7 @@ function ascii_menu_show() {
 
     menu_item_index_end=$(( menu_item_index_start + menu_scroll_size ))
 
-    # Print all possible items above index in case we're near end of the list
+    # Print all possible items above index in case we're near the list's end (bottom)
     (( menu_item_index_end > menu_size )) && menu_item_index_start=$(( menu_size - menu_scroll_size ))
 
     for (( i=menu_item_index_start; i<menu_item_index_end && i<menu_size; i+=1 ))
@@ -155,8 +148,9 @@ function ascii_menu_create() {
 
         printf "${TOPLEFT}${NOCURSOR}${title}\n"
         ascii_menu_filter
+        printf "${TOPLEFT}${NOCURSOR}${title}\n"
         ascii_menu_show menu_index
-        ascii_menu_print_options "${menu_footer}"
+        printf "${menu_footer}\n"
         [[ -n "${filter_word}" ]] && printf "Current filter: ${filter_word}\n"
         ascii_menu_handle_key menu_index ${callback_input}
     done
