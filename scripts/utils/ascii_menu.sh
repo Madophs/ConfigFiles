@@ -91,12 +91,18 @@ function ascii_menu_handle_key() {
     read -s -N 1 -t 0.0001 k3
     key+=${k1}${k2}${k3}
     case "${key}" in
-        $'\e[A'|[kK]) # Go Up
+        $'\e[A'|k) # Go Up
             (( (index_ref - 1) == -1 )) && index_ref=$(( menu_size ))
             index_ref=$(( (index_ref - 1) % menu_size ))
             ;;
-        $'\e[B'|[jJ]) # Go Down
+        K) # # Go to menu's first item
+            index_ref=0
+            ;;
+        $'\e[B'|j) # Go Down
             index_ref=$(( (index_ref + 1) % menu_size ))
+            ;;
+        J) # All way to last item
+            index_ref=$(( menu_size - 1 ))
             ;;
         '/')
             read -e -i "${filter_word}" -p "Filter:" filter_word
@@ -146,7 +152,6 @@ function ascii_menu_create() {
             menu_ref_copy=( "${menu_ref[@]}" )
         fi
 
-        printf "${TOPLEFT}${NOCURSOR}${title}\n"
         ascii_menu_filter
         printf "${TOPLEFT}${NOCURSOR}${title}\n"
         ascii_menu_show menu_index
