@@ -2,6 +2,10 @@
 
 source "${MDS_SCRIPTS}/utils/cout.sh"
 
+stty -echo # Disable echoing (typing output)
+declare -g -i is_repaint_needed=1
+declare -g -i menu_item_index_start_prev=-1
+declare -g -i menu_item_index_end_prev=-1
 declare -g IS_TRAPED_SETUP=N
 
 function ascii_menu_set_trap() {
@@ -16,6 +20,7 @@ function ascii_menu_set_trap() {
 # To activate press '/' and input the filter
 function ascii_menu_filter() {
     [[ "${filter_word}" == "${filter_word_prev}" ]] && return
+    clear
 
     menu_obj=() menu_keys_obj=()
     local -i menu_size="${#menu_ref[@]}"
@@ -40,11 +45,11 @@ function ascii_menu_filter() {
 
     filter_word_prev="${filter_word}"
     menu_index=0
+    menu_item_index_start_prev=-1
+    menu_item_index_end_prev=-1
 }
 
 function ascii_menu_show() {
-    local -n menu_index_ref=${1}
-    shift
     local -i menu_size=${#menu_obj[@]}
     local -i window_size=$(( LINES - 4 )) # tty height
     local -i menu_scroll_size=menu_size
@@ -59,23 +64,50 @@ function ascii_menu_show() {
     local -i menu_scroll_slice=$(( menu_scroll_size / 2 ))
 
     # update start index if position is beyond scroll slice (upper bound)
-    (( menu_index_ref - menu_scroll_slice > 0 )) && menu_item_index_start=$(( menu_index_ref - menu_scroll_slice ))
+    (( menu_index - menu_scroll_slice > 0 )) && menu_item_index_start=$(( menu_index - menu_scroll_slice ))
 
     menu_item_index_end=$(( menu_item_index_start + menu_scroll_size ))
 
     # Print all possible items above index in case we're near the list's end (bottom)
     (( menu_item_index_end > menu_size )) && menu_item_index_start=$(( menu_size - menu_scroll_size ))
 
-    for (( i=menu_item_index_start; i<menu_item_index_end && i<menu_size; i+=1 ))
-    do
-        if (( i == menu_index_ref ))
-        then
-            printf -v menu_line "${BLK}%4s ${UNDERLINE}%s${BLK}\n" "$((i+1))." "${menu_obj[${i}]}"
-        else
-            printf -v menu_line "${BLK}%4s %s${BLK}\n" "$((i+1))." "${menu_obj[${i}]}"
-        fi
-        printf "${menu_line}"
-    done
+    # if index limits have changed implies that we are scrolling, then we have to repaint every menu item
+    if (( menu_item_index_start_prev != menu_item_index_start || \
+          menu_item_index_end_prev != menu_item_index_end ))
+    then
+        is_repaint_needed=1
+    else
+        is_repaint_needed=0
+    fi
+
+    menu_item_index_start_prev=menu_item_index_start
+    menu_item_index_end_prev=menu_item_index_end
+
+    local -i padding=0 # Useful to erase item text leftovers
+    local -i line_number=1 # Terminal's canvas line number
+    if (( is_repaint_needed == 1 ))
+    then
+        for (( i=menu_item_index_start; i<menu_item_index_end && i<menu_size; i+=1 ))
+        do
+            padding=$(( COLUMNS - ${#menu_obj[${i}]} - 5))
+            if (( i == menu_index ))
+            then
+                printf "\e[$(( line_number+=1 ));0H${BLK}%4s ${UNDERLINE}${menu_obj[${i}]}${BLK} %${padding}s" "$((i+1))."
+            else
+                printf "\e[$(( line_number+=1 ));0H${BLK}%4s ${menu_obj[${i}]}${BLK} %${padding}s" "$((i+1))."
+            fi
+        done
+    else
+        padding=$(( COLUMNS - ${#menu_obj[${menu_index_prev}]} - 5))
+        printf "\e[$(( menu_index_prev + 2 ));0H${BLK}%4s ${menu_obj[${menu_index_prev}]}${BLK} %${padding}s" "$((menu_index_prev+1))."
+        padding=$(( COLUMNS - ${#menu_obj[${menu_index}]} - 5))
+        printf "\e[$(( menu_index + 2 ));0H${BLK}%4s ${UNDERLINE}${menu_obj[${menu_index}]}${BLK} %${padding}s" "$((menu_index+1))."
+        line_number+=$(( menu_scroll_size ))
+    fi
+
+    # Move to next line to print footer items
+    line_number+=1
+    printf "\e[${line_number};0H"
 }
 
 function ascii_menu_handle_key() {
@@ -105,7 +137,9 @@ function ascii_menu_handle_key() {
             index_ref=$(( menu_size - 1 ))
             ;;
         '/')
+            stty echo
             read -e -i "${filter_word}" -p "Filter:" filter_word
+            stty -echo
             ;;
         q|Q)
             clear
@@ -134,10 +168,10 @@ function ascii_menu_create() {
     local callback_input=${5}
     local filter_word=""
     local filter_word_prev="${filter_word}"
-    local -i menu_index=0
+    local -i menu_index=0 menu_index_prev=0
+    clear
     while (( $? == 0 ))
     do
-        clear
 
         if (( ${#menu_ref[@]} == 0 ))
         then
@@ -154,9 +188,11 @@ function ascii_menu_create() {
 
         ascii_menu_filter
         printf "${TOPLEFT}${NOCURSOR}${title}\n"
-        ascii_menu_show menu_index
+        ascii_menu_show
         printf "${menu_footer}\n"
         [[ -n "${filter_word}" ]] && printf "Current filter: ${filter_word}\n"
+
+        menu_index_prev=menu_index
         ascii_menu_handle_key menu_index ${callback_input}
     done
     return 0 #Ignore #?
