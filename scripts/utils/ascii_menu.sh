@@ -3,9 +3,7 @@
 source "${MDS_SCRIPTS}/utils/cout.sh"
 
 stty -echo # Disable echoing (typing output)
-declare -g -i is_repaint_needed=1
-declare -g -i menu_item_index_start_prev=-1
-declare -g -i menu_item_index_end_prev=-1
+declare -g -i menu_item_start_index_prev=-1
 declare -g IS_TRAPED_SETUP=N
 
 function ascii_menu_set_trap() {
@@ -44,8 +42,7 @@ function ascii_menu_filter() {
 
     filter_word_prev="${filter_word}"
     menu_index=0
-    menu_item_index_start_prev=-1
-    menu_item_index_end_prev=-1
+    menu_item_start_index_prev=-1
 }
 
 function ascii_menu_show() {
@@ -56,33 +53,25 @@ function ascii_menu_show() {
     # If items outsize scroll view, set scroll view to shell height (window_size)
     (( menu_scroll_size > window_size )) && menu_scroll_size=window_size
 
-    local -i menu_item_index_start=0
-    local -i menu_item_index_end=menu_size
+    local -i menu_item_start_index=0
+    local -i menu_item_end_index=menu_size
 
     # upper/lower item padding
     local -i menu_scroll_slice=$(( menu_scroll_size / 2 ))
 
     # update start index if position is beyond scroll slice (upper bound)
-    (( menu_index - menu_scroll_slice > 0 )) && menu_item_index_start=$(( menu_index - menu_scroll_slice ))
+    (( menu_index - menu_scroll_slice > 0 )) && menu_item_start_index=$(( menu_index - menu_scroll_slice ))
 
-    menu_item_index_end=$(( menu_item_index_start + menu_scroll_size ))
+    menu_item_end_index=$(( menu_item_start_index + menu_scroll_size ))
 
     # Print all possible items above index in case we're near the list's end (bottom)
-    (( menu_item_index_end > menu_size )) && menu_item_index_start=$(( menu_size - menu_scroll_size ))
-
-    # if index limits have changed implies that we are scrolling, then we have to repaint every menu item
-    if (( menu_item_index_start_prev != menu_item_index_start ))
-    then
-        is_repaint_needed=1
-    else
-        is_repaint_needed=0
-    fi
-    menu_item_index_start_prev=menu_item_index_start
+    (( menu_item_end_index > menu_size )) && menu_item_start_index=$(( menu_size - menu_scroll_size ))
 
     local -i line_number=0
-    if (( is_repaint_needed == 1 ))
+    # if start index has changed implies that we are scrolling, then we have to repaint every menu item
+    if (( menu_item_start_index_prev != menu_item_start_index ))
     then
-        for (( i=menu_item_index_start; i<menu_item_index_end && i<menu_size; i+=1 ))
+        for (( i=menu_item_start_index; i<menu_item_end_index && i<menu_size; i+=1 ))
         do
             if (( i == menu_index ))
             then
@@ -92,12 +81,13 @@ function ascii_menu_show() {
             fi
         done
     else
-        line_number=$(( (menu_index_prev + 2 - menu_item_index_start) % (menu_scroll_size + 2)))
+        line_number=$(( (menu_index_prev + 2 - menu_item_start_index) % (menu_scroll_size + 2)))
         printf "\e[${line_number};0H${CLEAR_LINE}${BLK}%5s ${menu_obj[${menu_index_prev}]}${BLK}" "$((menu_index_prev+1))."
 
-        line_number=$(( (menu_index + 2 - menu_item_index_start) % (menu_scroll_size + 2)))
+        line_number=$(( (menu_index + 2 - menu_item_start_index) % (menu_scroll_size + 2)))
         printf "\e[${line_number};0H${CLEAR_LINE}${BLK}%5s ${UNDERLINE}${menu_obj[${menu_index}]}${BLK}\n" "$((menu_index+1))."
     fi
+    menu_item_start_index_prev=menu_item_start_index
 
     # Move line to footer's position
     line_number=$(( menu_scroll_size + 2 ))
@@ -105,8 +95,7 @@ function ascii_menu_show() {
 }
 
 function ascii_menu_handle_key() {
-    local -n index_ref=${1}
-    local callback_func=${2}
+    local callback_func=${1}
     local -i menu_size=${#menu_obj[@]}
 
     # Read a single character
@@ -118,17 +107,17 @@ function ascii_menu_handle_key() {
     key+=${k1}${k2}${k3}
     case "${key}" in
         $'\e[A'|k) # Go Up
-            (( (index_ref - 1) == -1 )) && index_ref=$(( menu_size ))
-            index_ref=$(( (index_ref - 1) % menu_size ))
+            (( (menu_index - 1) == -1 )) && menu_index=$(( menu_size ))
+            menu_index=$(( (menu_index - 1) % menu_size ))
             ;;
         $'\e[H'|K) # Go to menu's first item
-            index_ref=0
+            menu_index=0
             ;;
         $'\e[B'|j) # Go Down
-            index_ref=$(( (index_ref + 1) % menu_size ))
+            menu_index=$(( (menu_index + 1) % menu_size ))
             ;;
-        $'\e[F'|J) # All way to last item
-            index_ref=$(( menu_size - 1 ))
+        $'\e[F'|J) # Go to menu's last item
+            menu_index=$(( menu_size - 1 ))
             ;;
         $'\e[D'|$'\e[C') # Prev/Next page (left/right arrows)
             local -i window_size=$(( LINES - 4 )) # tty height
@@ -138,10 +127,10 @@ function ascii_menu_handle_key() {
             (( menu_scroll_size > window_size )) && menu_scroll_size=window_size
             if [[ "${key}" == $'\e[C' ]]
             then
-                index_ref=$(( (index_ref + menu_scroll_size) % menu_size ))
+                menu_index=$(( (menu_index + menu_scroll_size) % menu_size ))
             else
-                (( (index_ref - menu_scroll_size) < 0 )) && index_ref=$(( menu_size + index_ref ))
-                index_ref=$(( (index_ref - menu_scroll_size) % menu_size ))
+                (( (menu_index - menu_scroll_size) < 0 )) && menu_index=$(( menu_size + menu_index ))
+                menu_index=$(( (menu_index - menu_scroll_size) % menu_size ))
             fi
             ;;
         '/')
@@ -153,10 +142,10 @@ function ascii_menu_handle_key() {
             return 1
             ;;
         *)
-            local menu_item_selected="${menu_obj[${index_ref}]}"
-            local menu_item_key_selected="${menu_keys_obj[${index_ref}]}"
+            local menu_item_selected="${menu_obj[${menu_index}]}"
+            local menu_item_key_selected="${menu_keys_obj[${menu_index}]}"
             [[ -n "${callback_func}" ]] && ${callback_func}
-            menu_item_index_start_prev=-1 # repaint in case items changed
+            menu_item_start_index_prev=-1 # repaint in case items changed
             ;;
     esac
     return $?
@@ -189,8 +178,8 @@ function ascii_menu_create() {
         then
             menu_obj=( "${menu_ref[@]}" )
             menu_keys_obj=( "${menu_keys_ref[@]}" )
-            filter_word_prev=""
             menu_ref_copy=( "${menu_ref[@]}" )
+            filter_word_prev=""
         fi
 
         ascii_menu_filter
@@ -200,7 +189,7 @@ function ascii_menu_create() {
         printf "${menu_footer}${NOCURSOR}${CLEAR_2BOTTOM_SCREEN}\n"
 
         menu_index_prev=menu_index
-        ascii_menu_handle_key menu_index ${callback_input}
+        ascii_menu_handle_key ${callback_input}
     done
     return 0 #Ignore #?
 }
