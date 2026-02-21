@@ -20,7 +20,6 @@ function ascii_menu_set_trap() {
 # To activate press '/' and input the filter
 function ascii_menu_filter() {
     [[ "${filter_word}" == "${filter_word_prev}" ]] && return
-    clear
 
     menu_obj=() menu_keys_obj=()
     local -i menu_size="${#menu_ref[@]}"
@@ -51,7 +50,7 @@ function ascii_menu_filter() {
 
 function ascii_menu_show() {
     local -i menu_size=${#menu_obj[@]}
-    local -i window_size=$(( LINES - 4 )) # tty height
+    local -i window_size=$(( LINES - 5 )) # tty height
     local -i menu_scroll_size=menu_size
 
     # If items outsize scroll view, set scroll view to shell height (window_size)
@@ -72,41 +71,36 @@ function ascii_menu_show() {
     (( menu_item_index_end > menu_size )) && menu_item_index_start=$(( menu_size - menu_scroll_size ))
 
     # if index limits have changed implies that we are scrolling, then we have to repaint every menu item
-    if (( menu_item_index_start_prev != menu_item_index_start || \
-          menu_item_index_end_prev != menu_item_index_end ))
+    if (( menu_item_index_start_prev != menu_item_index_start ))
     then
         is_repaint_needed=1
     else
         is_repaint_needed=0
     fi
-
     menu_item_index_start_prev=menu_item_index_start
-    menu_item_index_end_prev=menu_item_index_end
 
-    local -i padding=0 # Useful to erase item text leftovers
-    local -i line_number=1 # Terminal's canvas line number
+    local -i line_number=0
     if (( is_repaint_needed == 1 ))
     then
         for (( i=menu_item_index_start; i<menu_item_index_end && i<menu_size; i+=1 ))
         do
-            padding=$(( COLUMNS - ${#menu_obj[${i}]} - 5))
             if (( i == menu_index ))
             then
-                printf "\e[$(( line_number+=1 ));0H${BLK}%4s ${UNDERLINE}${menu_obj[${i}]}${BLK} %${padding}s" "$((i+1))."
+                printf "${CLEAR_LINE}${BLK}%5s ${UNDERLINE}${menu_obj[${i}]}${BLK}\n" "$((i+1))."
             else
-                printf "\e[$(( line_number+=1 ));0H${BLK}%4s ${menu_obj[${i}]}${BLK} %${padding}s" "$((i+1))."
+                printf "${CLEAR_LINE}${BLK}%5s ${menu_obj[${i}]}${BLK}\n" "$((i+1))."
             fi
         done
     else
-        padding=$(( COLUMNS - ${#menu_obj[${menu_index_prev}]} - 5))
-        printf "\e[$(( menu_index_prev + 2 ));0H${BLK}%4s ${menu_obj[${menu_index_prev}]}${BLK} %${padding}s" "$((menu_index_prev+1))."
-        padding=$(( COLUMNS - ${#menu_obj[${menu_index}]} - 5))
-        printf "\e[$(( menu_index + 2 ));0H${BLK}%4s ${UNDERLINE}${menu_obj[${menu_index}]}${BLK} %${padding}s" "$((menu_index+1))."
-        line_number+=$(( menu_scroll_size ))
+        line_number=$(( (menu_index_prev + 2 - menu_item_index_start) % (menu_scroll_size + 2)))
+        printf "\e[${line_number};0H${CLEAR_LINE}${BLK}%5s ${menu_obj[${menu_index_prev}]}${BLK}" "$((menu_index_prev+1))."
+
+        line_number=$(( (menu_index + 2 - menu_item_index_start) % (menu_scroll_size + 2)))
+        printf "\e[${line_number};0H${CLEAR_LINE}${BLK}%5s ${UNDERLINE}${menu_obj[${menu_index}]}${BLK}\n" "$((menu_index+1))."
     fi
 
-    # Move to next line to print footer items
-    line_number+=1
+    # Move line to footer's position
+    line_number=$(( menu_scroll_size + 2 ))
     printf "\e[${line_number};0H"
 }
 
@@ -127,28 +121,42 @@ function ascii_menu_handle_key() {
             (( (index_ref - 1) == -1 )) && index_ref=$(( menu_size ))
             index_ref=$(( (index_ref - 1) % menu_size ))
             ;;
-        K) # # Go to menu's first item
+        $'\e[H'|K) # Go to menu's first item
             index_ref=0
             ;;
         $'\e[B'|j) # Go Down
             index_ref=$(( (index_ref + 1) % menu_size ))
             ;;
-        J) # All way to last item
+        $'\e[F'|J) # All way to last item
             index_ref=$(( menu_size - 1 ))
+            ;;
+        $'\e[D'|$'\e[C') # Prev/Next page (left/right arrows)
+            local -i window_size=$(( LINES - 4 )) # tty height
+            local -i menu_scroll_size=menu_size
+
+            # If items outsize scroll view, set scroll view to shell height (window_size)
+            (( menu_scroll_size > window_size )) && menu_scroll_size=window_size
+            if [[ "${key}" == $'\e[C' ]]
+            then
+                index_ref=$(( (index_ref + menu_scroll_size) % menu_size ))
+            else
+                (( (index_ref - menu_scroll_size) < 0 )) && index_ref=$(( menu_size + index_ref ))
+                index_ref=$(( (index_ref - menu_scroll_size) % menu_size ))
+            fi
             ;;
         '/')
             stty echo
-            read -e -i "${filter_word}" -p "Filter:" filter_word
+            read -e -i "${filter_word}" -p "Search for:" filter_word
             stty -echo
             ;;
         q|Q)
-            clear
             return 1
             ;;
         *)
             local menu_item_selected="${menu_obj[${index_ref}]}"
             local menu_item_key_selected="${menu_keys_obj[${index_ref}]}"
             [[ -n "${callback_func}" ]] && ${callback_func}
+            menu_item_index_start_prev=-1 # repaint in case items changed
             ;;
     esac
     return $?
@@ -169,7 +177,6 @@ function ascii_menu_create() {
     local filter_word=""
     local filter_word_prev="${filter_word}"
     local -i menu_index=0 menu_index_prev=0
-    clear
     while (( $? == 0 ))
     do
 
@@ -187,10 +194,10 @@ function ascii_menu_create() {
         fi
 
         ascii_menu_filter
-        printf "${TOPLEFT}${NOCURSOR}${title}\n"
+        printf "${TOPLEFT}${CLEAR_LINE}${title}\n"
         ascii_menu_show
-        printf "${menu_footer}\n"
-        [[ -n "${filter_word}" ]] && printf "Current filter: ${filter_word}\n"
+        [[ -n "${filter_word}" ]] && printf "Current filter «${filter_word}»${CLEAR_LINE}\n"
+        printf "${menu_footer}${NOCURSOR}${CLEAR_2BOTTOM_SCREEN}\n"
 
         menu_index_prev=menu_index
         ascii_menu_handle_key menu_index ${callback_input}

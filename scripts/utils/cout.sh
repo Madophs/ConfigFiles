@@ -49,6 +49,10 @@ function unset_colors() {
 TOPLEFT='\e[0;0H'            ## Move cursor to top left corner of window
 NOCURSOR='\e[?25l'           ## Make cursor invisible
 NORMAL_OP='\e[0m\e[?12l\e[?25h'   ## Resume normal operation
+CLEAR_LINE='\e[K'
+CLEAR_SCREEN='\e[2J'
+CLEAR_2BOTTOM_SCREEN='\e[0J'
+CLEAR_2TOP_SCREEN='\e[1J'
 
 function print_stacktrace() {
     for ((i=1; i<=${#funcfiletrace[@]}; i+=1))
