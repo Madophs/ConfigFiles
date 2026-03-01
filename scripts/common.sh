@@ -301,7 +301,7 @@ function set_apt_hook() {
     local apt_hook="/etc/apt/apt.conf.d/05hook-${package_name}"
     sudo touch ${apt_hook}
     sudo truncate -s 0 ${apt_hook}
-    echo 'APT::Update::Post-Invoke {"export MDS_SCRIPTS={{scripts}};export MDS_TRAP_CMD={{trap}};${MDS_SCRIPTS}/third_party/{{package}}.sh {{option}};";};' \
+    echo 'APT::Update::Post-Invoke {"export MDS_HOME=/home/madophs;export MDS_SCRIPTS={{scripts}};export MDS_TRAP_CMD={{trap}};${MDS_SCRIPTS}/third_party/{{package}}.sh {{option}};";};' \
         | sed -e "s|{{package}}|${package_name}|g" -e "s|{{option}}|${option}|g" -e "s|{{scripts}}|${MDS_SCRIPTS}|g" -e "s|{{trap}}|${MDS_TRAP_CMD}|g" \
         | sudo tee -a ${apt_hook} &> /dev/null
 }
@@ -311,6 +311,31 @@ function remove_apt_hook() {
     local package_name="${1}"
     local apt_hook="/etc/apt/apt.conf.d/05hook-${package_name}"
     sudo rm "${apt_hook}"
+}
+
+function add_desktop_app_entry() {
+    missing_argument_validation 1 ${1}
+    cat > "${MDS_HOME}/.local/share/applications/${1}.desktop" << EOF
+[Desktop Entry]
+Exec=${Exec}
+GenericName=${GenericName}
+Icon=${Icon}
+Name=${Name}
+Comment=${Comment}
+NoDisplay=${NoDisplay:-false}
+Path=${Path}
+StartupNotify=${StartupNotify:-true}
+Terminal=${Terminal:-false}
+TerminalOptions=${TerminalOptions}
+Type=${Type:-Application}
+X-KDE-SubstituteUID=${X_KDE_SubstituteUID:-false}
+X-KDE-Username=${X_KDE_Username}
+EOF
+}
+
+function remove_desktop_app_entry() {
+    missing_argument_validation 1 ${1}
+    rm -f "${MDS_HOME}/.local/share/applications/${1}.desktop" &> /dev/null
 }
 
 # map_ref => Hashtable to hold option values

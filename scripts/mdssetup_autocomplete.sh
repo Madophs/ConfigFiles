@@ -51,9 +51,16 @@ _mdssetup() {
         return 0
     fi
 
+    if [[ ${prev} == "gimp" ]]
+    then
+        opts="--install --update --remove"
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+
     if [[ ${cur} == * ]]
     then
-        opts="ACE cuda rust opera vim vifm nvim deps ckb-next alias-completion discord gitkraken"
+        opts="ACE cuda rust opera vim vifm nvim deps ckb-next alias-completion discord gitkraken gimp"
         COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
         return 0
     fi
@@ -61,4 +68,3 @@ _mdssetup() {
 }
 
 complete -F _mdssetup mdssetup
-

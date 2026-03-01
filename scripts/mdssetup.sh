@@ -17,49 +17,53 @@ SUBJECT=$1
 case ${SUBJECT} in
     ACE)
         ${SOURCE_PATH}/ACE.sh
-    ;;
+    	;;
     cuda)
         ${SOURCE_PATH}/cuda.sh
-    ;;
+    	;;
     rust)
         ${SOURCE_PATH}/rust.sh $@
-    ;;
+    	;;
     nvim)
         shift
         ${SOURCE_PATH}/nvim.sh $@
-    ;;
+    	;;
     vim)
         ${SOURCE_PATH}/vim.sh
-    ;;
+    	;;
     vifm)
         shift
         ${SOURCE_PATH}/vifm.sh $@
-    ;;
+    	;;
     opera)
         shift
         ${SOURCE_PATH}/opera.sh $@
-    ;;
+    	;;
     ckb-next)
         ${SOURCE_PATH}/ckb_next.sh
-    ;;
+    	;;
     discord)
         shift
         ${SOURCE_PATH}/discord.sh $@
-    ;;
+    	;;
     gitkraken)
         shift
         ${SOURCE_PATH}/gitkraken.sh $@
-    ;;
+    	;;
+    gimp)
+        shift
+        ${SOURCE_PATH}/gimp.sh $@
+        ;;
     autocomplete)
         sudo ln -s ${MDS_SCRIPTS}/mdssetup_autocomplete.sh /etc/bash_completion.d/mdssetup-prompt
-    ;;
+    	;;
     deps)
         ${SOURCE_PATH}/deps.sh
-    ;;
+    	;;
     alias-completion)
         ${SOURCE_PATH}/alias_completion.sh
-    ;;
+    	;;
     *)
         cout error "Unknown option."
-    ;;
+    	;;
 esac

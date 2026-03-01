@@ -18,6 +18,7 @@ export SHELL_PID
 export MDS_SCRIPTS=${MDS_CONFIG}/scripts
 export MDS_SCRIPTS_BIN=${MDS_CONFIG}/scripts/bin
 export MDS_APPS=${HOME}/Documents/apps
+export MDS_HOME=${HOME}
 export MDS_ASSETS=${GIT_REPOS}/assets
 export MDS_HIDDEN_CONFIGS=${HOME}/.config/mdsconfig
 export MDS_SESSIONS_DIR=${HOME}/.config/mdsconfig/sessions
