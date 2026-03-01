@@ -50,7 +50,10 @@ function gdiff_callback() {
             git checkout HEAD "${git_file}"
             ;;
         [dD])
-            rm -f "${git_file}"
+            stty echo
+            read -n 1 -p $'Delete «\e[1;31m'${git_file}$'\e[0;0m» (y/n)' choice
+            stty -echo
+            [[ "${choice}" =~ [yY] ]] && rm -f "${git_file}"
             ;;
         [eE])
             ${EDITOR} "${git_file}"
