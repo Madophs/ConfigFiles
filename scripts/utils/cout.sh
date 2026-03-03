@@ -48,7 +48,10 @@ function unset_colors() {
 
 TOPLEFT='\e[0;0H'            ## Move cursor to top left corner of window
 NOCURSOR='\e[?25l'           ## Make cursor invisible
+SHOWCURSOR='\e[?25h'           ## Make cursor visible
 NORMAL_OP='\e[0m\e[?12l\e[?25h'   ## Resume normal operation
+SAVE_CURSOR='\e7'
+RESTORE_CURSOR='\e8'
 CLEAR_LINE='\e[K'
 CLEAR_SCREEN='\e[2J'
 CLEAR_2BOTTOM_SCREEN='\e[0J'

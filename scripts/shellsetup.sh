@@ -17,7 +17,8 @@ if [[ ${REAL_SHELL} == 'bash' ]]
 then
     set show-all-if-ambiguous on
     set completion-ignore-case on
-    bind 'TAB:menu-complete'
+    bind -x '"\C-i":mdshcomplete_main'
+    #bind 'TAB:complete'
     #bind '"\e[A": history-search-backward'
     #bind '"\e[B": history-search-forward'
     #bind 'set show-mode-in-prompt on'
