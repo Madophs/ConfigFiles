@@ -197,14 +197,20 @@ if has('nvim')
         map <F7> :call MdsCode("-b -t") <CR> :FloatermToggle <CR>
         map <F8> :call MdsCode("-b -e") <CR>
     endif
+    nnoremap <silent> † :FloatermToggle<CR>
+    tnoremap <silent> † <C-\><C-n>:FloatermToggle<CR>
+    tnoremap <silent> ¬ <C-\><C-n>
+    tnoremap <silent> <M-p> <C-\><C-n>:FloatermPrev<CR>
+    tnoremap <silent> <M-n> <C-\><C-n>:FloatermNext<CR>
     nnoremap <silent> <M-2> :BufferPrevious <CR>
     nnoremap <silent> <M-3> :BufferNext <CR>
     nnoremap <silent> <M-{> <Cmd>BufferMovePrevious<CR>
     nnoremap <silent> <M-}> <Cmd>BufferMoveNext<CR>
-    nnoremap <silent> <M-p> <Cmd>BufferPick<CR>
+    nnoremap <silent> <M-w> <Cmd>BufferPick<CR>
     nnoremap <silent> <M-f> :HopWord<CR>
     nnoremap <silent> <M-q> :HopPattern<CR>
-    nnoremap <silent> <M-w> :HopWordCurrentLine <CR>
+    nnoremap <silent> @sn :HopNodes<CR>
+    "nnoremap <silent> !n :HopPattern<CR>
     omap     <silent> m :<C-U>lua require('tsht').nodes()<CR>
     xnoremap <silent> m :lua require('tsht').nodes()<CR>
     autocmd VimEnter * silent FloatermNew --silent
