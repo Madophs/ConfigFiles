@@ -5,7 +5,7 @@
 declare -g -i SHELL_PID=$(ps -opid $$ | tail -n 1)
 
 # compute base directory
-declare -g REAL_SHELL=$(ps -o command $$ | tail -n 1 | awk '{print $0}' | grep -o -e '^[\/a-z]\+' | awk -F '/' '{print $NF}')
+declare -g REAL_SHELL=$(ps -o command $$ | tail -n 1 | awk '{print $0}' | grep -o -e '^[\/a-z-][/a-z]\+' | awk -F '[/-]' '{print $NF}')
 if [[ ${REAL_SHELL} == zsh ]]
 then
     export MDS_CONFIG=$(cd -P -- "$(dirname -- "$0")" && printf '%s\n' "$(pwd -P)/$(basename -- "$0")" | sed 's/\/mds_config\.sh//g')
@@ -45,6 +45,12 @@ export PATH=${GIT_REPOS}/MdsCode_Bash:${PATH}
 export PATH=${MDS_SCRIPTS_BIN}:${PATH}
 export APPCWD=/tmp/appcwd
 unset SSH_ASKPASS
+
+# Enable the subsequent settings only in interactive sessions
+case $- in
+  *i*) ;;
+    *) return;;
+esac
 
 # Small setup
 source ${MDS_SCRIPTS}/utils/cout.sh

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -l
 
 source "${MDS_SCRIPTS}/common.sh"
 GIMP_DOWNLOADS_URL="https://www.gimp.org/downloads"
@@ -28,31 +28,34 @@ function gimp_update() {
     local latest_version="$(gimp_get_latest_version)"
     [[ "${current_version}" == "${latest_version}" ]] && return
 
+    cout info "About ot install Gimp ${latest_version}"
+
     # Download install gimp
     local download_link="$(gimp_get_download_link)"
     local filename="$(echo "${download_link}" | awk -F '/' '{print $NF}')"
     download "${download_link}" "/tmp/gimp"
-    sudo chmod +x "/tmp/gimp/${filename}"
-    sudo mv "/tmp/gimp/${filename}" "/usr/bin/gimp"
+    chmod +x "/tmp/gimp/${filename}"
+    cp -f "/tmp/gimp/${filename}" "${HOME}/.local/bin/gimp"
     set_apt_hook gimp --update
 
     # Set desktop app entry
-    if [[ ! -f "${MDS_HOME}/Pictures/icons/gimp.svg" ]]
+    if [[ ! -f "${HOME}/Pictures/icons/gimp.svg" ]]
     then
         filename="$(echo "${GIMP_ICON_URL}" | awk -F '/' '{print $NF}')"
         download "${GIMP_ICON_URL}" "/tmp/gimp"
-        sudo mv "/tmp/gimp/${filename}" "${MDS_HOME}/Pictures/icons/gimp.svg"
+        cp "/tmp/gimp/${filename}" "${HOME}/Pictures/icons/gimp.svg"
     fi
 
-    Exec="/usr/bin/gimp"
+    Exec="${HOME}/.local/bin/gimp"
     GenericName="GNU Image Manipulation Program"
-    Icon="${MDS_HOME}/Pictures/icons/gimp.svg"
+    Icon="${HOME}/Pictures/icons/gimp.svg"
     Name="Gimp"
+    Categories="Graphics;"
     add_desktop_app_entry gimp
 }
 
 function gimp_remove() {
-    sudo rm -f "/usr/bin/gimp" &> /dev/null
+    rm -f "~/.local/bin/gimp" &> /dev/null
     remove_apt_hook gimp
     remove_desktop_app_entry
 }

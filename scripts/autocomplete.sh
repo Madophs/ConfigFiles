@@ -5,6 +5,11 @@ then
     bashcompinit
 fi
 
+if [[ -f "/etc/bash_completion" && ${REAL_SHELL} == "bash" ]]
+then
+    source "/etc/bash_completion"
+fi
+
 function load_autocomplete_resource() {
     if [[ -h /etc/bash_completion.d/$1 ]]
     then

@@ -297,13 +297,10 @@ function clean_file() {
 function set_apt_hook() {
     missing_argument_validation 2 "${1}" "${2}"
     local package_name=${1}
-    local option="${2}"
+    local args="${2}"
     local apt_hook="/etc/apt/apt.conf.d/05hook-${package_name}"
     sudo touch ${apt_hook}
-    sudo truncate -s 0 ${apt_hook}
-    echo 'APT::Update::Post-Invoke {"export MDS_HOME=/home/madophs;export MDS_SCRIPTS={{scripts}};export MDS_TRAP_CMD={{trap}};${MDS_SCRIPTS}/third_party/{{package}}.sh {{option}};";};' \
-        | sed -e "s|{{package}}|${package_name}|g" -e "s|{{option}}|${option}|g" -e "s|{{scripts}}|${MDS_SCRIPTS}|g" -e "s|{{trap}}|${MDS_TRAP_CMD}|g" \
-        | sudo tee -a ${apt_hook} &> /dev/null
+    sudo dd of=${apt_hook} <<< "APT::Update::Post-Invoke {\"sudo -u madophs -i ${MDS_SCRIPTS}/third_party/${package_name}.sh ${args};\";};" 2> /dev/null
 }
 
 function remove_apt_hook() {
@@ -328,6 +325,7 @@ StartupNotify=${StartupNotify:-true}
 Terminal=${Terminal:-false}
 TerminalOptions=${TerminalOptions}
 Type=${Type:-Application}
+Categories=${Categories}
 X-KDE-SubstituteUID=${X_KDE_SubstituteUID:-false}
 X-KDE-Username=${X_KDE_Username}
 EOF
