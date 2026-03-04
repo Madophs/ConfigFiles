@@ -1,4 +1,4 @@
-// Keyboard layout for Madophs inspired in English (Macintosh)
+// Keyboard layout for Madophs
 // Place at /usr/share/X11/xkb/symbols
 
 default partial alphanumeric_keys
@@ -9,7 +9,7 @@ xkb_symbols "mds" {
     key.type[group1]="FOUR_LEVEL";
 
     key <LSGT> { [ section,  plusminus,            section,        plusminus ] };
-    key <TLDE> { [   grave, asciitilde,         dead_grave,    Greek_epsilon ] };
+    key <TLDE> { [   grave, asciitilde,         dead_grave,          notsign ] };
     key <AE01> { [       1,     exclam,         exclamdown,        therefore ] };
     key <AE02> { [       2,         at,        Greek_theta,         EuroSign ] };
     key <AE03> { [       3, numbersign,           sterling,            U2039 ] };
@@ -23,9 +23,9 @@ xkb_symbols "mds" {
     key <AE11> { [   minus, underscore,             endash,            U223A ] };
     key <AE12> { [   equal,       plus,           notequal,        plusminus ] };
 
-    key <AD01> { [            q,          Q,          0xff1b,             OE ] };
-    key <AD02> { [            w,          W,      dead_acute,    Greek_SIGMA ] };
-    key <AD03> { [            e,          E,              Up,          U2B9D ] };
+    key <AD01> { [            q,          Q,          0xff1b,          U25CB ] };
+    key <AD02> { [            w,          W,              Up,          U2B9D ] };
+    key <AD03> { [            e,          E,   Greek_epsilon,    Greek_SIGMA ] };
     key <AD04> { [            r,          R,      registered,          U211D ] };
     key <AD05> { [            t,          T,          dagger,       currency ] };
     key <AD06> { [            y,          Y,             yen,     onequarter ] };
@@ -37,22 +37,22 @@ xkb_symbols "mds" {
     key <AD12> { [ bracketright, braceright,           U27E7,          U2998 ] };
     key <BKSL> { [    backslash,        bar,   guillemotleft, guillemotright ] };
 
-    key <AC01> { [          a,          A,         aring,              Aring ] };
-    key <AC02> { [          s,          S,          Left,              U2B9C ] };
-    key <AC03> { [          d,          D,          Down,              U2B9F ] };
-    key <AC04> { [          f,          F,         Right,              U2B9E ] };
+    key <AC01> { [          a,          A,          Left,              U2B9C ] };
+    key <AC02> { [          s,          S,          Down,              U2B9F ] };
+    key <AC03> { [          d,          D,         Right,              U2B9E ] };
+    key <AC04> { [          f,          F,   Cyrillic_ef,        Cyrillic_EF ] };
     key <AC05> { [          g,          G,   Greek_alpha,         Greek_beta ] };
     key <AC06> { [          h,          H,       hstroke,            Hstroke ] };
-    key <AC07> { [          j,          J,         U2206,            onehalf ] };
-    key <AC08> { [          k,          K,       notsign,              THORN ] };
+    key <AC07> { [          j,          J,         U2584,              U2580 ] };
+    key <AC08> { [          k,          K,    dead_acute,              U25CF ] };
     key <AC09> { [          l,          L,   Greek_lamda,        Greek_LAMDA ] };
-    key <AC10> { [  semicolon,      colon,         U2026,              U205D ] };
+    key <AC10> { [  semicolon,      colon,    squareroot,              U205D ] };
     key <AC11> { [ apostrophe,   quotedbl,            ae,                 AE ] };
 
     key <AB01> { [         z,          Z,             Home,            U2768 ] };
     key <AB02> { [         x,          X,              End,            U2769 ] };
     key <AB03> { [         c,          C,         ccedilla,         Ccedilla ] };
-    key <AB04> { [         v,          V,       squareroot,            U25CA ] };
+    key <AB04> { [         v,          V,            U258C,            U2590 ] };
     key <AB05> { [         b,          B,         integral,            U2248 ] };
     key <AB06> { [         n,          N,       dead_tilde,      Greek_OMEGA ] };
     key <AB07> { [         m,          M,               mu,           ssharp ] };
