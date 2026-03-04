@@ -1,0 +1,14 @@
+<!-- /usr/share/X11/rules/evdev.xml -->
+    <layout>
+      <configItem>
+        <name>mds</name>
+        <shortDescription>mds</shortDescription>
+        <description>Spanish (Madophs)</description>
+        <countryList>
+          <iso3166Id>MX</iso3166Id>
+        </countryList>
+        <languageList>
+          <iso639Id>spa</iso639Id>
+        </languageList>
+      </configItem>
+    </layout>

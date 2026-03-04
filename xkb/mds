@@ -1,0 +1,64 @@
+// Keyboard layout for Madophs inspired in English (Macintosh)
+// Place at /usr/share/X11/xkb/symbols
+
+default partial alphanumeric_keys
+xkb_symbols "mds" {
+
+    name[Group1]= "Spanish (Madophs)";
+
+    key.type[group1]="FOUR_LEVEL";
+
+    key <LSGT> { [ section,  plusminus,            section,        plusminus ] };
+    key <TLDE> { [   grave, asciitilde,         dead_grave,    Greek_epsilon ] };
+    key <AE01> { [       1,     exclam,         exclamdown,        therefore ] };
+    key <AE02> { [       2,         at,        Greek_theta,         EuroSign ] };
+    key <AE03> { [       3, numbersign,           sterling,            U2039 ] };
+    key <AE04> { [       4,     dollar,               cent,            U203A ] };
+    key <AE05> { [       5,    percent,           infinity,         multiply ] };
+    key <AE06> { [       6,asciicircum,            section,         function ] };
+    key <AE07> { [       7,  ampersand,          paragraph,     doubledagger ] };
+    key <AE08> { [       8,   asterisk, enfilledcircbullet,           degree ] };
+    key <AE09> { [       9,  parenleft,         includedin,            union ] };
+    key <AE10> { [       0, parenright,           includes,     intersection ] };
+    key <AE11> { [   minus, underscore,             endash,            U223A ] };
+    key <AE12> { [   equal,       plus,           notequal,        plusminus ] };
+
+    key <AD01> { [            q,          Q,          0xff1b,             OE ] };
+    key <AD02> { [            w,          W,      dead_acute,    Greek_SIGMA ] };
+    key <AD03> { [            e,          E,              Up,          U2B9D ] };
+    key <AD04> { [            r,          R,      registered,          U211D ] };
+    key <AD05> { [            t,          T,          dagger,       currency ] };
+    key <AD06> { [            y,          Y,             yen,     onequarter ] };
+    key <AD07> { [            u,          U,  dead_diaeresis,          U2200 ] };
+    key <AD08> { [            i,          I, dead_circumflex,     dead_caron ] };
+    key <AD09> { [            o,          O,          oslash,         Oslash ] };
+    key <AD10> { [            p,          P,        Greek_pi,          U220F ] };
+    key <AD11> { [  bracketleft,  braceleft,           U27E6,          U2997 ] };
+    key <AD12> { [ bracketright, braceright,           U27E7,          U2998 ] };
+    key <BKSL> { [    backslash,        bar,   guillemotleft, guillemotright ] };
+
+    key <AC01> { [          a,          A,         aring,              Aring ] };
+    key <AC02> { [          s,          S,          Left,              U2B9C ] };
+    key <AC03> { [          d,          D,          Down,              U2B9F ] };
+    key <AC04> { [          f,          F,         Right,              U2B9E ] };
+    key <AC05> { [          g,          G,   Greek_alpha,         Greek_beta ] };
+    key <AC06> { [          h,          H,       hstroke,            Hstroke ] };
+    key <AC07> { [          j,          J,         U2206,            onehalf ] };
+    key <AC08> { [          k,          K,       notsign,              THORN ] };
+    key <AC09> { [          l,          L,   Greek_lamda,        Greek_LAMDA ] };
+    key <AC10> { [  semicolon,      colon,         U2026,              U205D ] };
+    key <AC11> { [ apostrophe,   quotedbl,            ae,                 AE ] };
+
+    key <AB01> { [         z,          Z,             Home,            U2768 ] };
+    key <AB02> { [         x,          X,              End,            U2769 ] };
+    key <AB03> { [         c,          C,         ccedilla,         Ccedilla ] };
+    key <AB04> { [         v,          V,       squareroot,            U25CA ] };
+    key <AB05> { [         b,          B,         integral,            U2248 ] };
+    key <AB06> { [         n,          N,       dead_tilde,      Greek_OMEGA ] };
+    key <AB07> { [         m,          M,               mu,           ssharp ] };
+    key <AB08> { [     comma,       less,    lessthanequal,            U2991 ] };
+    key <AB09> { [    period,    greater, greaterthanequal,            U2992 ] };
+    key <AB10> { [     slash,   question,         division,     questiondown ] };
+
+    include "level3(ralt_switch)"
+};
