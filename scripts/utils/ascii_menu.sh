@@ -9,7 +9,7 @@ declare -g IS_TRAPED_SETUP=N
 function ascii_menu_set_trap() {
     if [[ "${IS_TRAPED_SETUP}" == N ]]
     then
-        trap 'printf "$NORMAL_OP"' EXIT # return terminal to normal state (reset cursor's visibility and position) on exit
+        trap 'printf "$NORMAL_OP"; stty echo' EXIT # return terminal to normal state (reset cursor's visibility and position) on exit
     fi
     IS_TRAPED_SETUP=Y
 }
