@@ -198,8 +198,9 @@ if has('nvim')
         map <F8> :call MdsCode("-b -e") <CR>
     endif
     nnoremap <silent> † :FloatermToggle<CR>
+    inoremap <silent> † <ESC>:FloatermToggle<CR>
     tnoremap <silent> † <C-\><C-n>:FloatermToggle<CR>
-    tnoremap <silent> ¬ <C-\><C-n>
+    tnoremap <silent> λ <C-\><C-n>
     tnoremap <silent> <M-p> <C-\><C-n>:FloatermPrev<CR>
     tnoremap <silent> <M-n> <C-\><C-n>:FloatermNext<CR>
     nnoremap <silent> <M-2> :BufferPrevious <CR>
@@ -208,12 +209,16 @@ if has('nvim')
     nnoremap <silent> <M-}> <Cmd>BufferMoveNext<CR>
     nnoremap <silent> <M-w> <Cmd>BufferPick<CR>
     nnoremap <silent> <M-f> :HopWord<CR>
-    nnoremap <silent> <M-q> :HopPattern<CR>
+    nnoremap <silent> <M-p> :HopPattern<CR>
+    nnoremap <silent> <leader>v :HopYankChar1CurrentLine<CR>
     nnoremap <silent> @sn :HopNodes<CR>
     "nnoremap <silent> !n :HopPattern<CR>
     omap     <silent> m :<C-U>lua require('tsht').nodes()<CR>
     xnoremap <silent> m :lua require('tsht').nodes()<CR>
     autocmd VimEnter * silent FloatermNew --silent
+
+    autocmd FileType sh inoremap ® <ESC>:FloatermSend %:p <CR><C-\><C-n>:FloatermShow<CR>
+    autocmd FileType sh nnoremap ® <ESC>:FloatermSend %:p <CR><C-\><C-n>:FloatermShow<CR>
 else
     if $COMPETITIVE_MODE ==? "Y"
         map <F7> :!clear && mdscode -b -n %:p -t <CR>
@@ -231,15 +236,18 @@ let g:floaterm_keymap_toggle = '<F12>'
 let g:floaterm_height=0.9
 let g:floaterm_width=0.9
 
-map <c-h> :grep -rn $MDS_ROOT --exclude-dir=storage --exclude-dir=vendor --exclude-dir=node_modules --exclude=tags --exclude="*.json" -e
+"map <c-h> :grep -rn $MDS_ROOT --exclude-dir=storage --exclude-dir=vendor --exclude-dir=node_modules --exclude=tags --exclude="*.json" -e
 "map <C-i> :cd $MDS_ROOT <CR>
 nnoremap <leader>n :NERDTreeToggle<CR>
-nnoremap <leader>r :NERDTreeFind<CR>
+nnoremap <leader>f :NERDTreeFind<CR>
+nnoremap <leader>w :NERDTreeCWD<CR>
+vmap <leader>sw <Plug>(coc-codeaction-selected)
+nnoremap ▌ :Vifm<CR>
 map <F4> :TagbarToggle<CR>
 nnoremap <silent> <M-i> <Cmd> TagbarJumpPrev<CR>
 nnoremap <silent> <M-o> <Cmd> TagbarJumpNext<CR>
 nmap <C-J> :Kwbd <CR>
-map <C-L> :Buffers <CR>
+nnoremap ∫ :Buffers <CR>
 
 " Smooth scrolling
 noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 0, 2)<CR>
