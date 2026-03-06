@@ -156,7 +156,7 @@ function update_repos() {
 
     if (( $(get_parent_pid_by_regex "sudo apt update") != 1 ))
     then
-        IS_APT_UPDATE_PERFORMED="YES"
+        export IS_APT_UPDATE_PERFORMED="YES"
         return 0
     fi
 
@@ -292,22 +292,6 @@ function clean_file() {
     file_to_empty=$1
     touch ${file_to_empty} &> /dev/null
     truncate -s 0 ${file_to_empty} &> /dev/null
-}
-
-function set_apt_hook() {
-    missing_argument_validation 2 "${1}" "${2}"
-    local package_name=${1}
-    local args="${2}"
-    local apt_hook="/etc/apt/apt.conf.d/05hook-${package_name}"
-    sudo touch ${apt_hook}
-    sudo dd of=${apt_hook} <<< "APT::Update::Post-Invoke {\"sudo -u madophs -i ${MDS_SCRIPTS}/third_party/${package_name}.sh ${args};\";};" 2> /dev/null
-}
-
-function remove_apt_hook() {
-    missing_argument_validation 1 ${1}
-    local package_name="${1}"
-    local apt_hook="/etc/apt/apt.conf.d/05hook-${package_name}"
-    sudo rm "${apt_hook}"
 }
 
 function add_desktop_app_entry() {

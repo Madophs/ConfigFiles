@@ -1,0 +1,18 @@
+#!/bin/bash -l
+
+source "${MDS_SCRIPTS}/common.sh"
+
+declare -g APT_HOOKS_FILE="${MDS_HIDDEN_CONFIGS}/apt_hooks"
+declare -g -a APT_HOOKS=()
+
+if ! mapfile -t APT_HOOKS < "${APT_HOOKS_FILE}" 2> /dev/null;
+then
+    return
+fi
+
+update_repos
+
+for apt_hook in ${APT_HOOKS[@]}
+do
+    "${MDS_SCRIPTS}/mdssetup.sh" ${apt_hook} --update
+done
