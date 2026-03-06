@@ -7,64 +7,40 @@ _mdssetup() {
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
-    local picked_arg=${COMP_WORDS[1]}
+    local -a __hook_scripts=( $(ls "${MDS_SCRIPTS}/third_party/"*.sh) )
+    __hook_scripts=( ${__hook_scripts[@]#*party/} )
 
-    if [[ ${prev} == "opera" || ${picked_arg} == "opera" ]]
+    local hook_script
+    for hook_script in ${__hook_scripts[@]}
+    do
+        [[ ${prev} != "${hook_script}" ]] && continue
+        local -a shell_params=( $(grep '#shellparams' "${MDS_SCRIPTS}/third_party/${hook_script}" 2> /dev/null) )
+        shell_params=( "${shell_params[@]%#shellparams}" )
+        opts="${shell_params[@]}"
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    done
+
+    if [[ ${prev} == "add_hook" ]]
     then
-        opts="--install --update --remove-ffmpeg --install-ffmpeg --set-autoupdate --versions --remove-set-autoupdate"
+        opts="${__hook_scripts[@]}"
         COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
         return 0
     fi
 
-    if [[ ${prev} == "nvim" ]]
+    if [[ ${prev} == "remove_hook" ]]
     then
-        opts="--install --setup --update --latest-version"
-        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
-        return 0
-    fi
-
-    if [[ ${prev} == "vifm" ]]
-    then
-        opts="--install --install-colorschemes"
-        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
-        return 0
-    fi
-
-    if [[ ${prev} == "rust" ]]
-    then
-        opts="--install --update"
-        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
-        return 0
-    fi
-
-    if [[ ${prev} == "discord" ]]
-    then
-        opts="--install --update --remove --version"
-        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
-        return 0
-    fi
-
-    if [[ ${prev} == "gitkraken" ]]
-    then
-        opts="--install --update --current-version --latest-version"
-        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
-        return 0
-    fi
-
-    if [[ ${prev} == "gimp" ]]
-    then
-        opts="--install --update --remove"
+        opts="$(cat "${MDS_HIDDEN_CONFIGS}/apt_hooks" 2> /dev/null)"
         COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
         return 0
     fi
 
     if [[ ${cur} == * ]]
     then
-        opts="ACE cuda rust opera vim vifm nvim deps ckb-next alias-completion discord gitkraken gimp"
+        opts="list_hooks add_hook remove_hook remove_all_hooks autocomplete ${__hook_scripts[@]}"
         COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
         return 0
     fi
-
 }
 
 complete -F _mdssetup mdssetup
