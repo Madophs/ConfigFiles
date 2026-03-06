@@ -1,4 +1,5 @@
 #!/bin/bash
+#shellparams --install --setup --update --latest-version
 
 source ${MDS_SCRIPTS}/common.sh
 
@@ -24,7 +25,7 @@ function nvim_install() {
 
     if [[ $? == 0 ]]; then
         cout success "NeoVim installed successfully."
-        set_apt_hook nvim --update
+        mdssetup add_hook nvim.sh
     else
         cout error "Something went wrong."
     fi

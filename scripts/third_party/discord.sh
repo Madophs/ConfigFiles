@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/bin/bash -l
+#shellparams --install --remove --update --version
 
 source ${MDS_SCRIPTS}/common.sh
 
@@ -12,13 +13,12 @@ function discord_install() {
     if [[ $(is_package_installed discord) == YES ]]
     then
         cout warning 'Package "discord" already installed.'
-        return 0
     else
         mkdir -p /tmp/discord
         download "$(discord_get_link)" "/tmp/discord"
-        install_package "$(ls /tmp/discord/discord*deb | head -n 1)"
+        install_package "$(ls -t /tmp/discord/discord*deb | head -n 1)"
     fi
-    set_apt_hook discord --update
+    mdssetup add_hook discord.sh
 }
 
 function discord_version() {
@@ -45,7 +45,7 @@ function discord_update() {
 
 function discord_remove() {
     sudo apt remove discord
-    remove_apt_hook discord
+    mdssetup remove_hook discord.sh
 }
 
 OPTION=$1

@@ -1,4 +1,5 @@
 #!/bin/bash
+#shellparams --install --update
 
 source ${MDS_SCRIPTS}/common.sh
 

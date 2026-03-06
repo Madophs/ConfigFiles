@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/bin/bash -l
+#shellparams --install --update --current-version --latest-version
 
 source "${MDS_SCRIPTS}/common.sh"
 DOWNLOAD_PAGE_URL=https://www.gitkraken.com/download
@@ -22,7 +23,7 @@ function gitkraken_install() {
     download "${GITKRAKEN_DOWNLOAD_URL}" "/tmp/gitkraken"
     install_package "/tmp/gitkraken/gitkraken-amd64.deb"
     rm -rf "/tmp/gitkraken"
-    set_apt_hook gitkraken --update
+    mdssetup add_hook gitkraken.sh
 }
 
 function gitkraken_update() {

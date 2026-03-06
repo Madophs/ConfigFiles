@@ -1,4 +1,5 @@
 #!/bin/bash
+#shellparams --install --update --install-ffmpeg --versions --remove-ffmpeg --remove --set-autoupdate --remove-set-autoupdate
 
 source ${MDS_SCRIPTS}/common.sh
 PACKAGE_NAME=opera-stable

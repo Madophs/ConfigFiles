@@ -1,5 +1,7 @@
 #!/bin/bash
-. ${MDS_SCRIPTS}/common.sh
+#shellparams opts="--install --install-colorschemes"
+
+source ${MDS_SCRIPTS}/common.sh
 
 function vifm_install_colorschemes() {
     TARGET_DIRECTORY=${HOME}/.config/vifm/colors
