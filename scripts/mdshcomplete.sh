@@ -112,7 +112,7 @@ function __mdsh_key_handling() {
                 complist_index=$(( complist_index % num_cols ))
             fi
             ;;
-        $'\e[D'|h*) # Move left: <-,h
+        $'\e[D'|$'\e[Z'|h*) # Move left: <-,left-tab,h
             complist_index=$(( complist_index - 1 ))
             (( complist_index < 0 )) && complist_index=$(( complist_size - 1 ))
             ;;
