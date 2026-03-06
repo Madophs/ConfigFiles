@@ -23,12 +23,12 @@ xkb_symbols "mds" {
     key <AE11> { [   minus, underscore,             endash,            U223A ] };
     key <AE12> { [   equal,       plus,           notequal,        plusminus ] };
 
-    key <AD01> { [            q,          Q,          0xff1b,          U25CB ] };
+    key <AD01> { [            q,          Q,          0xff1b,         U1F90D ] };
     key <AD02> { [            w,          W,              Up,          U2B9D ] };
     key <AD03> { [            e,          E,   Greek_epsilon,    Greek_SIGMA ] };
     key <AD04> { [            r,          R,      registered,          U211D ] };
     key <AD05> { [            t,          T,          dagger,       currency ] };
-    key <AD06> { [            y,          Y,             yen,     onequarter ] };
+    key <AD06> { [            y,          Y,             yen,          U25CB ] };
     key <AD07> { [            u,          U,  dead_diaeresis,          U2200 ] };
     key <AD08> { [            i,          I, dead_circumflex,     dead_caron ] };
     key <AD09> { [            o,          O,          oslash,         Oslash ] };
