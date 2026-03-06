@@ -100,3 +100,5 @@ require('lualine').setup()
 require('nvim-surround').setup()
 
 require('hlargs').setup()
+
+vim.api.nvim_set_keymap("v", "<leader>ss", ":lua require('websearcher').search_selected()<CR>", { noremap = true, silent = true })

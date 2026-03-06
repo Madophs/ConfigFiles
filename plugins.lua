@@ -124,6 +124,8 @@ return require('packer').startup(function()
 
   use { 'm-demare/hlargs.nvim' }
 
+  use 'KaitoMuraoka/websearcher.nvim'
+
   if packer_bootstrap then
     require('packer').sync()
   end
