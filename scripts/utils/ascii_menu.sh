@@ -2,11 +2,11 @@
 
 source "${MDS_SCRIPTS}/utils/cout.sh"
 
-stty -echo # Disable echoing (typing output)
 declare -g -i menu_item_start_index_prev=-1
 declare -g IS_TRAPED_SETUP=N
 
 function ascii_menu_set_trap() {
+    stty -echo # Disable echoing (typing output)
     if [[ "${IS_TRAPED_SETUP}" == N ]]
     then
         trap 'printf "$NORMAL_OP"; stty echo' EXIT # return terminal to normal state (reset cursor's visibility and position) on exit
