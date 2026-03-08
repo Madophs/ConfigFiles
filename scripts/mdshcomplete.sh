@@ -1,27 +1,8 @@
 #!/bin/bash
+
 [[ "${REAL_SHELL}" != "bash" ]] && return
 
 source /usr/share/bash-completion/bash_completion
-
-function get_cursor_position() {
-  # Save current terminal settings and set raw mode, no echo
-  exec < /dev/tty
-  local old_stty=$(stty -g)
-  stty raw -echo min 0
-
-  # Request cursor position (ESC[6n)
-  printf "\\033[6n" > /dev/tty
-
-  # Read the response from the terminal: ESC[row;columnR
-  IFS=';' read -ra pos -d R
-
-  # Restore terminal settings
-  stty "${old_stty}"
-
-  # Extract row and column, adjusting for 0-based indexing if needed (terminal is 1-based)
-  CROW=${pos[0]:2} # Strip the leading "ESC["
-  CCOL=${pos[1]}
-}
 
 function get_completions() {
     local completion COMP_CWORD COMP_LINE COMP_POINT COMP_WORDS COMPREPLY=()

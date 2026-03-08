@@ -1,5 +1,4 @@
 # Directories aliases
-alias cdr="cd \${MDS_ROOT}"
 alias cdgit="cd ${GIT_REPOS}"
 alias lcpp="cd ${GIT_REPOS}/C-CPP-Linux-Programming"
 alias cpp="cd ${CTEST}"
@@ -18,6 +17,7 @@ alias cdapps="cd ${MDS_APPS}"
 alias cpptags="cd ${MDS_ROOT}; rm -f tags; ctags -R --c++-kinds=+p; export TAGS=${MDS_ROOT}/tags"
 alias phptags="cd ${MDS_ROOT}; rm -f tags; ctags -R --languages=php --exclude=storage; export TAGS=\${MDS_ROOT}/tags"
 alias setroot="echo \$(pwd) > ${MDS_ROOT_FILE}; export MDS_ROOT=\$(cat \${MDS_ROOT_FILE}); export TAGS=\${MDS_ROOT}/tags"
+alias cdr='MDS_ROOT="$(cat "${MDS_ROOT_FILE}")"; cd "${MDS_ROOT}" 2> /dev/null'
 alias getroot="export MDS_ROOT=\$(cat ${MDS_ROOT_FILE}); echo \${MDS_ROOT}"
 alias upgrade="sudo apt update && sudo apt upgrade -y"
 alias update="sudo apt update"
@@ -51,6 +51,7 @@ alias bashconfig="source ~/.bashrc"
 # Scripts aliases
 alias operaffmpeg="${MDS_SCRIPTS}/operaffmpeg.sh"
 alias zshplugins="${MDS_SCRIPTS}/zsh/zsh_plugins_setup.sh"
+alias lfunc="source ${MDS_SCRIPTS}/custom_cmds.sh"
 alias sl2="${MDS_SCRIPTS}/backup_steam_savefiles.sh"
 alias htoken="${MDS_SCRIPTS}/handle_git_token.sh"
 alias gclone="${MDS_SCRIPTS}/git.sh clone"
@@ -88,5 +89,6 @@ then
     alias lt='lsd --tree'
 fi
 
+unalias l &> /dev/null
 unalias gk &> /dev/null
 unalias gke &> /dev/null

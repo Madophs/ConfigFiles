@@ -134,3 +134,47 @@ function set_apt_hooks() {
     local target="/etc/apt/apt.conf.d/05hook-mds"
     sudo dd of=${target} <<< "APT::Update::Post-Invoke {\"sudo -u madophs -i ${hook_updater} ;\";};" 2> /dev/null
 }
+
+# @brief: copy raw output to clipboard
+function c() {
+    local -i is_first_line=1
+    while read -r line
+    do
+        (( is_first_line )) && echo -e -n "${line}" || echo -e -n "\n${line}"
+        is_first_line=0
+    done | sed 's/\x1b\[[0-9;]*m//g' | xclip -selection clipboard
+}
+
+function get_cursor_position() {
+  # Save current terminal settings and set raw mode, no echo
+  exec < /dev/tty
+  local old_stty=$(stty -g)
+  stty raw -echo min 0
+
+  # Request cursor position (ESC[6n)
+  printf "\\033[6n" > /dev/tty
+
+  # Read the response from the terminal: ESC[row;columnR
+  local -a pos=()
+  if [[ "${REAL_SHELL}" == "bash" ]]
+  then
+      IFS=';' read -ra pos -d R
+  else
+      IFS=';' read -d 'R' -rA pos
+  fi
+
+  # Restore terminal settings
+  stty "${old_stty}"
+
+  # Extract row and column, adjusting for 0-based indexing if needed (terminal is 1-based)
+  CROW="${pos[@]:0:1}"
+  CROW="${CROW:2}" # Strip the leading "ESC["
+  CCOL=${pos[@]:1:1}
+}
+
+# @brief: move cursor to the top of the screen, keeping the scroll back
+function l() {
+    get_cursor_position
+    local -i downwards_scrolls=$(( CROW - 1 ))
+    printf "\e[${downwards_scrolls}S\e[${downwards_scrolls}A"
+}
