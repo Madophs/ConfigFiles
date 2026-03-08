@@ -217,8 +217,8 @@ if has('nvim')
     xnoremap <silent> m :lua require('tsht').nodes()<CR>
     autocmd VimEnter * silent FloatermNew --silent
 
-    autocmd FileType sh inoremap ® <ESC>:FloatermSend %:p <CR><C-\><C-n>:FloatermShow<CR>
-    autocmd FileType sh nnoremap ® <ESC>:FloatermSend %:p <CR><C-\><C-n>:FloatermShow<CR>
+    autocmd FileType sh inoremap ® <ESC>:w <CR> :FloatermSend %:p <CR><C-\><C-n>:FloatermShow<CR>
+    autocmd FileType sh nnoremap ® <ESC>:w <CR> :FloatermSend %:p <CR><C-\><C-n>:FloatermShow<CR>
 else
     if $COMPETITIVE_MODE ==? "Y"
         map <F7> :!clear && mdscode -b -n %:p -t <CR>
@@ -254,6 +254,21 @@ noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 0, 2)<CR>
 noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 0, 2)<CR>
 noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 0, 4)<CR>
 noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 0, 4)<CR>
+
+" View management
+nnoremap <silent> ⮝ <C-W>k
+nnoremap <silent> ⮞ <C-W>l
+nnoremap <silent> ⮟ <C-W>j
+nnoremap <silent> ⮜ <C-W>h
+tnoremap <silent> ⮝ <C-\><C-n><C-W>k
+tnoremap <silent> ⮞ <C-\><C-n><C-W>l
+tnoremap <silent> ⮟ <C-\><C-n><C-W>j
+tnoremap <silent> ⮜ <C-\><C-n><C-W>h
+nnoremap <silent> `k :resize +5 <CR>
+nnoremap <silent> `l :vertical resize +5 <CR>
+nnoremap <silent> `j :resize -5 <CR>
+nnoremap <silent> `h :vertical resize -5 <CR>
+nnoremap <silent> 🤍 <C-W>_<C-W>\|
 
 " Indentation character list
 if ! has('nvim')
