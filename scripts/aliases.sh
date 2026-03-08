@@ -47,6 +47,7 @@ alias nviml="nvim \$(ls -A | fzf)"
 alias cdl='cd "$(fzf | grep -o -e ".\+\/")"'
 alias syscalls="batcat \$(find /usr/include -name 'unistd*.h' | xargs grep 'write 1' | head -n 1 | awk -F ':' '{print \$1}')"
 alias bashconfig="source ~/.bashrc"
+alias sane="stty sane"
 
 # Scripts aliases
 alias operaffmpeg="${MDS_SCRIPTS}/operaffmpeg.sh"
