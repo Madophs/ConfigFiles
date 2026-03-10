@@ -4,6 +4,34 @@
 
 source /usr/share/bash-completion/bash_completion
 
+function __parse_comp_input() {
+    local -n comp_words_ptr=${1}
+    shift
+    local raw_input="${*}"
+    local -i input_len=${#raw_input}
+    local -i is_escaped_char=0
+    local l='' token=''
+    for (( i=0; i<input_len; i+=1 ))
+    do
+        for (( ; i<input_len; i+=1 ))
+        do
+            [[ "${raw_input:${i}:1}" == ' ' && ${is_escaped_char} == 0 ]] && break
+
+            token+="${raw_input:${i}:1}"
+
+            if [[ ${is_escaped_char} == 1 ]]
+            then
+                is_escaped_char=0
+            elif [[ "${raw_input:${i}:1}" == '\' ]]
+            then
+                is_escaped_char=1 # Next character most be escaped
+            fi
+        done
+        [[ -n "${token}" ]] && comp_words_ptr+=( "${token}" )
+        token=''
+    done
+}
+
 function get_completions() {
     local completion COMP_CWORD COMP_LINE COMP_POINT COMP_WORDS COMPREPLY=()
 
@@ -12,12 +40,12 @@ function get_completions() {
         #source /usr/share/bash-completion/bash_completion
     #}
 
-    COMP_LINE=$*
+    COMP_LINE="${*}"
     COMP_POINT=${#COMP_LINE}
 
     eval set -- "$@"
 
-    COMP_WORDS=("$@")
+    __parse_comp_input COMP_WORDS "${COMP_LINE}"
 
     # add '' to COMP_WORDS if the last character of the command line is a space
     [[ ${COMP_LINE[@]: -1} = ' ' ]] && COMP_WORDS+=('')
@@ -29,7 +57,7 @@ function get_completions() {
     if (( ${#COMP_WORDS[@]} == 1 ))
     then
         # compgen -c queries all commands in $PATH
-        compgen -c "${@}" | LC_ALL=C sort | uniq
+        compgen -c "${@}" | uniq
         return
     fi
 
@@ -50,13 +78,51 @@ function get_completions() {
     [[ -n ${completion} ]] || return 1
 
     # execute completion function
-    "${completion}"
+    ${completion} 2> /dev/null
 
     # print completions to stdout
-    printf '%s\n' "${COMPREPLY[@]}" | LC_ALL=C sort
+    printf '%s\n' "${COMPREPLY[@]/ /\\ }"
 }
 
-function __mdsh_key_handling() {
+function __update_readline_prompt() {
+    local cchar="${READLINE_LINE:${READLINE_POINT}:1}"
+    local pchar="${READLINE_LINE:$((READLINE_POINT-1)):1}"
+    # 1.- git[''] 2.- git[' '] 3.- git add[''] repo
+    if [[ ( -z "${cchar}" || "${cchar}" == " " ) && "${pchar}" =~ [^\ ] ]]
+    then
+        #cout debug "here"
+        for (( i=$((READLINE_POINT-1)); i>=0; i-=1 ))
+        do
+            [[ "${READLINE_LINE:${i}:1}" == " "  && "${READLINE_LINE:$(( i -1 )):1}" != '\' ]] && break
+        done
+        READLINE_LINE="${READLINE_LINE:0:$(( i+1 ))}${complist[${complist_index}]}${READLINE_LINE:${READLINE_POINT}}"
+        READLINE_POINT=${#READLINE_LINE}
+            # 4.- git [''] => git <add>
+    elif [[ -z "${cchar}" && "${pchar}" == " " ]]
+    then
+        READLINE_LINE="${READLINE_LINE}${complist[${complist_index}]}"
+        READLINE_POINT=${#READLINE_LINE}
+            # 5.- git b[r]a => git <branch>
+    elif [[ -n "${cchar}" ]]
+    then
+        for (( i=$((READLINE_POINT-1)); i>=0; i-=1 ))
+        do
+            [[ "${READLINE_LINE:${i}:1}" == " " ]] && break
+        done
+        for (( j=$((READLINE_POINT+1)); j<${#READLINE_LINE}; j+=1 ))
+        do
+            [[ "${READLINE_LINE:${j}:1}" == " " ]] && break
+        done
+        READLINE_LINE="${READLINE_LINE:0:$(( i+1 ))}${complist[${complist_index}]}${READLINE_LINE:${j}}"
+    else
+        # replace with whatever suggestion is selected
+        READLINE_LINE="${complist[${complist_index}]}"
+        READLINE_POINT=${#READLINE_LINE}
+    fi
+    is_job_done=1
+}
+
+function __mdsh_input_handling() {
     # Read a single character
     IFS= read -s -n 1 key
     # Capture trailing characters
@@ -65,7 +131,7 @@ function __mdsh_key_handling() {
     read -s -N 1 -t 0.0001 k3
     key+=${k1}${k2}${k3}
     case "${key}" in
-        $'\e[A'|k*|u*) # Move Up: up arrow,k
+        $'\e[A') # Move Up
             case "${key}" in
                 u*) complist_index=$(( complist_index - (num_cols * scroll_slice) )) ;;
                 *) complist_index=$(( complist_index - num_cols )) ;;
@@ -82,7 +148,7 @@ function __mdsh_key_handling() {
                 done
             fi
             ;;
-        $'\e[B'|j*|d*) # Move Down: down arrow,j
+        $'\e[B') # Move Down: down arrow
             case "${key}" in
                 d*) complist_index+=$(( num_cols * scroll_slice )) ;;
                 *) complist_index+=num_cols ;;
@@ -93,11 +159,11 @@ function __mdsh_key_handling() {
                 complist_index=$(( complist_index % num_cols ))
             fi
             ;;
-        $'\e[D'|$'\e[Z'|h*) # Move left: <-,left-tab,h
+        $'\e[D'|$'\e[Z') # Move left: <-,left-tab
             complist_index=$(( complist_index - 1 ))
             (( complist_index < 0 )) && complist_index=$(( complist_size - 1 ))
             ;;
-        $'\e[C'|$'\t'|l*) # Move right: <-,tab,l
+        $'\e[C'|$'\t') # Move right: <-,tab
             complist_index=$(( (complist_index + 1) % complist_size ))
             ;;
         $'\e[H') # Go to menu's first item
@@ -106,44 +172,21 @@ function __mdsh_key_handling() {
         $'\e[F') # Move to last item
             complist_index=$(( complist_size - 1))
             ;;
-        $''|[qQ]) # Quit: ESC
+        $'') # Quit: ESC
             is_job_done=1
             ;;
-        "")
-            local cchar="${READLINE_LINE:${READLINE_POINT}:1}"
-            local pchar="${READLINE_LINE:$((READLINE_POINT-1)):1}"
-            # 1.- git[''] 2.- git[' '] 3.- git add[''] repo
-            if [[ ( -z "${cchar}" || "${cchar}" == " " ) && "${pchar}" =~ [^\ ] ]]
-            then
-                for (( i=$((READLINE_POINT-1)); i>=0; i-=1 ))
-                do
-                    [[ "${READLINE_LINE:${i}:1}" == " " ]] && break
-                done
-                READLINE_LINE="${READLINE_LINE:0:$(( i+1 ))}${complist[${complist_index}]}${READLINE_LINE:${READLINE_POINT}}"
-                READLINE_POINT=${#READLINE_LINE}
-            # 4.- git [''] => git <add>
-            elif [[ -z "${cchar}" && "${pchar}" == " " ]]
-            then
-                READLINE_LINE="${READLINE_LINE}${complist[${complist_index}]}"
-                READLINE_POINT=${#READLINE_LINE}
-            # 5.- git b[r]a => git <branch>
-            elif [[ -n "${cchar}" ]]
-            then
-                for (( i=$((READLINE_POINT-1)); i>=0; i-=1 ))
-                do
-                    [[ "${READLINE_LINE:${i}:1}" == " " ]] && break
-                done
-                for (( j=$((READLINE_POINT+1)); j<${#READLINE_LINE}; j+=1 ))
-                do
-                    [[ "${READLINE_LINE:${j}:1}" == " " ]] && break
-                done
-                READLINE_LINE="${READLINE_LINE:0:$(( i+1 ))}${complist[${complist_index}]}${READLINE_LINE:${j}}"
-            else
-                # replace with whatever suggestion is selected
-                READLINE_LINE="${complist[${complist_index}]}"
-                READLINE_POINT=${#READLINE_LINE}
-            fi
-            is_job_done=1
+        $'\x7f') # backspace
+            READLINE_LINE="${READLINE_LINE:0:$((READLINE_POINT-1))}${READLINE_LINE:$((READLINE_POINT+1))}"
+            READLINE_POINT=$(( READLINE_POINT - 1))
+            are_completions_updated=0
+            ;;
+        [a-zA-Z0-9_\/\.])
+            READLINE_LINE="${READLINE_LINE:0:${READLINE_POINT}}${key}${READLINE_LINE:${READLINE_POINT}}"
+            READLINE_POINT=$(( READLINE_POINT + 1))
+            are_completions_updated=0
+            ;;
+        ""|' ')
+            __update_readline_prompt
             ;;
     esac
 }
@@ -220,12 +263,8 @@ function __mdsh_print_suggestions() {
     done
 }
 
-function mdshcomplete_main() {
-    local -a complist=( $(get_completions "${READLINE_LINE}" ))
-    (( ${#complist} == 0 )) && return
-    local -i complist_size=${#complist[@]}
-
-    local -i col_width=0
+function __compute_col_width() {
+    col_width=0
     for item in "${complist[@]}"
     do
         if (( col_width < (${#item}+2) ))
@@ -233,7 +272,9 @@ function mdshcomplete_main() {
             col_width=$(( ${#item} + 2 )) # 2 columns for padding
         fi
     done
+}
 
+function mdshcomplete_main() {
     get_cursor_position
 
     # Create some space if we're at the very bottom
@@ -242,10 +283,12 @@ function mdshcomplete_main() {
 
     # Useful margin to manipulate cursor downwards motion (\n or \e[B)
     # as they don't have any affect if bottom lines are already reached
-    declare -g -i BOTTOM_PADDING=1
+    local  -i BOTTOM_PADDING=1
+    local __user_prompt="$( printf "${PS1@P}" | tail -n 1)"
 
+    local -i complist_size=0
     local -i start_index=0 end_index=0
-    local -i num_rows=0 num_cols=0
+    local -i num_rows=0 num_cols=0 col_width=0
     local -i scroll_slice=0
 
     # cursor reposition only need once if required
@@ -253,12 +296,33 @@ function mdshcomplete_main() {
     local -i complist_index=0
     local -i is_job_done=0
 
+    local -i are_completions_updated=0
+    local -a complist=()
     printf "${NOCURSOR}"
     while (( is_job_done == 0 ))
     do
-        printf "${SAVE_CURSOR}$( echo "${PS1@P}" | tail -n 1)${READLINE_LINE}\n"
+        if (( ! are_completions_updated ))
+        then
+            printf "${CLEAR_LINE}${CLEAR_2BOTTOM_SCREEN}"
+
+            IFS=$'\n' complist=( $(get_completions "${READLINE_LINE}" ))
+            complist_size=${#complist[@]}
+            [[ ${complist_size} == 0 || "${complist[@]}" == "''" ]] && break
+
+            # In a single result case, append it to user input and leave
+            if (( complist_size == 1 ))
+            then
+                __update_readline_prompt
+                break
+            fi
+
+            __compute_col_width
+            are_completions_updated=1
+        fi
+
+        printf "${SAVE_CURSOR}${__user_prompt}${READLINE_LINE}\n"
         __mdsh_print_suggestions
-        __mdsh_key_handling
+        __mdsh_input_handling
         printf "${RESTORE_CURSOR}"
     done
     printf "${SHOWCURSOR}${CLEAR_LINE}${CLEAR_2BOTTOM_SCREEN}"
