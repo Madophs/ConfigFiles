@@ -2,7 +2,6 @@
 
 source "${MDS_SCRIPTS}/utils/cout.sh"
 
-declare -g -i menu_item_start_index_prev=-1
 declare -g IS_TRAPED_SETUP=N
 
 function ascii_menu_set_trap() {
@@ -165,6 +164,7 @@ function ascii_menu_create() {
     local callback_input=${5}
     local filter_word=""
     local filter_word_prev="${filter_word}"
+    local -i menu_item_start_index_prev=-1
     local -i menu_index=0 menu_index_prev=0
     while (( $? == 0 ))
     do
