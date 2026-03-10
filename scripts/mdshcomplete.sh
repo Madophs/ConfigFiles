@@ -81,7 +81,17 @@ function get_completions() {
     ${completion} 2> /dev/null
 
     # print completions to stdout
-    printf '%s\n' "${COMPREPLY[@]/ /\\ }"
+    local comp
+    for comp in "${COMPREPLY[@]}"
+    do
+        if [[ "${comp: -1}" == " " ]]
+        then
+            comp="${comp:0: -1}"
+            printf '%s\n' "${comp/ /\\ } "
+        else
+            printf '%s\n' "${comp/ /\\ }"
+        fi
+    done
 }
 
 function __update_readline_prompt() {
