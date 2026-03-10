@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 [[ "${REAL_SHELL}" != "bash" ]] && return
 
@@ -33,6 +33,7 @@ function __parse_comp_input() {
 }
 
 function get_completions() {
+    local IFS=$' \t\n'
     local completion COMP_CWORD COMP_LINE COMP_POINT COMP_WORDS COMPREPLY=()
 
     # load bash-completion if necessary
@@ -57,7 +58,7 @@ function get_completions() {
     if (( ${#COMP_WORDS[@]} == 1 ))
     then
         # compgen -c queries all commands in $PATH
-        compgen -c "${@}" | uniq
+        compgen -c "${@}" | sort -u
         return
     fi
 
@@ -80,6 +81,9 @@ function get_completions() {
     # execute completion function
     ${completion} 2> /dev/null
 
+    IFS=$'\n'
+    COMPREPLY=( $(printf "%s\n" "${COMPREPLY[@]}" | sort -u) )
+
     # print completions to stdout
     local comp
     for comp in "${COMPREPLY[@]}"
@@ -87,9 +91,9 @@ function get_completions() {
         if [[ "${comp: -1}" == " " ]]
         then
             comp="${comp:0: -1}"
-            printf '%s\n' "${comp/ /\\ } "
+            printf '%s\n' "${comp// /\\ } "
         else
-            printf '%s\n' "${comp/ /\\ }"
+            printf '%s\n' "${comp// /\\ }"
         fi
     done
 }
@@ -315,7 +319,8 @@ function mdshcomplete_main() {
         then
             printf "${CLEAR_LINE}${CLEAR_2BOTTOM_SCREEN}"
 
-            IFS=$'\n' complist=( $(get_completions "${READLINE_LINE}" ))
+            local IFS=$'\n'
+            complist=( $(get_completions "${READLINE_LINE}" ))
             complist_size=${#complist[@]}
             [[ ${complist_size} == 0 || "${complist[@]}" == "''" ]] && break
 
