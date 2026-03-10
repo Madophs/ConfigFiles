@@ -244,7 +244,7 @@ nnoremap <leader>w :NERDTreeCWD<CR>
 vmap <leader>sw <Plug>(coc-codeaction-selected)
 nnoremap ▌ :Vifm<CR>
 map <F4> :TagbarToggle<CR>
-nnoremap <silent> <M-i> <Cmd> TagbarJumpPrev<CR>
+nnoremap <silent> <M-u> <Cmd> TagbarJumpPrev<CR>
 nnoremap <silent> <M-o> <Cmd> TagbarJumpNext<CR>
 nmap <C-J> :Kwbd <CR>
 nnoremap ∫ :Buffers <CR>

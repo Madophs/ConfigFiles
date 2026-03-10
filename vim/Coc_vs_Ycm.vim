@@ -25,9 +25,6 @@ function! s:filetype_handler_for_type()
         silent! CocEnable
         silent! CocStart
 
-        let g:coc_enable_locationlist = 0
-        autocmd User CocLocationsChange CocList --no-quit --normal location
-
         " To code navigation.
         nmap <silent> gd <Plug>(coc-definition)
         nmap <silent> gy <Plug>(coc-type-definition)
@@ -35,7 +32,7 @@ function! s:filetype_handler_for_type()
         nmap <silent> gr <Plug>(coc-references)
         nnoremap <C-l> :CocNext<CR>
         nnoremap <C-h> :CocPrev<CR>
-
+        nnoremap ф :CocListResume <CR>
         " Formatting selected code.
         xmap <leader>f  <Plug>(coc-format-selected)
         nmap <leader>f  <Plug>(coc-format-selected)
