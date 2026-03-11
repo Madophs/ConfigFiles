@@ -48,6 +48,9 @@ alias cdl='cd "$(fzf | grep -o -e ".\+\/")"'
 alias syscalls="batcat \$(find /usr/include -name 'unistd*.h' | xargs grep 'write 1' | head -n 1 | awk -F ':' '{print \$1}')"
 alias bashconfig="source ~/.bashrc"
 alias sane="stty sane"
+alias mdsdebugx='touch /tmp/mds_output; export MDS_DEBUG=/tmp/mds_output'
+alias mdsdebugc='truncate -s 0 /tmp/mds_output'
+alias mdsdebugw='watch -n 1 "tac /tmp/mds_output | head -n 50"'
 
 # Scripts aliases
 alias operaffmpeg="${MDS_SCRIPTS}/operaffmpeg.sh"
