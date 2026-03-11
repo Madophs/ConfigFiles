@@ -15,12 +15,19 @@ trap "eval \"\$(< ${MDS_TRAP_CMD})\"; truncate -s 0 ${MDS_TRAP_CMD}" 35
 
 if [[ ${REAL_SHELL} == 'bash' ]]
 then
+    shopt -s autocd
+    shopt -s cdable_vars
+    shopt -s extglob
+    shopt -s histappend
+    shopt -s nocaseglob
+    shopt -s nocasematch
+    shopt -s nullglob
     set show-all-if-ambiguous on
     bind -s 'set completion-ignore-case on'
     bind -x '"\C-i":mdshcomplete_main'
     #bind 'TAB:complete'
-    #bind '"\e[A": history-search-backward'
-    #bind '"\e[B": history-search-forward'
+    bind '"\e[A": history-search-backward'
+    bind '"\e[B": history-search-forward'
     #bind 'set show-mode-in-prompt on'
     #bind 'set vi-ins-mode-string "\e[1;35mI\e[0;0m"'
     #bind 'set vi-cmd-mode-string "\e[1;35mC\e[0;0m"'
