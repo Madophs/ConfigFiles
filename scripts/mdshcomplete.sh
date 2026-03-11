@@ -44,8 +44,6 @@ function get_completions() {
     COMP_LINE="${*}"
     COMP_POINT=${#COMP_LINE}
 
-    eval set -- "$@"
-
     __parse_comp_input COMP_WORDS "${COMP_LINE}"
 
     # add '' to COMP_WORDS if the last character of the command line is a space
@@ -54,32 +52,46 @@ function get_completions() {
     # index of the last word
     COMP_CWORD=$(( ${#COMP_WORDS[@]} - 1 ))
 
+    # main arg usually holds a command, directory or variable
+    local main_arg="${COMP_WORDS[0]}"
+
     # for single/partial cmds queries are done through compgen
     if (( ${#COMP_WORDS[@]} == 1 ))
     then
-        # compgen -c queries all commands in $PATH
-        compgen -c "${@}" | sort -u
-        return
+        IFS=$'\n' # create arrays using \n as separator
+        if [[ "${main_arg}" =~ ^\$\{?[a-zA-Z_0-9]+$ ]]
+        then
+            # complete varnames
+            local varname="${main_arg##*[$\{]}" # remove unwanted leading chars ${
+            COMPREPLY=( $(printf '${%s}\n' $(compgen -v "${varname}")) )
+        elif [[ "${main_arg}" =~ ^\$\{?[a-zA-Z_0-9]+\}?\/$ ]]
+        then
+            # variable with a slash will trigger directory completion
+            COMPREPLY=( $(compgen -d "${main_arg}") )
+        else
+            # compgen -c queries all commands in $PATH and -d directories in $PWD
+            COMPREPLY=( $(compgen -d -c "${main_arg}") )
+        fi
+    else
+        # determine completion function
+        completion=$(complete -p "${main_arg}" 2>/dev/null | awk '{print $(NF-1)}')
+
+        # run _completion_loader only if necessary
+        if [[ -z ${completion} ]]
+        then
+            # load completion
+            _completion_loader "${main_arg}"
+
+            # detect completion
+            completion=$(complete -p "${main_arg}" 2>/dev/null | awk '{print $(NF-1)}')
+        fi
+
+        # ensure completion was detected
+        [[ -n ${completion} ]] || return 1
+
+        # execute completion function
+        ${completion} 2> /dev/null
     fi
-
-    # determine completion function
-    completion=$(complete -p "$1" 2>/dev/null | awk '{print $(NF-1)}')
-
-    # run _completion_loader only if necessary
-    if [[ -z ${completion} ]]
-    then
-        # load completion
-        _completion_loader "$1"
-
-        # detect completion
-        completion=$(complete -p "$1" 2>/dev/null | awk '{print $(NF-1)}')
-    fi
-
-    # ensure completion was detected
-    [[ -n ${completion} ]] || return 1
-
-    # execute completion function
-    ${completion} 2> /dev/null
 
     IFS=$'\n'
     COMPREPLY=( $(printf "%s\n" "${COMPREPLY[@]}" | sort -u) )
