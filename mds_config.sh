@@ -53,13 +53,12 @@ case $- in
 esac
 
 # Small setup
-source ${MDS_SCRIPTS}/utils/cout.sh
-source ${MDS_SCRIPTS}/utils/clock_timer.sh
-source ${MDS_SCRIPTS}/mdshcomplete.sh
-source ${MDS_SCRIPTS}/zsh/configs.sh
-source ${MDS_SCRIPTS}/shellsetup.sh
-source ${MDS_SCRIPTS}/aliases.sh
-source ${MDS_SCRIPTS}/zsh/zsh_plugins.sh
+source "${MDS_SCRIPTS}/utils/cout.sh"
+source "${MDS_SCRIPTS}/utils/clock_timer.sh"
+source "${MDS_SCRIPTS}/zsh/configs.sh"
+source "${MDS_SCRIPTS}/shellsetup.sh"
+source "${MDS_SCRIPTS}/aliases.sh"
+source "${MDS_SCRIPTS}/zsh/zsh_plugins.sh"
 
 # function commands
 source ${MDS_SCRIPTS}/custom_cmds.sh
