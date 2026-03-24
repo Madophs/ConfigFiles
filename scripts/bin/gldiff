@@ -24,9 +24,13 @@ do
 done
 
 function modified_files_callback() {
-    case ${key} in
+    case "${key}" in
         [vV]|"")
-            git difftool --tool=nvimdiff -y ${hash_selected}~ ${hash_selected} "${GIT_BASE_DIR}/${menu_item_key_selected}"
+            if ! git -C "${GIT_BASE_DIR}" difftool --tool=nvimdiff -y "${hash_selected}~" "${hash_selected}" "${menu_item_key_selected}";
+            then
+                # revision or path is no longer in the working tree
+                git -C "${GIT_BASE_DIR}" difftool --tool=nvimdiff -y "${hash_selected}~" "${hash_selected}"
+            fi
             ;;
         [oO])
             nvim -R "${GIT_BASE_DIR}/${menu_item_key_selected}"
