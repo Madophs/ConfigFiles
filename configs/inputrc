@@ -1,0 +1,17 @@
+set editing-mode vi
+
+set show-mode-in-prompt
+
+# 37 is set foreground color to color 7
+# 47 is set background color to color 7
+# 40 is set background color to color 0
+# set vim insert mode string
+set vi-ins-mode-string \1\e[1;96;40m\2\1\e[1;30;106m\2INSERT\1\e[1;96;40m\2\1\e[0m\2
+
+# 92 is set foreground color to color 10
+# 102 is set background color to color 10
+# 40 is set background color to color 0
+# set vim command (normal) model string
+#set vi-cmd-mode-string \1\e[1;92;40m\2\1\e[1;30;102m\2NORMAL\1\e[1;92;40m\2\1\e[0m\2
+set vi-cmd-mode-string \1\e[1;92;40m\2\1\e[1;30;102m\2NORMAL\1\e[1;92;40m\2\1\e[0m\2
+
