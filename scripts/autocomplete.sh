@@ -1,5 +1,5 @@
 # python3 -m pip install argcomplete
-if [[ ${REAL_SHELL} == zsh ]]
+if [[ "${REAL_SHELL}" == "zsh" ]]
 then
     autoload bashcompinit
     bashcompinit
@@ -11,9 +11,9 @@ then
 fi
 
 function load_autocomplete_resource() {
-    if [[ -h /etc/bash_completion.d/$1 ]]
+    if [[ -h "/etc/bash_completion.d/${1}" ]]
     then
-        source /etc/bash_completion.d/$1
+        source "/etc/bash_completion.d/${1}"
     fi
 }
 
