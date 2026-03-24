@@ -1,0 +1,38 @@
+# To be placed in $HOME/.config
+# Get editor completions based on the config schema
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# Use custom format
+format = '$all'
+
+# Inserts a blank line between shell prompts
+add_newline = false
+
+[line_break]
+disabled = false
+
+[status]
+disabled = true
+
+# Replace the '❯' symbol in the prompt with '➜'
+[character] # The name of the module we are configuring is 'character'
+format = "[](fg:black bg:bright-cyan)[](fg:bright-cyan) "
+disabled = false
+
+[git_status]
+ahead = '⇡${count}'
+diverged = '⇕⇡${ahead_count}⇣${behind_count}'
+behind = '⇣${count}'
+disabled = false
+
+[git_metrics]
+format = '([+$added]($added_style) )([-$deleted]($deleted_style) )'
+disabled = false
+
+[username]
+show_always = true
+
+# Disable the package module, hiding it from the prompt completely
+[package]
+disabled = true
+
