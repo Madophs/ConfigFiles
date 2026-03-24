@@ -19,8 +19,8 @@ alias phptags="cd ${MDS_ROOT}; rm -f tags; ctags -R --languages=php --exclude=st
 alias setroot="echo \$(pwd) > ${MDS_ROOT_FILE}; export MDS_ROOT=\$(cat \${MDS_ROOT_FILE}); export TAGS=\${MDS_ROOT}/tags"
 alias cdr='MDS_ROOT="$(cat "${MDS_ROOT_FILE}")"; cd "${MDS_ROOT}" 2> /dev/null'
 alias getroot="export MDS_ROOT=\$(cat ${MDS_ROOT_FILE}); echo \${MDS_ROOT}"
-alias upgrade="sudo apt update && sudo apt upgrade -y"
-alias update="sudo apt update"
+alias upgrade="export IS_APT_UPDATE_PERFORMED=YES && sudo apt update && sudo apt upgrade -y"
+alias update="export IS_APT_UPDATE_PERFORMED=YES && sudo apt update"
 alias install="sudo apt install"
 alias reinstall="sudo apt reinstall"
 alias purge="sudo apt purge"
