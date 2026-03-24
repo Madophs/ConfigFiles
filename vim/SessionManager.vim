@@ -8,7 +8,7 @@ function! g:SaveSession()
             call win_execute(l:winnr2id, 'quit')
         endif
     endfor
-    let g:mds_session_file = system("(REPONAME=$(git rev-parse --show-toplevel 2> /dev/null) && echo $REPONAME | awk -F '/' '{print \"git_\"$NF\".vim\"}') || echo " .. getcwd() .. " | awk -F '/' '{print $NF\".vim\"}'")
+    let g:mds_session_file = system("(REPONAME=$(git -C '" .. getcwd() .. "' rev-parse --show-toplevel 2> /dev/null) && echo $REPONAME | awk -F '/' '{print \"git_\"$NF\".vim\"}') || echo " .. getcwd() .. " | awk -F '/' '{print $NF\".vim\"}'")
     let l:save_session_path = $MDS_SESSIONS_DIR .. '/' .. g:mds_session_file
     execute "mksession!" .. l:save_session_path
 endfunction
@@ -16,7 +16,7 @@ endfunction
 function! g:LoadSession(...)
     let g:mds_session_file = a:0 > 0 ? a:1 : ''
     if g:mds_session_file == ''
-        let g:mds_session_file = system("(REPONAME=$(git rev-parse --show-toplevel 2> /dev/null) && echo $REPONAME | awk -F '/' '{print \"git_\"$NF\".vim\"}') || echo " .. getcwd() .. " | awk -F '/' '{print $NF\".vim\"}'")
+        let g:mds_session_file = system("(REPONAME=$(git -C '" .. getcwd() .. "' rev-parse --show-toplevel 2> /dev/null) && echo $REPONAME | awk -F '/' '{print \"git_\"$NF\".vim\"}') || echo " .. getcwd() .. " | awk -F '/' '{print $NF\".vim\"}'")
     endif
     let l:save_session_path = $MDS_SESSIONS_DIR .. '/' .. g:mds_session_file
     execute "silent! source " .. l:save_session_path
