@@ -35,7 +35,6 @@ Plug 'crusoexia/vim-monokai'
 Plug 'tpope/vim-vinegar'
 Plug 'embark-theme/vim'
 Plug 'luochen1990/rainbow'
-Plug 'terryma/vim-smooth-scroll'
 Plug 'inside/vim-search-pulse'
 Plug 'mhinz/vim-startify'
 Plug 'pboettch/vim-cmake-syntax'
@@ -248,12 +247,6 @@ nnoremap <silent> <M-u> <Cmd> TagbarJumpPrev<CR>
 nnoremap <silent> <M-o> <Cmd> TagbarJumpNext<CR>
 nmap <C-J> :Kwbd <CR>
 nnoremap ∫ :Buffers <CR>
-
-" Smooth scrolling
-noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 0, 2)<CR>
-noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 0, 2)<CR>
-noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 0, 4)<CR>
-noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 0, 4)<CR>
 
 " View management
 nnoremap <silent> ⮝ <C-W>k
