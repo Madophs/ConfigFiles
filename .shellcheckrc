@@ -1,0 +1,11 @@
+# disable dash and sh competibility warnings
+disable=SC3000-SC4000
+
+# Not following
+disable=SC1091
+
+# function keyword is non-standard. Delete it.
+disable=SC2112
+
+# ShellCheck can't follow non-constant source. Use a directive to specify location. (shellcheck SC1090)
+disable=SC1090
