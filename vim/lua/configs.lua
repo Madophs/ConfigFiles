@@ -121,4 +121,13 @@ require('neoscroll').setup({
       'WinScrolled', 'CursorMoved'
   },
 })
+
 vim.api.nvim_set_keymap("v", "<leader>ss", ":lua require('websearcher').search_selected()<CR>", { noremap = true, silent = true })
+
+vim.opt.lazyredraw = true
+
+if vim.g.neovide then
+    vim.fn.setenv("MDS_FANCY", "YES")
+    vim.g.neovide_opacity = 0.75
+    vim.g.neovide_multigrid = true
+end
