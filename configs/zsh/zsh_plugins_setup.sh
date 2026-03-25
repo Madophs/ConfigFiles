@@ -1,12 +1,12 @@
-#!/bin/bash
+#!/bin/env bash
 
-source ${MDS_SCRIPTS}/common.sh
-source ${MDS_SCRIPTS}/zsh/plugins_enabled_default.sh
-source ${MDS_SCRIPTS}/zsh/update_git_plugin.sh
+source "${MDS_SCRIPTS}/common.sh"
+source "${MDS_CONFIG}/configs/zsh/plugins_enabled_default.sh"
+source "${MDS_CONFIG}/configs/zsh/update_git_plugin.sh"
 
 # User configs (overrides default ones)
 if [[ -f ${MDS_HIDDEN_CONFIGS}/plugins_enabled_user.sh ]]; then
-    source ${MDS_HIDDEN_CONFIGS}/plugins_enabled_user.sh
+    source "${MDS_HIDDEN_CONFIGS}/plugins_enabled_user.sh"
 fi
 
 install_package_if_missing git
@@ -19,17 +19,17 @@ else
 fi
 
 handle_zsh_plugin https://github.com/zsh-users/zsh-autosuggestions \
-    ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions \
+    "${ZSH_CUSTOM:-${HOME}/.oh-my-zsh/custom}/plugins/zsh-autosuggestions" \
     zsh-autosuggestions \
-    ${ZSH_AUTOSUGGESTIONS_ENABLED}
+    "${ZSH_AUTOSUGGESTIONS_ENABLED}"
 
 handle_zsh_plugin https://github.com/zsh-users/zsh-syntax-highlighting.git \
-    ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting \
+    "${ZSH_CUSTOM:-${HOME}/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting" \
     zsh-syntax-highlighting \
-    ${ZSH_SYNTAX_HIGHLIGHTING_ENABLED}
+    "${ZSH_SYNTAX_HIGHLIGHTING_ENABLED}"
 
 handle_zsh_plugin https://github.com/psprint/zsh-navigation-tools.git \
-    ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-navigation-tools \
+    "${ZSH_CUSTOM:-${HOME}/.oh-my-zsh/custom}/plugins/zsh-navigation-tools" \
     zsh-navigation-tools \
-    ${ZSH_NAVIGATION_TOOLS_ENABLED}
+    "${ZSH_NAVIGATION_TOOLS_ENABLED}"
 

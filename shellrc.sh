@@ -62,7 +62,6 @@ esac
 source "${MDS_CONFIG}/scripts/utils/cout.sh"
 source "${MDS_CONFIG}/scripts/utils/clock_timer.sh"
 source "${MDS_CONFIG}/configs/shellsetup.sh"
-source "${MDS_CONFIG}/scripts/zsh/zsh_plugins.sh"
 
 # function commands
 source "${MDS_CONFIG}/scripts/custom_cmds.sh"

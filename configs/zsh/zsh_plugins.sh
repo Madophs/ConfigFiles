@@ -1,10 +1,5 @@
 #!/bin/env zsh
 
-if [[ ${REAL_SHELL} != 'zsh' ]]
-then
-    return 0
-fi
-
 if [[ -e ${ZSH_CUSTOM}/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
     source ${ZSH_CUSTOM}/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 fi

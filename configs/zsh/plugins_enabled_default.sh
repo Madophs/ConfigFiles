@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/env bash
 
 # All ZSH plugins enabled by default
 export ZSH_AUTOSUGGESTIONS_ENABLED="Y"

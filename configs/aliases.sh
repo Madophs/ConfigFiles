@@ -57,7 +57,7 @@ alias syscalls="batcat \$(find /usr/include -name 'unistd*.h' | xargs grep 'writ
 
 # Scripts aliases
 alias operaffmpeg='${MDS_SCRIPTS}/operaffmpeg.sh'
-alias zshplugins='${MDS_SCRIPTS}/zsh/zsh_plugins_setup.sh'
+alias zshplugins='${MDS_CONFIG}/configs/zsh/zsh_plugins_setup.sh'
 alias lfunc='source ${MDS_SCRIPTS}/custom_cmds.sh'
 alias sl2='${MDS_SCRIPTS}/backup_steam_savefiles.sh'
 alias htoken='${MDS_SCRIPTS}/handle_git_token.sh'
