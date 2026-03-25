@@ -1,48 +1,38 @@
-#!/bin/bash
+#!/bin/env bash
 
-source ${MDS_SCRIPTS}/common.sh
-HIDDEN_HOSTLIST_DIR=~/.config/mdsconfig
-HOSTLIST_FILE=${HIDDEN_HOSTLIST_DIR}/hostlist
-mkdir -p ${HIDDEN_HOSTLIST_DIR}
-touch ${HOSTLIST_FILE}
+HIDDEN_HOTLIST_DIR="${HOME}/.config/mdsconfig"
+HOTLIST_FILE=${HIDDEN_HOTLIST_DIR}/hotlist
+mkdir -p "${HIDDEN_HOTLIST_DIR}"
+touch "${HOTLIST_FILE}"
 
-function load_hostlist_file() {
+[[ ! -v znt_cd_hotlist ]] && declare -g -a znt_cd_hotlist=()
+
+function hotlist_load() {
     znt_cd_hotlist=()
-    cat ${HOSTLIST_FILE} | while read line
+    local line
+    while read -r line
     do
-        znt_cd_hotlist+=("$line")
-    done
+        znt_cd_hotlist+=("${line}")
+    done < <(cat "${HOTLIST_FILE}")
 }
 
-function is_already_present_in_hostlist() {
-    cat ${HOSTLIST_FILE} | grep -w "${@}$" &> /dev/null
-    if [[ $(any_error $?) == "YES" ]]
+function hotlist_push() {
+    if ! grep -w "${PWD}$" "${HOTLIST_FILE}" &> /dev/null;
     then
-        echo "NO"
+        echo "${PWD}" >> "${HOTLIST_FILE}"
+        znt_cd_hotlist+=("${PWD}")
+    fi
+}
+
+function hotlist_pop() {
+    if (( $# == 0 ))
+    then
+        local target_dir="${PWD}"
     else
-        echo "YES"
+        local target_dir="${*}"
     fi
-}
 
-function push_directory_to_hotlist() {
-    CURRENT_DIRECTORY=$@
-    if [[ $(is_already_present_in_hostlist ${CURRENT_DIRECTORY}) == "NO" ]]
-    then
-        echo ${CURRENT_DIRECTORY} >> ${HOSTLIST_FILE}
-        znt_cd_hotlist+=("${CURRENT_DIRECTORY}")
-    fi
-}
-
-function remove_directory_from_hotlist() {
-    TARGET_DIRECTORY=$@
-    clean_file ${HOSTLIST_FILE}.tmp
-    cat ${HOSTLIST_FILE} | while read line
-    do
-        if [[ ${line} != ${TARGET_DIRECTORY} ]]
-        then
-            echo ${line} >> ${HOSTLIST_FILE}.tmp
-        fi
-    done
-    mv ${HOSTLIST_FILE}.tmp ${HOSTLIST_FILE}
-    load_hostlist_file
+    grep -v -w "${target_dir}$" "${HOTLIST_FILE}" > "${HOTLIST_FILE}.tmp"
+    mv "${HOTLIST_FILE}.tmp" "${HOTLIST_FILE}"
+    hotlist_load
 }

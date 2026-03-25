@@ -26,6 +26,6 @@ if [[ -e ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-navigation-tools/zsh-nav
                     "/usr/local/share/zsh/site-functions" "/usr/local/share/zsh"
                                     "/usr/local/bin" )
 
-    source ${MDS_SCRIPTS}/zsh/hotlist.sh
-    load_hostlist_file
+    source "${MDS_SCRIPTS}/functions/hotlist.sh"
+    hotlist_load
 fi
