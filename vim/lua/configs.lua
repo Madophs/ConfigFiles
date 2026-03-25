@@ -130,5 +130,7 @@ if vim.g.neovide then
     vim.fn.setenv("MDS_FANCY", "YES")
     vim.fn.setenv("MDS_SESSIONS_DIR", "$HOME/.config/mdsconfig/sessions")
     vim.g.neovide_opacity = 0.75
+    vim.g.neovide_normal_opacity = 0.75
     vim.g.neovide_multigrid = true
+    vim.g.neovide_fullscreen = true
 end
