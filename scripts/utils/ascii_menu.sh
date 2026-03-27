@@ -138,12 +138,12 @@ function ascii_menu_handle_key() {
             stty -echo
             ;;
         q|Q)
-            return 1
+            exit_status=1
             ;;
         *)
             local menu_item_selected="${menu_obj[${menu_index}]}"
             local menu_item_key_selected="${menu_keys_obj[${menu_index}]}"
-            [[ -n "${callback_func}" ]] && ${callback_func}
+            [[ -n "${callback_func}" ]] && ${callback_func} ; exit_status=$?
             menu_item_start_index_prev=-1 # repaint in case items changed
             ;;
     esac
@@ -166,7 +166,9 @@ function ascii_menu_create() {
     local filter_word_prev="${filter_word}"
     local -i menu_item_start_index_prev=-1
     local -i menu_index=0 menu_index_prev=0
-    while (( $? == 0 ))
+
+    local -i exit_status=0
+    while (( exit_status == 0 ))
     do
 
         if (( ${#menu_ref[@]} == 0 ))
@@ -191,5 +193,5 @@ function ascii_menu_create() {
         menu_index_prev=menu_index
         ascii_menu_handle_key ${callback_input}
     done
-    return 0 #Ignore #?
+    return 0 # ignore exit status
 }
