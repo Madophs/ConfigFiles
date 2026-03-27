@@ -29,7 +29,7 @@ function ascii_menu_filter() {
         if [[ "${iteml}" == *${filter_word,,}* ]]
         then
             item="${menu_ref[${i}]}" # Get current (raw) line
-            string_before="${iteml%%${filter_word,,}*}" # Substring before filter_word
+            string_before="${iteml%%"${filter_word,,}"*}" # Substring before filter_word
             string_after_index=$(( ${#string_before} + ${#filter_word} )) # Index after filter_word
             item_filtered="${item:0:${#string_before}}${INVERT}${item:${#string_before}:${#filter_word}}${INVERT_BLK}${item:${string_after_index}}"
 
@@ -90,7 +90,7 @@ function ascii_menu_show() {
 
     # Move line to footer's position
     line_number=$(( menu_scroll_size + 2 ))
-    printf "\e[${line_number};0H"
+    echo -ne "\e[${line_number};0H"
 }
 
 function ascii_menu_handle_key() {
@@ -98,13 +98,13 @@ function ascii_menu_handle_key() {
     local -i menu_size=${#menu_obj[@]}
 
     # Read a single character
-    read -s -n 1 key
+    read -r -s -n 1 key
     # Capture trailing characters
-    read -s -N 1 -t 0.0001 k1
-    read -s -N 1 -t 0.0001 k2
-    read -s -N 1 -t 0.0001 k3
+    read -r -s -N 1 -t 0.0001 k1
+    read -r -s -N 1 -t 0.0001 k2
+    read -r -s -N 1 -t 0.0001 k3
     key+=${k1}${k2}${k3}
-    case "${key}" in
+    case ${key} in
         $'\e[A'|k) # Go Up
             (( (menu_index - 1) == -1 )) && menu_index=$(( menu_size ))
             menu_index=$(( (menu_index - 1) % menu_size ))
@@ -134,7 +134,7 @@ function ascii_menu_handle_key() {
             ;;
         '/')
             stty echo
-            read -e -i "${filter_word}" -p "Search for:" filter_word
+            read -r -e -i "${filter_word}" -p "Search for:" filter_word
             stty -echo
             ;;
         q|Q)
@@ -147,7 +147,6 @@ function ascii_menu_handle_key() {
             menu_item_start_index_prev=-1 # repaint in case items changed
             ;;
     esac
-    return $?
 }
 
 # @arg: menu_ref (menu items shown)
@@ -185,13 +184,13 @@ function ascii_menu_create() {
         fi
 
         ascii_menu_filter
-        printf "${TOPLEFT}${CLEAR_LINE}${title}\n"
+        echo -ne "${TOPLEFT}${CLEAR_LINE}${title}\n"
         ascii_menu_show
-        [[ -n "${filter_word}" ]] && printf "Current filter «${filter_word}»${CLEAR_LINE}\n"
-        printf "${menu_footer}${NOCURSOR}${CLEAR_2BOTTOM_SCREEN}\n"
+        [[ -n "${filter_word}" ]] && echo -ne "Current filter «${filter_word}»${CLEAR_LINE}\n"
+        echo -ne "${menu_footer}${NOCURSOR}${CLEAR_2BOTTOM_SCREEN}\n"
 
         menu_index_prev=menu_index
-        ascii_menu_handle_key ${callback_input}
+        ascii_menu_handle_key "${callback_input}"
     done
     return 0 # ignore exit status
 }
