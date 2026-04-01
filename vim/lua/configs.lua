@@ -1,59 +1,10 @@
-require('nvim-treesitter.configs').setup {
-    ensure_installed = {
-        'c', 'cpp', 'lua', 'vim', 'vimdoc', 'query', 'java', 'rust', 'php', 'javascript', 'json',
-        'python', 'yaml', 'html', 'cuda', 'bash', 'css', 'gitignore', 'go', 'graphql', 'haskell',
-        'llvm', 'lua', 'make', 'objdump', 'r', 'typescript', 'nasm'
-    },
-    highlight = {
-        enable = true,
-        -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
-        -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
-        -- Using this option may slow down your editor, and you may see some duplicate highlights.
-        -- Instead of true it can also be a list of languages
-        additional_vim_regex_highlighting = false,
-    },
-    refactor = {
-        highlight_definitions = {
-            enable = true,
-            -- Set to false if you have an `updatetime` of ~100.
-            clear_on_cursor_move = true,
-        },
-    },
-    textobjects = {
-        swap = {
-        enable = true,
-            swap_next = {
-                ["<leader>a"] = "@parameter.inner",
-            },
-            swap_previous = {
-                ["<leader>A"] = "@parameter.inner",
-            },
-        },
-    },
+require('nvim-treesitter').install {
+    'c', 'cpp', 'lua', 'vim', 'vimdoc', 'query', 'java', 'rust', 'php', 'javascript', 'json',
+    'python', 'yaml', 'html', 'cuda', 'bash', 'css', 'gitignore', 'go', 'graphql', 'haskell',
+    'llvm', 'lua', 'make', 'objdump', 'r', 'typescript', 'nasm'
 }
 
--- This module contains a number of default definitions
-local rainbow_delimiters = require ('rainbow-delimiters')
-vim.g.rainbow_delimiters = {
-    strategy = {
-        [''] = rainbow_delimiters.strategy['global'],
-        vim = rainbow_delimiters.strategy['local'],
-    },
-    query = {
-        [''] = 'rainbow-delimiters',
-        lua = 'rainbow-blocks',
-    },
-    highlight = {
-        'RainbowDelimiterRed',
-        'RainbowDelimiterYellow',
-        'RainbowDelimiterBlue',
-        'RainbowDelimiterOrange',
-        'RainbowDelimiterGreen',
-        'RainbowDelimiterViolet',
-        'RainbowDelimiterCyan',
-    },
-}
-
+---- rainbow-delimiters configs
 local highlight = {
     "RainbowRed",
     "RainbowYellow",
@@ -116,7 +67,7 @@ require('neoscroll').setup({
   easing = 'linear',           -- Default easing function
   pre_hook = nil,              -- Function to run before the scrolling animation starts
   post_hook = nil,             -- Function to run after the scrolling animation ends
-  performance_mode = true,    -- Disable "Performance Mode" on all buffers.
+  performance_mode = false,    -- Disable "Performance Mode" on all buffers.
   ignored_events = {           -- Events ignored while scrolling
       'WinScrolled', 'CursorMoved'
   },

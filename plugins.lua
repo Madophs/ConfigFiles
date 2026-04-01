@@ -55,26 +55,25 @@ return require('packer').startup(function()
   -- Plugins can have post-install/update hooks
   use {'iamcco/markdown-preview.nvim', run = 'cd app && yarn install', cmd = 'MarkdownPreview'}
 
-  -- Post-install/update hook with neovim command
-  --use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' }
   use {
     'nvim-treesitter/nvim-treesitter',
-    run = function()
-      local ts_update = require('nvim-treesitter.install').update({ with_sync = true })
-      ts_update()
-    end,
+    lazy = false,
+    build = ':TSUpdate'
   }
 
-
-  use {'nvim-treesitter/nvim-treesitter-refactor'}
-
   use {'nvim-treesitter/nvim-treesitter-context'}
+
+  use({
+    "nvim-treesitter/nvim-treesitter-textobjects",
+    after = "nvim-treesitter",
+    requires = "nvim-treesitter/nvim-treesitter",
+  })
 
   use {'HiPhish/rainbow-delimiters.nvim'}
 
   use {'mfussenegger/nvim-treehopper'}
 
-  use { 'smoka7/hop.nvim', tag = 'v2.5.0' }
+  use { 'smoka7/hop.nvim', tag = 'v2.7.2' }
 
   -- Post-install/update hook with call of vimscript function with argument
   use { 'glacambre/firenvim', run = function() vim.fn['firenvim#install'](0) end }
@@ -120,12 +119,6 @@ return require('packer').startup(function()
               -- Configuration here, or leave empty to use defaults
           })
       end
-  })
-
-  use({
-    "nvim-treesitter/nvim-treesitter-textobjects",
-    after = "nvim-treesitter",
-    requires = "nvim-treesitter/nvim-treesitter",
   })
 
   use 'Xuyuanp/scrollbar.nvim'
