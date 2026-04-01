@@ -28,6 +28,14 @@ return require('packer').startup(function()
   -- Load on an autocommand event
   use {'andymass/vim-matchup', event = 'VimEnter'}
 
+  use {
+    "windwp/nvim-autopairs",
+    event = "InsertEnter",
+    config = function()
+        require("nvim-autopairs").setup {}
+    end
+  }
+
   -- Load on a combination of conditions: specific filetypes or commands
   -- Also run code after load (see the "config" key)
   use {
