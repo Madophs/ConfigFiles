@@ -5,28 +5,28 @@ require('nvim-treesitter').install {
 }
 
 ---- rainbow-delimiters configs
-local highlight = {
-    "RainbowRed",
-    "RainbowYellow",
-    "RainbowBlue",
-    "RainbowOrange",
-    "RainbowGreen",
-    "RainbowViolet",
-    "RainbowCyan",
-}
+--local highlight = {
+    --"RainbowRed",
+    --"RainbowYellow",
+    --"RainbowBlue",
+    --"RainbowOrange",
+    --"RainbowGreen",
+    --"RainbowViolet",
+    --"RainbowCyan",
+--}
 
-local hooks = require "ibl.hooks"
--- create the highlight groups in the highlight setup hook, so they are reset
--- every time the colorscheme changes
-hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
-    vim.api.nvim_set_hl(0, "RainbowRed", { fg = "#E06C75" })
-    vim.api.nvim_set_hl(0, "RainbowYellow", { fg = "#E5C07B" })
-    vim.api.nvim_set_hl(0, "RainbowBlue", { fg = "#61AFEF" })
-    vim.api.nvim_set_hl(0, "RainbowOrange", { fg = "#D19A66" })
-    vim.api.nvim_set_hl(0, "RainbowGreen", { fg = "#98C379" })
-    vim.api.nvim_set_hl(0, "RainbowViolet", { fg = "#C678DD" })
-    vim.api.nvim_set_hl(0, "RainbowCyan", { fg = "#56B6C2" })
-end)
+--local hooks = require "ibl.hooks"
+---- create the highlight groups in the highlight setup hook, so they are reset
+---- every time the colorscheme changes
+--hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
+    --vim.api.nvim_set_hl(0, "RainbowRed", { fg = "#E06C75" })
+    --vim.api.nvim_set_hl(0, "RainbowYellow", { fg = "#E5C07B" })
+    --vim.api.nvim_set_hl(0, "RainbowBlue", { fg = "#61AFEF" })
+    --vim.api.nvim_set_hl(0, "RainbowOrange", { fg = "#D19A66" })
+    --vim.api.nvim_set_hl(0, "RainbowGreen", { fg = "#98C379" })
+    --vim.api.nvim_set_hl(0, "RainbowViolet", { fg = "#C678DD" })
+    --vim.api.nvim_set_hl(0, "RainbowCyan", { fg = "#56B6C2" })
+--end)
 
 -- place this in one of your configuration file(s)
 local hop = require('hop')
@@ -73,7 +73,21 @@ require('neoscroll').setup({
   },
 })
 
+vim.keymap.set('n', '<leader>m', require('treesj').toggle)
+
 vim.api.nvim_set_keymap("v", "<leader>ss", ":lua require('websearcher').search_selected()<CR>", { noremap = true, silent = true })
+
+-- movement
+vim.keymap.set({ 'n', 'v' }, '@sk', '<cmd>Treewalker Up<cr>', { silent = true })
+vim.keymap.set({ 'n', 'v' }, '@sj', '<cmd>Treewalker Down<cr>', { silent = true })
+vim.keymap.set({ 'n', 'v' }, '@sh', '<cmd>Treewalker Left<cr>', { silent = true })
+vim.keymap.set({ 'n', 'v' }, '@sl', '<cmd>Treewalker Right<cr>', { silent = true })
+
+-- swapping
+vim.keymap.set('n', '<leader>k', '<cmd>Treewalker SwapUp<cr>', { silent = true })
+vim.keymap.set('n', '<leader>j', '<cmd>Treewalker SwapDown<cr>', { silent = true })
+vim.keymap.set('n', '<leader>h', '<cmd>Treewalker SwapLeft<cr>', { silent = true })
+vim.keymap.set('n', '<leader>l', '<cmd>Treewalker SwapRight<cr>', { silent = true })
 
 vim.opt.lazyredraw = true
 

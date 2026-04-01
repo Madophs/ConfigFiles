@@ -69,7 +69,7 @@ return require('packer').startup(function()
     requires = "nvim-treesitter/nvim-treesitter",
   })
 
-  use {'HiPhish/rainbow-delimiters.nvim'}
+  --use {'HiPhish/rainbow-delimiters.nvim'}
 
   use {'mfussenegger/nvim-treehopper'}
 
@@ -129,6 +129,44 @@ return require('packer').startup(function()
 
   use 'karb94/neoscroll.nvim'
 
+  use 'Wansmer/treesj'
+
+  use 'aaronik/treewalker.nvim'
+
+  use {
+      "shellRaining/hlchunk.nvim",
+      event = { "BufReadPre", "BufNewFile" },
+      config = function()
+          require("hlchunk").setup({
+                  chunk = {
+                      enable = true
+                      -- ...
+                  },
+                  indent = {
+                      enable = true,
+                      chars = {
+                          "│",
+                      },
+                      style = {
+                          "#FF0000",
+                          "#FF7F00",
+                          "#FFFF00",
+                          "#00FF00",
+                          "#00FFFF",
+                          "#0000FF",
+                          "#8B00FF",
+                      },
+                  },
+                  line_num = {
+                      enable = true
+                  },
+                  blank = {
+                      enable = true,
+
+                  }
+              })
+      end
+  }
   if packer_bootstrap then
     require('packer').sync()
   end
