@@ -89,6 +89,26 @@ vim.keymap.set('n', '<leader>j', '<cmd>Treewalker SwapDown<cr>', { silent = true
 vim.keymap.set('n', '<leader>h', '<cmd>Treewalker SwapLeft<cr>', { silent = true })
 vim.keymap.set('n', '<leader>l', '<cmd>Treewalker SwapRight<cr>', { silent = true })
 
+vim.keymap.set({ "x", "o" }, "af", function()
+  require "nvim-treesitter-textobjects.select".select_textobject("@function.outer", "textobjects")
+end)
+vim.keymap.set({ "x", "o" }, "if", function()
+  require "nvim-treesitter-textobjects.select".select_textobject("@function.inner", "textobjects")
+end)
+
+vim.keymap.set({ "n", "x", "o" }, "]f", function()
+  require("nvim-treesitter-textobjects.move").goto_next_start("@function.outer", "textobjects")
+end)
+vim.keymap.set({ "n", "x", "o" }, "]F", function()
+  require("nvim-treesitter-textobjects.move").goto_next_end("@function.outer", "textobjects")
+end)
+vim.keymap.set({ "n", "x", "o" }, "[f", function()
+  require("nvim-treesitter-textobjects.move").goto_previous_start("@function.outer", "textobjects")
+end)
+vim.keymap.set({ "n", "x", "o" }, "[F", function()
+  require("nvim-treesitter-textobjects.move").goto_previous_end("@function.outer", "textobjects")
+end)
+
 vim.opt.lazyredraw = true
 
 if vim.g.neovide then
