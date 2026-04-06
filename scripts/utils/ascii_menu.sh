@@ -94,6 +94,7 @@ function ascii_menu_show() {
 }
 
 function ascii_menu_handle_key() {
+    menu_index_prev=menu_index
     local callback_func=${1}
     local -i menu_size=${#menu_obj[@]}
 
@@ -189,7 +190,6 @@ function ascii_menu_create() {
         [[ -n "${filter_word}" ]] && echo -ne "Current filter «${filter_word}»${CLEAR_LINE}\n"
         echo -ne "${menu_footer}${NOCURSOR}${CLEAR_2BOTTOM_SCREEN}\n"
 
-        menu_index_prev=menu_index
         ascii_menu_handle_key "${callback_input}"
     done
     return 0 # ignore exit status
