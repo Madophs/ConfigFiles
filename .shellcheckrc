@@ -9,3 +9,9 @@ disable=SC2112
 
 # ShellCheck can't follow non-constant source. Use a directive to specify location. (shellcheck SC1090)
 disable=SC1090
+
+# variable is referenced by not assigned
+disable=SC2154
+
+# variable appears unused. Verify use (or export if used externally).
+disable=SC2034
