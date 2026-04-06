@@ -19,14 +19,15 @@ do
     shift
 done
 
-mapfile -t lines < <(\
-    printf "%s" "$(git log -${rev_chuck_size} --abbrev-commit --follow -- "${path}" 2> /dev/null \
-    | grep -A 4 '^commit [a-z0-9]\+$' \
-    | sed -E '/^( |-)*$/d;s/^ *//g')" \
+mapfile -t commit_logs < <(
+    printf "%s"\
+        "$(git log -${rev_chuck_size} --abbrev-commit --follow -- "${path}" 2> /dev/null \
+            | grep -A 4 '^commit [a-z0-9]\+$' \
+            | sed -E '/^( |-)*$/d;s/^ *//g')" \
     )
 
-declare -i log_size=${#lines[@]}
-if (( log_size == 0))
+declare -i log_size=${#commit_logs[@]}
+if (( log_size == 0 ))
 then
     cout fail "Couldn't retrieve revision log"
 fi
@@ -37,8 +38,8 @@ for (( i=0; i<log_size; i+=4 ))
 do
     # split commit data
     # shellcheck disable=SC2068
-    set -- ${lines[@]:i:3}
-    commits_menu+=( "${1^} <${CYAN}${2}${WHITE}> ${YELLOW}'${lines[$((i+3))]}'${WHITE} by ${GREEN}${4}${WHITE} at ${PURPLE}${7} ${8} ${9} ${11}" )
+    set -- ${commit_logs[@]:i:3}
+    commits_menu+=( "${1^} <${CYAN}${2}${WHITE}> ${YELLOW}'${commit_logs[$((i+3))]}'${WHITE} by ${GREEN}${4}${WHITE} at ${PURPLE}${7} ${8} ${9} ${11}" )
     commit_hashes+=( "${2}" )
 done
 
