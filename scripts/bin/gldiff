@@ -5,9 +5,26 @@ source "${MDS_SCRIPTS}/utils/ascii_menu.sh"
 GIT_BASE_DIR="$(git rev-parse --show-toplevel 2> /dev/null)"
 [[ -z "${GIT_BASE_DIR}" ]] && cout fail "Not a git repository"
 
-declare -i rev_chuck_size=${1:-50}
+declare -i rev_chuck_size=50
+declare path="."
 
-mapfile -t lines < <( printf "%s" "$(git log -${rev_chuck_size} --abbrev-commit 2> /dev/null | grep -A 4 '^commit [a-z0-9]\+$' | sed -E '/^( |-)*$/d;s/^ *//g')")
+while (( $# > 0 ))
+do
+    if [[ "${1}" =~ ^[0-9]+$ ]]
+    then
+        rev_chuck_size="${1}"
+    else
+        path="${1}"
+    fi
+    shift
+done
+
+mapfile -t lines < <(\
+    printf "%s" "$(git log -${rev_chuck_size} --abbrev-commit --follow -- "${path}" 2> /dev/null \
+    | grep -A 4 '^commit [a-z0-9]\+$' \
+    | sed -E '/^( |-)*$/d;s/^ *//g')" \
+    )
+
 declare -i log_size=${#lines[@]}
 if (( log_size == 0))
 then
@@ -18,9 +35,11 @@ declare -a commits_menu=()
 declare -g -a commit_hashes=()
 for (( i=0; i<log_size; i+=4 ))
 do
-    set -- ${lines[${i}]} ${lines[$((i+1))]} ${lines[$((i+2))]}
+    # split commit data
+    # shellcheck disable=SC2068
+    set -- ${lines[@]:i:3}
     commits_menu+=( "${1^} <${CYAN}${2}${WHITE}> ${YELLOW}'${lines[$((i+3))]}'${WHITE} by ${GREEN}${4}${WHITE} at ${PURPLE}${7} ${8} ${9} ${11}" )
-    commit_hashes+=( ${2} )
+    commit_hashes+=( "${2}" )
 done
 
 function modified_files_callback() {
@@ -32,6 +51,9 @@ function modified_files_callback() {
                 git -C "${GIT_BASE_DIR}" difftool --tool=nvimdiff -y "${hash_selected}~" "${hash_selected}"
             fi
             ;;
+        [hH])
+            gldiff "${menu_item_key_selected}"
+            ;;
         [oO])
             nvim -R "${GIT_BASE_DIR}/${menu_item_key_selected}"
             ;;
@@ -39,8 +61,9 @@ function modified_files_callback() {
 }
 
 function modified_files_menu() {
-    local -a files_menu=( $(git diff-tree --no-commit-id --name-only -r ${hash_selected}) )
-    ascii_menu_create files_menu files_menu "Git log <${menu_item_selected}>" "(V)iew (O)pen (Q)uit" modified_files_callback
+    local -a files_menu=()
+    mapfile -t files_menu < <( git diff-tree --no-commit-id --name-only -r "${hash_selected}" )
+    ascii_menu_create files_menu files_menu "Git log <${menu_item_selected}>" "(V)iew (H)istory (O)pen (Q)uit" modified_files_callback
 }
 
 function gldiff_callback() {
@@ -52,4 +75,7 @@ function gldiff_callback() {
     esac
 }
 
-ascii_menu_create commits_menu commit_hashes "Git log" "(V)iew (Q)uit" gldiff_callback
+menu_title="Git log"
+[[ "${path}" != "." ]] && menu_title+=" for ${BROWN}«${path}»${BLK}"
+
+ascii_menu_create commits_menu commit_hashes "${menu_title}" "(V)iew (Q)uit" gldiff_callback
