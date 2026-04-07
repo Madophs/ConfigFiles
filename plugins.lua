@@ -18,15 +18,9 @@ return require('packer').startup(function()
 
   use 'voldikss/vim-floaterm'
 
-  -- Simple plugins can be specified as strings
-  --use '9mm/vim-closer'
-
   -- Lazy loading:
   -- Load on specific commands
   use {'tpope/vim-dispatch', opt = true, cmd = {'Dispatch', 'Make', 'Focus', 'Start'}}
-
-  -- Load on an autocommand event
-  use {'andymass/vim-matchup', event = 'VimEnter'}
 
   use {
     "windwp/nvim-autopairs",
@@ -121,8 +115,6 @@ return require('packer').startup(function()
       end
   })
 
-  use 'Xuyuanp/scrollbar.nvim'
-
   use { 'm-demare/hlargs.nvim' }
 
   use 'KaitoMuraoka/websearcher.nvim'
@@ -154,6 +146,9 @@ return require('packer').startup(function()
       })
     end
   }
+
+  use "petertriho/nvim-scrollbar"
+
   if packer_bootstrap then
     require('packer').sync()
   end

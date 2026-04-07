@@ -42,6 +42,10 @@ vim.keymap.set('', 'T', function()
 end, {remap=true})
 --require('tsht').move({ side = "start" })
 
+require('gitsigns').setup()
+vim.keymap.set('n', '<leader>hi', require('gitsigns').preview_hunk_inline)
+vim.keymap.set('n', '<leader>hd', require('gitsigns').toggle_deleted)
+
 require("ibl").setup { indent = { highlight = highlight } }
 
 require('hop').setup { keys = 'etovxqpdygfblzhckisuran' }
@@ -72,6 +76,9 @@ require('neoscroll').setup({
       'WinScrolled', 'CursorMoved'
   },
 })
+
+require("scrollbar").setup()
+require("scrollbar.handlers.gitsigns").setup()
 
 vim.keymap.set('n', '<leader>m', require('treesj').toggle)
 
@@ -119,3 +126,5 @@ if vim.g.neovide then
   vim.g.neovide_multigrid = true
   vim.g.neovide_fullscreen = true
 end
+
+vim.opt.signcolumn="auto:3"

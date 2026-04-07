@@ -264,14 +264,14 @@ nnoremap <silent> `j :resize -5 <CR>
 nnoremap <silent> `h :vertical resize -5 <CR>
 nnoremap <silent> 🤍 <C-W>_<C-W>\|
 
-" Indentation character list
-if ! has('nvim')
+if has('nvim')
+    let g:indentLine_enabled = 0
+    let g:gitgutter_signs = 0
+else
     "let g:indentLine_char_list = ['|', '¦', '┆', '┊']
     let g:indentLine_char_list = ['|']
     let g:indentLine_enabled = 1
     autocmd InsertEnter,CursorMoved *.cpp IndentLinesReset
-else
-    let g:indentLine_enabled = 0
 endif
 
 " Parenthesis colors
@@ -352,7 +352,7 @@ let g:tagbar_type_cpp = {
 let g:ycm_filetype_whitelist = {'python': 1}
 let g:ycm_autoclose_preview_window_after_completion = 1
 let g:coc_filetypes_enable = ['c', 'cpp', 'tpp', 'javascript', 'typescript', 'php', 'bash', 'css', 'html', 'sh', 'vim', 'blade', 'gitcommit', 'rust', 'cmake', 'vim', 'lua', 'gitcommit', 'nasm', 'gas', 'python']
-let g:coc_global_extensions = ['coc-json', 'coc-git', 'coc-angular', 'coc-cmake', 'coc-clangd', 'coc-css', 'coc-cssmodules', 'coc-html-css-support', 'coc-html', 'coc-htmlhint', 'coc-phpactor', 'coc-phpls', 'coc-sh', 'coc-spell-checker', 'coc-tsserver', 'coc-blade-formatter', 'coc-blade-linter', 'coc-blade', 'coc-yank', 'coc-vimlsp', 'coc-rust-analyzer', 'coc-lua', 'coc-emmet', 'coc-copilot', 'coc-prettier', 'coc-java', 'coc-pyright']
+let g:coc_global_extensions = ['coc-json', 'coc-angular', 'coc-cmake', 'coc-clangd', 'coc-css', 'coc-cssmodules', 'coc-html-css-support', 'coc-html', 'coc-htmlhint', 'coc-phpactor', 'coc-phpls', 'coc-sh', 'coc-spell-checker', 'coc-tsserver', 'coc-blade-formatter', 'coc-blade-linter', 'coc-blade', 'coc-yank', 'coc-vimlsp', 'coc-rust-analyzer', 'coc-lua', 'coc-emmet', 'coc-copilot', 'coc-prettier', 'coc-java', 'coc-pyright']
 let g:ycm_enabled = v:false
 
 " Source files (Usually functions)
