@@ -56,6 +56,8 @@ require('nvim-surround').setup()
 
 require('hlargs').setup()
 
+require('marks').setup()
+
 require('neoscroll').setup({
   mappings = {                 -- Keys to be mapped to their corresponding default scrolling animation
     '<C-u>', '<C-d>',
@@ -77,8 +79,11 @@ require('neoscroll').setup({
   },
 })
 
-require("scrollbar").setup()
-require("scrollbar.handlers.gitsigns").setup()
+require('scrollview').setup({
+  excluded_filetypes = {'nerdtree'},
+  current_only = true,
+  signs_on_startup = {'indent', 'cursor', 'marks', 'search', 'keywords', 'diagnostics', 'conflicts'},
+})
 
 vim.keymap.set('n', '<leader>m', require('treesj').toggle)
 

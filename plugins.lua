@@ -147,7 +147,9 @@ return require('packer').startup(function()
     end
   }
 
-  use "petertriho/nvim-scrollbar"
+  use "dstein64/nvim-scrollview"
+
+  use "chentoast/marks.nvim"
 
   if packer_bootstrap then
     require('packer').sync()
