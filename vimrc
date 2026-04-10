@@ -121,6 +121,7 @@ set number
 set relativenumber
 set mouse=ni
 set showmatch
+set textwidth=80
 set wrap
 set linebreak
 set showbreak=↳
@@ -128,6 +129,7 @@ set breakindent
 set scrolloff=3
 set ruler
 set foldmethod=indent
+set foldignore=
 set nofoldenable
 set hidden
 
@@ -372,10 +374,3 @@ if has('nvim')
 else
     call setenv('VIM_EDITOR', 'vim')
 endif
-
-augroup ScrollbarInit
-  autocmd!
-  autocmd WinScrolled,VimResized,QuitPre * silent! lua require('scrollbar').show()
-  autocmd WinEnter,FocusGained           * silent! lua require('scrollbar').show()
-  autocmd WinLeave,BufLeave,BufWinLeave,FocusLost * silent! lua require('scrollbar').clear()
-augroup end
