@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # worg (wallpaper organizer) separates images base on Width and Height ratio
-# any image with dimension lower than 4 digits it's filter out
+# any image with dimension lower than 4 digits is filter out
 
 # higher than "threshold" means wide otherwise "slim"
 declare -r -i WIDE_RATIO_THRESHOLD=188
