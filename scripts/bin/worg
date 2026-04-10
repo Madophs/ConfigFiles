@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+# worg (wallpaper organizer) separates images base on Width and Height ratio
+# any image with dimension lower than 4 digits it's filter out
+
+# higher than "threshold" means wide otherwise "slim"
+declare -r -i WIDE_RATIO_THRESHOLD=188
+declare -r -i TILE_RATIO_THRESHOLD=100
+declare -r DIMENSIONS_REGEX='[0-9]{4} ?x ?[0-9]{4}'
+
+mapfile -t images < <(find . -type f -printf "%P\n" | grep -E '.png$|.jp[e]?g$')
+
+# filter out images not satisfying required dimension
+mapfile -t filter_out_indexes < <(\
+    file -b "${images[@]}" \
+    | grep -n -v -E "${DIMENSIONS_REGEX}"\
+    | awk -F ':' '{printf ($1-1)"\n"}')
+for index in "${filter_out_indexes[@]}"
+do
+    unset "images[${index}]"
+done
+images=( "${images[@]}" )
+(( ${#images[@]} == 0 )) && cout fail "No images suitable for wallpaper were found."
+mkdir -p wide slim tile
+
+# grep width and height in 'w/h' format
+mapfile -t dimensions < <(
+    file -b "${images[@]}" \
+    | grep -o -E "${DIMENSIONS_REGEX}" \
+    | awk -F '[x ]' '{print $1"/"$NF}')
+
+mapfile -t images_ratio < <(printf "ceil( (%s) * 100 )\n" "${dimensions[@]}" | genius)
+declare -r -i images_size=${#images[@]}
+for (( i=0; i<images_size; ++i ))
+do
+    if (( images_ratio[i] > WIDE_RATIO_THRESHOLD ))
+    then
+        mv --update=none "${images[i]}" wide/
+    elif (( images_ratio[i] < TILE_RATIO_THRESHOLD ))
+    then
+        mv --update=none "${images[i]}" tile/
+    else
+        mv --update=none "${images[i]}" slim/
+    fi
+done
