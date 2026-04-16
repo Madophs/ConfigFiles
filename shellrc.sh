@@ -1,19 +1,14 @@
-# We can only return from a function or sourced script
-if (return 0 2>/dev/null);
-then
-    declare -g IS_SOURCED=YES
-else
-    declare -g IS_SOURCED=NO
-fi
-
 # Current shell PID
+declare -i SHELL_PID
 SHELL_PID="$(ps -opid $$ | tail -n 1)"
 
 # compute base directory
-REAL_SHELL="$(ps -o command $$ | tail -n 1 | awk '{print $0}' | grep -o -e '^[\/a-z-][/a-z]\+' | awk -F '[/-]' '{print $NF}')"
-if [[ ${REAL_SHELL} == zsh ]]
+REAL_SHELL="$(ps -o command $$ | tail -n 1 | awk '{print $0}' \
+              | grep -o -e '^[\/a-z-][/a-z]\+' | awk -F '[/-]' '{print $NF}')"
+if [[ $REAL_SHELL == zsh ]]
 then
-    MDS_CONFIG=$(cd -P -- "$(dirname -- "$0")" && printf '%s\n' "$(pwd -P)/$(basename -- "$0")" | sed 's/\/shellrc\.sh//g')
+    MDS_CONFIG=$(cd -P -- "$(dirname -- "$0")" \
+                 && printf '%s\n' "$(pwd -P)/$(basename -- "$0")" | sed 's/\/shellrc\.sh//g')
 else
     MDS_CONFIG="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 fi
