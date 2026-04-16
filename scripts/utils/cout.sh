@@ -5,18 +5,16 @@ source "${MDS_SCRIPTS}/utils/ansi_codes.sh"
 [[ ! -v MDS_DEBUG ]] && export MDS_DEBUG=""
 
 function print_stacktrace() {
+    local file lineno
     for ((i=1; i<=${#funcfiletrace[@]}; ++i))
     do
         echo -ne "${YELLOW}${funcstack[${i}]}${BROWN}..." >&2
+        IFS=':' read -r -s file lineno <<< "${funcfiletrace[i]}"
         if (( i == 1 ))
         then
-            # shellcheck disable=SC2296
-            echo -e "${GREEN}$(basename "${(%):-%x}")${BLK}" >&2
+            echo -e "${GREEN}$(basename "${file}")${BLK}" >&2
         else
-            # mapfile isn't available on zsh
-            # shellcheck disable=SC2207
-            declare -a file_lineno=($(echo "${funcfiletrace[i]}" | tr ':' ' '))
-            echo -e "${GREEN}$(basename "${file_lineno[1]}"):${CYAN}${file_lineno[2]}${BLK}" >&2
+            echo -e "${GREEN}$(basename "${file}"):${CYAN}${lineno}${BLK}" >&2
         fi
     done
 
