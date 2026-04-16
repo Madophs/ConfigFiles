@@ -32,3 +32,12 @@ then
     rm -f "${HOME}/.inputrc"
     ln -s "${MDS_CONFIG}/configs/bash/inputrc" "${HOME}/.inputrc"
 fi
+
+# export functions
+export -f cout
+export -f print_stacktrace
+export -f export_colors
+export -f unset_colors
+
+# calling functions
+export_colors

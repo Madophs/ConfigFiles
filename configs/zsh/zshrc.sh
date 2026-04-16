@@ -42,3 +42,6 @@ autoload -Uz add-zsh-hook
 add-zsh-hook precmd print-exit-code
 
 source "${MDS_CONFIG}/configs/zsh/zsh_plugins.sh"
+
+# calling functions
+export_colors
