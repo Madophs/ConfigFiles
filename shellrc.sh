@@ -58,7 +58,6 @@ esac
 
 # Small setup
 source "${MDS_CONFIG}/scripts/utils/cout.sh"
-source "${MDS_CONFIG}/scripts/utils/clock_timer.sh"
 source "${MDS_CONFIG}/configs/shellsetup.sh"
 
 # function commands

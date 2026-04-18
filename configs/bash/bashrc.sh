@@ -33,11 +33,15 @@ then
     ln -s "${MDS_CONFIG}/configs/bash/inputrc" "${HOME}/.inputrc"
 fi
 
+source "${MDS_CONFIG}/scripts/utils/clock_timer.sh"
+
 # export functions
 export -f cout
 export -f print_stacktrace
 export -f export_colors
 export -f unset_colors
+export -f clock_start
+export -f clock_end
 
 # calling functions
 export_colors
