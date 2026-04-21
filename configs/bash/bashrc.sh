@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-trap 'eval "$(< "${MDS_TRAP_CMD}")"; truncate -s 0 "${MDS_TRAP_CMD}"' SIGRTMIN+1
+trap 'eval "$(< "${MDS_TRAP_CMD}")"; truncate -s 0 "${MDS_TRAP_CMD}"' SIGUSR1
 
 HISTSIZE=7000
 HISTFILESIZE=7000

@@ -34,12 +34,8 @@ function get_parent_pid_by_regex() {
 function add_cmd_to_trap() {
     declare -i pid=${1}
     local trap_cmd="${2}"
-    if [[ "$(cat ${MDS_TRAP_CMD})" == "${trap_cmd}" ]]
-    then
-        return 1
-    fi
-    echo -e "${trap_cmd}" > ${MDS_TRAP_CMD}
-    kill -n 35 ${pid}
+    echo -e "${trap_cmd}" > "${MDS_TRAP_CMD}"
+    kill -s SIGUSR1 "${pid}"
 }
 
 function get_shell() {

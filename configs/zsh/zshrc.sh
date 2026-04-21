@@ -1,6 +1,6 @@
 #!/bin/env zsh
 
-trap 'eval "$(< "${MDS_TRAP_CMD}")"; truncate -s 0 "${MDS_TRAP_CMD}"' RTMIN+1
+trap 'eval "$(cat "${MDS_TRAP_CMD}")"; truncate -s 0 "${MDS_TRAP_CMD}"' SIGUSR1
 
 setopt HIST_IGNORE_DUPS
 setopt HIST_IGNORE_ALL_DUPS
