@@ -67,8 +67,18 @@ function gaudio_set_vars() {
     esac
 }
 
+function gaudio_get_url() {
+    if [[ "${XDG_SESSION_TYPE}" == "wayland" ]]
+    then
+        audio_url="$(wl-paste)"
+    else
+        audio_url="$(xclip -selection clipboard -o)"
+    fi || cout error "Failed to read clipboard"
+}
+
 function gaudio() {
-    local audio_url="$(xclip -selection clipboard -o)"
+    local audio_url
+    gaudio_get_url
     gaudio_set_vars
     ascii_menu_create MENU AUDIO_URL_LIST "Choose audio for '${SEARCHED_WORD}':" "(P)lay (D)ownload (Q)uit" gaudio_callback
 }
