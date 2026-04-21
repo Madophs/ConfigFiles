@@ -39,16 +39,13 @@ function gaudio_set_vars() {
                     cout error "Failed to parse url from HTML doctype"
     else
         audio_url="${content}"
+        HTML_DOM="$(lynx -connect-timeout=5000 -source "${audio_url}")" || cout error "Connection error"
     fi
 
     BASE_DOMAIN="$(echo "${audio_url}" | grep -o -e "https://[a-zA-Z\._]\+\.\(org\|com\)")"
     case "${BASE_DOMAIN}" in
         *cambridge*)
             local wotd_line_number
-            if [[ -z "${HTML_DOM}" ]]
-            then
-                HTML_DOM="$(lynx -connect-timeout=5000 -source "${audio_url}")" || cout error "Connection error"
-            fi
             BASE_AUDIO_DOMAIN="${BASE_DOMAIN}"
 
             # Trim word of the day
@@ -64,10 +61,6 @@ function gaudio_set_vars() {
             AUDIO_URL_LIST=( "${MENU[@]}" )
             ;;
         *forvo*)
-            if [[ -z "${HTML_DOM}" ]]
-            then
-                HTML_DOM="$(lynx -connect-timeout=5000 -source "${audio_url}")" || cout error "Connection error"
-            fi
             BASE_AUDIO_DOMAIN="${FORVO_MP3_BASE_URL}"
 
             [[ "${audio_url}" =~ (word/)([^/]+) ]] && SEARCHED_WORD="${BASH_REMATCH[2]}"
