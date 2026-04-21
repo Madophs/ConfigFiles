@@ -28,6 +28,7 @@ export MDS_ROOT ; MDS_ROOT="$(cat "${MDS_ROOT_FILE}" 2> /dev/null)"
 export MDS_TRAP_CMD="${MDS_HIDDEN_CONFIGS}/mds_trap_cmd"
 export MDS_INPUT="${HOME}/.local/share/mdscode/io/input"
 export MDS_OUTPUT="${HOME}/.local/share/mdscode/io/output"
+export MDS_LANG_AUDIO="${HOME}/Documents/mnt/lang_audios"
 export MDS_FANCY=YES
 export NEOVIDE_FRAME=none
 export NEOVIDE_FORK=1

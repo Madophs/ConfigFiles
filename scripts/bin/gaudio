@@ -2,7 +2,7 @@
 
 source "${MDS_SCRIPTS}/utils/ascii_menu.sh"
 
-TARGET_DIR="/home/madophs/Downloads/language audios"
+TARGET_DIR="${MDS_LANG_AUDIO:-${HOME}/Downloads/audios}"
 FORVO_MP3_BASE_URL="https://audio12.forvo.com/audios/mp3/"
 BASE_AUDIO_DOMAIN=""
 BASE_DOMAIN=""
@@ -10,10 +10,12 @@ HTML_DOM=""
 SEARCHED_WORD=""
 declare -a MENU=()
 declare -a AUDIO_URL_LIST=()
+mkdir -p "${TARGET_DIR}"
 
 function gaudio_callback() {
-    local mp3_audio_url="${menu_item_key_selected}"
-    local mp3_filename="$(echo "${mp3_audio_url}" | awk -F '/' '{print $NF}')"
+    local mp3_filename mp3_audio_url
+    mp3_audio_url="${menu_item_key_selected}"
+    mp3_filename="$(echo "${mp3_audio_url}" | awk -F '/' '{print $NF}')"
     wget -nc -qq "${mp3_audio_url}" -P '/tmp/audios' || cout error "Failed to download audio"
     case ${key} in
         [pP])
@@ -29,58 +31,120 @@ function gaudio_callback() {
 }
 
 function gaudio_set_vars() {
+    if [[ "${content_type}" == "html" ]]
+    then
+        HTML_DOM="${content}"
+        audio_url=$(echo "${HTML_DOM}" |
+                    grep -i -m 1 'rel="canonical"' | grep -o 'https[^"]*') ||
+                    cout error "Failed to parse url from HTML doctype"
+    else
+        audio_url="${content}"
+    fi
+
     BASE_DOMAIN="$(echo "${audio_url}" | grep -o -e "https://[a-zA-Z\._]\+\.\(org\|com\)")"
     case "${BASE_DOMAIN}" in
         *cambridge*)
-            HTML_DOM="$(lynx -connect-timeout=5000 -source "${audio_url}")" || cout error "Connection error"
+            local wotd_line_number
+            if [[ -z "${HTML_DOM}" ]]
+            then
+                HTML_DOM="$(lynx -connect-timeout=5000 -source "${audio_url}")" || cout error "Connection error"
+            fi
             BASE_AUDIO_DOMAIN="${BASE_DOMAIN}"
 
             # Trim word of the day
-            local wotd_line_number=$(echo "${HTML_DOM}" | grep -m 1 -n -i 'word of the day' | grep -o '^[0-9]\+')
+            wotd_line_number=$(echo "${HTML_DOM}" | grep -m 1 -n -i 'word of the day' | grep -o '^[0-9]\+')
             if [[ -n "${wotd_line_number}" ]]
             then
                 HTML_DOM=$(echo "${HTML_DOM}" | sed -n "1,${wotd_line_number}{p}")
             fi
 
-            SEARCHED_WORD=$(echo "${audio_url}" | grep -o -e '[^\/]\+$')
-
-            MENU=( $(echo "${HTML_DOM}" | grep -o '\/media.*\.mp3' | sort | uniq | sed "s|\(.*\)|${BASE_AUDIO_DOMAIN}\1|g") )
+            SEARCHED_WORD=${audio_url/*\/}
+            mapfile -t MENU < <(echo "${HTML_DOM}" | grep -o '/media.*\.mp3' |
+                                sort | uniq | sed "s|\(.*\)|${BASE_AUDIO_DOMAIN}\1|g")
             AUDIO_URL_LIST=( "${MENU[@]}" )
             ;;
         *forvo*)
-            HTML_DOM="$(lynx -connect-timeout=5000 -source "${audio_url}")" || cout error "Connection error"
+            if [[ -z "${HTML_DOM}" ]]
+            then
+                HTML_DOM="$(lynx -connect-timeout=5000 -source "${audio_url}")" || cout error "Connection error"
+            fi
             BASE_AUDIO_DOMAIN="${FORVO_MP3_BASE_URL}"
 
-            SEARCHED_WORD=$(echo "${audio_url}" | sed 's|\(.*\)\/word\/\([a-z]\+\).*|\2|g')
+            [[ "${audio_url}" =~ (word/)([^/]+) ]] && SEARCHED_WORD="${BASH_REMATCH[2]}"
 
-            local -a pronun_lang_list=( $(echo "${HTML_DOM}" | grep -o '"pronunciations-list-[a-z_]\+"' | uniq) )
-            local pronun_lang_blocks=$(echo "${HTML_DOM}" | sed -n '/"pronunciations-list-[a-z_]\+"/,/<\/ul>/p')
-            local -a pronun_users=( $(echo "${pronun_lang_blocks}" | grep -i -A2 -e 'pronunciation by' | grep 'data-p2' | sed 's|.*\(data-p2="\)\(.*\)\("\).*|\2|g') )
-            local -a pronun_users_country=()
-            mapfile -t pronun_users_country < <( echo "${pronun_lang_blocks}" | grep -o '(\(Male\|Female\) from.*)' | tr -d "()" )
-            mapfile -t MENU < <( paste -d " " <(printf "%s\n" "${pronun_users[@]}") <(printf "%s\n" "${pronun_users_country[@]}"))
-            AUDIO_URL_LIST=( $(echo "${pronun_lang_blocks}" | grep -o 'Play(.*)' | cut -d ',' -f 5 | sed "s/'//g" | base64 --decode | sed "s|mp3|mp3\n|g" | sed "s|\(.*\)mp3|${BASE_AUDIO_DOMAIN}\1mp3|g") )
+            local -a pronun_lang_list=() pronun_users=() pronun_users_country=()
+            local pronun_lang_blocks
+
+            mapfile -t pronun_lang_list < <(
+                echo "${HTML_DOM}" | grep -o '"pronunciations-list-[a-z_]\+"' |
+                uniq)
+
+            pronun_lang_blocks=$(echo "${HTML_DOM}" |
+                                 sed -n '/"pronunciations-list-[a-z_]\+"/,/<\/ul>/p')
+
+            mapfile -t pronun_users < <(
+                echo "${pronun_lang_blocks}" | grep -i -A2 -e 'pronunciation by' |
+                grep 'data-p2' | sed 's|.*\(data-p2="\)\(.*\)\("\).*|\2|g')
+
+            mapfile -t pronun_users_country < <(
+                echo "${pronun_lang_blocks}" |
+                grep -o '(\(Male\|Female\) from.*)' | tr -d "()" )
+
+            mapfile -t MENU < <(
+                paste -d " " \
+                    <(printf "%s\n" "${pronun_users[@]}") \
+                    <(printf "%s\n" "${pronun_users_country[@]}"))
+
+            mapfile -t AUDIO_URL_LIST < <(
+                echo "${pronun_lang_blocks}" | grep -o 'Play(.*)' |
+                cut -d ',' -f 5 | sed "s/'//g" | base64 --decode |
+                sed "s|mp3|mp3\n|g" |
+                sed "s|\(.*\)mp3|${BASE_AUDIO_DOMAIN}\1mp3|g")
             ;;
         *)
             cout error "Invalid URL"
             ;;
     esac
+
+    if (( ${#MENU[@]} == 0 || ${#AUDIO_URL_LIST[@]} == 0 ))
+    then
+        cout fail "Couldn't find any data."
+    fi
 }
 
-function gaudio_get_url() {
+function gaudio_set_content_from_clipboard() {
     if [[ "${XDG_SESSION_TYPE}" == "wayland" ]]
     then
-        audio_url="$(wl-paste)"
+        content="$(wl-paste)"
     else
-        audio_url="$(xclip -selection clipboard -o)"
+        content="$(xclip -selection clipboard -o)"
     fi || cout error "Failed to read clipboard"
+    [[ -z "${content}" ]] && cout fail "Clipboard is empty."
 }
 
-function gaudio() {
-    local audio_url
-    gaudio_get_url
-    gaudio_set_vars
-    ascii_menu_create MENU AUDIO_URL_LIST "Choose audio for '${SEARCHED_WORD}':" "(P)lay (D)ownload (Q)uit" gaudio_callback
+function gaudio_set_content_type() {
+    if echo "${content}" | grep -i -q '<!doctype html>';
+    then
+        content_type='html'
+    elif echo "${content}" | grep -i -q '^https';
+    then
+        content_type='url'
+    else
+        cout fail "Invalid input."
+    fi
 }
 
-gaudio
+##########          MAIN          ##########
+
+if ! which -x play &> /dev/null;
+then
+    cout fail "Command 'play' not found. Please install 'sox' package."
+fi
+
+gaudio_set_content_from_clipboard
+gaudio_set_content_type
+gaudio_set_vars
+ascii_menu_create MENU AUDIO_URL_LIST \
+    "Choose audio for '${SEARCHED_WORD}':" \
+    "(P)lay (D)ownload (Q)uit" \
+    gaudio_callback
