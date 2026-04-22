@@ -1,87 +1,109 @@
 #!/bin/bash
 
-source ${MDS_SCRIPTS}/common.sh
-missing_argument_validation 1 $1
+source "${MDS_SCRIPTS}/utils/cout.sh"
 
-GITTOKEN=${MDS_HIDDEN_CONFIGS}/token
-create_token_file() {
-    if [[ ! -f ${GITTOKEN} ]]
+GIT_TOKEN="${MDS_HIDDEN_CONFIGS}/token"
+
+function reassign_attibutes_on_exit() {
+    trap 'sudo chattr +i "${GIT_TOKEN}"' EXIT
+}
+
+function create_token_file() {
+    # All commands should be executed successfully
+    if [[ ! -f ${GIT_TOKEN} ]]
     then
-        sudo touch ${GITTOKEN} && sudo chown root:root ${GITTOKEN} && sudo chmod 600 ${GITTOKEN} && sudo chattr +i ${GITTOKEN}
-        if [[ $? != 0 ]]; then
-            cout error "Wrong password"
-        fi
+        {
+            sudo touch "${GIT_TOKEN}" &&
+            sudo chown root:root "${GIT_TOKEN}" &&
+            sudo chmod 600 "${GIT_TOKEN}" &&
+            sudo chattr +i "${GIT_TOKEN}" # file can't be modified
+        } || cout error "Failed to create file."
     else
         cout warning "File already exists!"
         cout info "Replace? (y/n)"
-        read opt
-        if [[ ${opt} == 'y' ]]
-        then
-            sudo chattr -i ${GITTOKEN} && sudo rm -f ${GITTOKEN}
-            sudo touch ${GITTOKEN} && sudo chown root:root ${GITTOKEN} && sudo chmod 600 ${GITTOKEN} && sudo chattr +i ${GITTOKEN}
-        fi
+        local -l opt
+        read -r -s -N 1 opt
+        [[ "${opt}" != 'y' ]] && return
+        {
+            sudo chattr -i "${GIT_TOKEN}" &&
+            sudo rm -f "${GIT_TOKEN}" &&
+            sudo touch "${GIT_TOKEN}" &&
+            sudo chown root:root "${GIT_TOKEN}" &&
+            sudo chmod 600 "${GIT_TOKEN}" &&
+            sudo chattr +i "${GIT_TOKEN}"
+        } || cout error "Failed to replace file."
     fi
 }
 
-delete_token_file() {
-    sudo rm -f ${GITTOKEN}
-    if [[ $? != 0 ]]
+function delete_token_file() {
+    local -l opt
+    cout warning "Remove git token? (y/n)"
+    read -r -s -N 1 opt
+    if [[ "${opt}" == 'y' ]]
     then
-        cout warning "Try again..."
+        sudo chattr -i "${GIT_TOKEN}" || cout error "Failed to change token file attributes."
+        sudo rm -f "${GIT_TOKEN}" || cout fail "Couldn't be removed"
     fi
 }
 
-open_token_file() {
-    if [[ -f ${GITTOKEN} ]]
+function open_token_file() {
+    if [[ -f ${GIT_TOKEN} ]]
     then
-        sudo chattr -i ${GITTOKEN}
-        sudo vim --cmd noswapfile ${GITTOKEN}
-        sudo chattr +i ${GITTOKEN}
+        reassign_attibutes_on_exit
+        sudo chattr -i "${GIT_TOKEN}"
+        sudo vim --cmd noswapfile "${GIT_TOKEN}"
     else
         cout error "Git token file doesn't exists"
     fi
 }
 
-show_token() {
-    if [[ -f ${GITTOKEN} ]]
+function show_token() {
+    if [[ -f ${GIT_TOKEN} ]]
     then
-        sudo cat ${GITTOKEN}
+        sudo cat "${GIT_TOKEN}"
     else
-        cout error "Git token file doesn't exists"
+        cout fail "Git token file doesn't exists"
     fi
 }
 
-copy_token() {
-    if [[ -f ${GITTOKEN} ]]
+function copy_token() {
+    [[ -f ${GIT_TOKEN} ]] || cout info "Git token file doesn't exists"
+    sudo xclip -rmlastnl -selection clipboard "${GIT_TOKEN}"
+}
+
+function paste_token() {
+    reassign_attibutes_on_exit
+    # display servers have separate clipboard utilities
+    if [[ "${XDG_SESSION_TYPE}" == "wayland" ]]
     then
-        sudo xclip -selection clipboard ${GITTOKEN}
-    else
-        cout info "Git token file doesn't exists"
+        # we will work with x11 for now
+        xclip -selection clipboard -i <<< "$(wl-paste)"
     fi
+    sudo chattr -i "${GIT_TOKEN}"
+    sudo xclip -rmlastnl -selection clipboard -o | sudo tee "${GIT_TOKEN}" > /dev/null
 }
 
-OPT=$1
-main() {
-    case ${OPT} in
-        create)
-            create_token_file
+OPT="${1}"
+case ${OPT} in
+    create)
+        create_token_file
         ;;
-        delete)
-            delete_token_file
+    delete)
+        delete_token_file
         ;;
-        open|edit)
-            open_token_file
+    open|edit)
+        open_token_file
         ;;
-        show)
-            show_token
+    show)
+        show_token
         ;;
-        copy)
-            copy_token
+    copy)
+        copy_token
         ;;
-        *)
-            cout info "options {create|delete|open|edit|show|copy}"
+    paste)
+        paste_token
         ;;
-    esac
-}
-
-main ${OPT}
+    *)
+        cout info "options {create|delete|open|edit|show|copy}"
+        ;;
+esac
