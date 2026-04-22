@@ -1,0 +1,13 @@
+QTabBar::tab:hover
+{
+    text-decoration: underline;
+}
+
+QTabBar::tab:selected
+{
+    background-color: palette(window);
+    color: yellow;
+    border: 0px;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
