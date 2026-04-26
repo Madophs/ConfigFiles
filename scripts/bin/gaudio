@@ -55,7 +55,8 @@ function gaudio_set_vars() {
                 HTML_DOM=$(echo "${HTML_DOM}" | sed -n "1,${wotd_line_number}{p}")
             fi
 
-            SEARCHED_WORD=${audio_url/*\/}
+            SEARCHED_WORD=${audio_url/*\/} # delete all before / i.e [https://site/]word
+            SEARCHED_WORD=${SEARCHED_WORD/\?*} # delete all after ? i.e word[?q=word]
             mapfile -t MENU < <(echo "${HTML_DOM}" | grep -o '/media.*\.mp3' |
                                 sort | uniq | sed "s|\(.*\)|${BASE_AUDIO_DOMAIN}\1|g")
             AUDIO_URL_LIST=( "${MENU[@]}" )
