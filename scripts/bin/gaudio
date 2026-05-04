@@ -16,16 +16,21 @@ function gaudio_callback() {
     local mp3_filename mp3_audio_url
     mp3_audio_url="${menu_item_key_selected}"
     mp3_filename="$(echo "${mp3_audio_url}" | awk -F '/' '{print $NF}')"
-    wget -nc -qq "${mp3_audio_url}" -P '/tmp/audios' || cout error "Failed to download audio"
+    wget -nc -qq "${mp3_audio_url}" -P '/tmp/audios' || perror "Failed to download audio"
     case ${key} in
-        [pP])
+        [lL])
             (play "/tmp/audios/${mp3_filename}" &> /dev/null &)
             ;;
         [dD]|"")
             cp "/tmp/audios/${mp3_filename}" "${TARGET_DIR}/${SEARCHED_WORD}.mp3"
             (play "${TARGET_DIR}/${SEARCHED_WORD}.mp3" &> /dev/null &)
-            cout info "Saving '${SEARCHED_WORD}.mp3' to '${TARGET_DIR}'"
-            return 1
+            menu_ref[menu_index]="${menu_ref[${menu_index}]} (${GREEN}Downloaded${BLK})"
+            pok "Saving '${SEARCHED_WORD}.mp3' to '${TARGET_DIR}'" 1.5
+            ;;
+        [pP])
+            gaudio_build
+            title="Choose audio for '${YELLOW}${SEARCHED_WORD}${BLK}':"
+            menu_index=0
             ;;
     esac
 }
@@ -36,10 +41,10 @@ function gaudio_set_vars() {
         HTML_DOM="${content}"
         audio_url=$(echo "${HTML_DOM}" |
                     grep -i -m 1 'rel="canonical"' | grep -o 'https[^"]*') ||
-                    cout error "Failed to parse url from HTML doctype"
+                    perror "Failed to parse url from HTML doctype"
     else
         audio_url="${content}"
-        HTML_DOM="$(lynx -connect-timeout=5000 -source "${audio_url}")" || cout error "Connection error"
+        HTML_DOM="$(lynx -connect-timeout=5000 -source "${audio_url}")" || perror "Connection error"
     fi
 
     BASE_DOMAIN="$(echo "${audio_url}" | grep -o -e "https://[a-zA-Z\._]\+\.\(org\|com\)")"
@@ -96,13 +101,13 @@ function gaudio_set_vars() {
                 sed "s|\(.*\)mp3|${BASE_AUDIO_DOMAIN}\1mp3|g")
             ;;
         *)
-            cout error "Invalid URL"
+            perror "Invalid URL"
             ;;
     esac
 
     if (( ${#MENU[@]} == 0 || ${#AUDIO_URL_LIST[@]} == 0 ))
     then
-        cout fail "Couldn't find any data."
+        pfail "Couldn't find any data."
     fi
 }
 
@@ -112,8 +117,8 @@ function gaudio_set_content_from_clipboard() {
         content="$(wl-paste)"
     else
         content="$(xclip -selection clipboard -o)"
-    fi || cout error "Failed to read clipboard"
-    [[ -z "${content}" ]] && cout fail "Clipboard is empty."
+    fi || perror "Failed to read clipboard"
+    [[ -z "${content}" ]] && pfail "Clipboard is empty."
 }
 
 function gaudio_set_content_type() {
@@ -124,21 +129,25 @@ function gaudio_set_content_type() {
     then
         content_type='url'
     else
-        cout fail "Invalid input."
+        pfail "Invalid input."
     fi
+}
+
+function gaudio_build() {
+    gaudio_set_content_from_clipboard
+    gaudio_set_content_type
+    gaudio_set_vars
 }
 
 ##########          MAIN          ##########
 
 if ! which -x play &> /dev/null;
 then
-    cout fail "Command 'play' not found. Please install 'sox' package."
+    pfail "Command 'play' not found. Please install 'sox' package."
 fi
 
-gaudio_set_content_from_clipboard
-gaudio_set_content_type
-gaudio_set_vars
+gaudio_build
 ascii_menu_create MENU AUDIO_URL_LIST \
-    "Choose audio for '${SEARCHED_WORD}':" \
-    "(P)lay (D)ownload (Q)uit" \
+    "Choose audio for '${YELLOW}${SEARCHED_WORD}${BLK}':" \
+    "(L)isten (P)aste (D)ownload (Q)uit" \
     gaudio_callback
