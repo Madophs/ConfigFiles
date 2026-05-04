@@ -35,8 +35,8 @@ function print_stacktrace() {
 
 function cout() {
     local -u type=${1}
-    shift
-    local message="${*}"
+    local message="${2}"
+    local stime="${3}"
     case ${type} in
         ERROR|FAIL)
             echo -e "${BLUE}[${RED}${type}${BLUE}]${BLK} ${message}" >&2
@@ -60,8 +60,8 @@ function cout() {
                 echo -e "${BLUE}[${PURPLE}DEBUG${BLUE}]${BLK} «${PURPLE_DARK}$(date '+%T %d-%m-%Y')${BLK}» ${message}" >&2
             fi
             ;;
-        SUCCESS)
-            echo -e "${BLUE}[${GREEN}SUCCESS${BLUE}]${BLK} ${message}" >&2
+        SUCCESS|OK)
+            echo -e "${BLUE}[${GREEN}${type}${BLUE}]${BLK} ${message}" >&2
             ;;
         WARNING)
             echo -e "${BLUE}[${YELLOW}WARNING${BLUE}]${BLK} ${message}" >&2
@@ -70,4 +70,32 @@ function cout() {
             echo -e "${BLUE}[${CYAN}INFO${BLUE}]${BLK} ${message}" >&2
             ;;
     esac
+    if [[ -n "${stime}" ]]
+    then
+        sleep "${stime}"
+    fi
+}
+
+function perror() {
+    cout error "${1}" "${2}"
+}
+
+function pfail() {
+    cout fail "${1}" "${2}"
+}
+
+function pdebug() {
+    cout fail "${1}" "${2}"
+}
+
+function pwarn() {
+    cout warning "${1}" "${2}"
+}
+
+function pinfo() {
+    cout info "${1}" "${2}"
+}
+
+function pok() {
+    cout ok "${1}" "${2}"
 }
