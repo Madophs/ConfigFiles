@@ -184,3 +184,13 @@ function nvim() {
     echo -ne "${RESTORE_CURSOR_SET}"
 }
 
+# @brief: parse Anki export file (txt) words
+function anki_words() {
+    grep -i -o -E '^[a-z -]+' "${1:?}" | sed -e 's/ *$//g' | tr '[:upper:]' '[:lower:]' > "${2:?}"
+}
+
+function anki_en() { anki_words "${1}" "${MDS_VOCAB_DIR}/en.txt"; }
+
+function anki_es() { anki_words "${1}" "${MDS_VOCAB_DIR}/es.txt"; }
+
+function anki_ru() { anki_words "${1}" "${MDS_VOCAB_DIR}/ru.txt"; }

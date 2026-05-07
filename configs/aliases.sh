@@ -50,6 +50,18 @@ alias sane="stty sane"
 alias mdsdebugx='touch /tmp/mds_output; export MDS_DEBUG=/tmp/mds_output'
 alias mdsdebugc='truncate -s 0 /tmp/mds_output'
 alias mdsdebugw='watch -n 1 "tac /tmp/mds_output | head -n 50"'
+alias ttyper_en='ttyper --language-file "${MDS_VOCAB_DIR}/en.txt"'
+alias ttyper_es='ttyper --language-file "${MDS_VOCAB_DIR}/es.txt"'
+alias ttyper_ru='ttyper --language-file "${MDS_VOCAB_DIR}/ru.txt"'
+alias ttyper_pt='ttyper --language-file "${MDS_VOCAB_DIR}/pt.txt"'
+alias wpm_en='wpm --load-json ${MDS_WPM_EN_QUOTES} 2> /dev/null'
+alias wpm_es='wpm --load-json ${MDS_WPM_ES_QUOTES} 2> /dev/null'
+alias wpm_ru='wpm --load-json ${MDS_WPM_RU_QUOTES} 2> /dev/null'
+alias wpm_pt='wpm --load-json ${MDS_WPM_PT_QUOTES} 2> /dev/null'
+alias wpm2json_en='wpm2json "${MDS_WPM_EN_TXT}" > "${MDS_WPM_EN_QUOTES}"'
+alias wpm2json_es='wpm2json "${MDS_WPM_ES_TXT}" > "${MDS_WPM_ES_QUOTES}"'
+alias wpm2json_ru='wpm2json "${MDS_WPM_RU_TXT}" > "${MDS_WPM_RU_QUOTES}"'
+alias wpm2json_pt='wpm2json "${MDS_WPM_PT_TXT}" > "${MDS_WPM_PT_QUOTES}"'
 
 # positional arguments are passed by awk command
 # shellcheck disable=SC2142

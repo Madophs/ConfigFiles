@@ -3,6 +3,7 @@
 # necessary files and directories
 mkdir -p "${MDS_HIDDEN_CONFIGS}"
 mkdir -p "${MDS_SESSIONS_DIR}"
+mkdir -p "${MDS_VOCAB_DIR}"
 touch "${MDS_TRAP_CMD}"
 touch "${MDS_ROOT_FILE}"
 
