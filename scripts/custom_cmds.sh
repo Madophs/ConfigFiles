@@ -178,3 +178,9 @@ function l() {
     local -i downwards_scrolls=$(( CROW - 1 ))
     printf "\e[${downwards_scrolls}S\e[${downwards_scrolls}A"
 }
+
+function nvim() {
+    command nvim "${@}"
+    echo -ne "${RESTORE_CURSOR_SET}"
+}
+
