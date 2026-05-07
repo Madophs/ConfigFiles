@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+source "${MDS_SCRIPTS}/utils/cout.sh"
+
+(( $# < 1 )) && cfail "Usage: wpm2json input [-o,--output|-j,--json]"
+
+input_file="${1}"
+opt_output="${2:--j}"
+[[ -f "${input_file}" ]] || cfail "Unable to open «${input_file}»"
+
+function print_json_format() {
+    echo "["
+    printf '{"author": "madophs",\n"title":"custom",\n"text": "%s"}%s\n' \
+           "${quotes[@]}"
+    echo "]"
+}
+
+declare -a quotes=()
+mapfile -t quotes < <(
+    cat "${input_file}" |
+    tr -s '[:space:]' | tr '\n' '|' |
+    sed -e 's/|/\n,\n/g' -e 's/"/\\"/g' -e "s/’/'/g" -e 's/—/-/g' |
+    head -n -1)
+
+case ${opt_output} in
+    -o|--output)
+        print_json_format
+        ;;
+    -j|--json)
+        print_json_format | jq
+        ;;
+esac
