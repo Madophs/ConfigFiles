@@ -85,7 +85,7 @@ function pfail() {
 }
 
 function pdebug() {
-    cout fail "${1}" "${2}"
+    cout debug "${1}" "${2}"
 }
 
 function pwarn() {
