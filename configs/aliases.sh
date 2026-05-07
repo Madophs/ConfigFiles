@@ -19,21 +19,12 @@ alias phptags='cd "${MDS_ROOT}"; rm -f tags; ctags -R --languages=php --exclude=
 alias setroot='echo $(pwd) > "${MDS_ROOT_FILE}"; export MDS_ROOT=$(cat "${MDS_ROOT_FILE}"); export TAGS="${MDS_ROOT}/tags"'
 alias cdr='MDS_ROOT="$(cat "${MDS_ROOT_FILE}")"; cd "${MDS_ROOT}" 2> /dev/null'
 alias getroot='export MDS_ROOT=$(cat ${MDS_ROOT_FILE}); echo ${MDS_ROOT}'
-alias upgrade="export IS_APT_UPDATE_PERFORMED=YES && sudo apt update && sudo apt upgrade -y"
-alias update="export IS_APT_UPDATE_PERFORMED=YES && sudo apt update"
-alias install="sudo apt install"
-alias reinstall="sudo apt reinstall"
-alias purge="sudo apt purge"
-alias autoremove="sudo apt autoremove"
-alias remove="sudo apt remove"
-alias show="apt show"
-alias search="sudo apt search"
 alias zshrc='${EDITOR} ~/.zshrc'
 alias zshload="source ~/.zshrc"
 alias zshlogin="exec zsh --login"
-alias off="qdbus org.kde.Shutdown /Shutdown org.kde.Shutdown.logoutAndShutdown"
-alias logout="qdbus org.kde.Shutdown /Shutdown logout"
-alias nap="qdbus org.kde.Solid.PowerManagement /org/kde/Solid/PowerManagement/Actions/SuspendSession org.kde.Solid.PowerManagement.Actions.SuspendSession.suspendToRam"
+alias off="qdbus6 org.kde.Shutdown /Shutdown org.kde.Shutdown.logoutAndShutdown"
+alias logout="qdbus6 org.kde.Shutdown /Shutdown logout"
+alias nap="qdbus6 org.kde.Solid.PowerManagement /org/kde/Solid/PowerManagement/Actions/SuspendSession org.kde.Solid.PowerManagement.Actions.SuspendSession.suspendToRam"
 alias myip="host myip.opendns.com resolver1.opendns.com"
 alias vimrc='${EDITOR} ${MDS_CONFIG}/vimrc'
 alias config='${EDITOR} $(find ${MDS_CONFIG} -type f -not -path "*/[@.]*" | fzf)'
@@ -50,6 +41,7 @@ alias sane="stty sane"
 alias mdsdebugx='touch /tmp/mds_output; export MDS_DEBUG=/tmp/mds_output'
 alias mdsdebugc='truncate -s 0 /tmp/mds_output'
 alias mdsdebugw='watch -n 1 "tac /tmp/mds_output | head -n 50"'
+alias mountw='sudo mount -t ntfs-3g /dev/sda3 /mnt'
 alias ttyper_en='ttyper --language-file "${MDS_VOCAB_DIR}/en.txt"'
 alias ttyper_es='ttyper --language-file "${MDS_VOCAB_DIR}/es.txt"'
 alias ttyper_ru='ttyper --language-file "${MDS_VOCAB_DIR}/ru.txt"'
@@ -79,6 +71,26 @@ alias gfetch='${MDS_SCRIPTS}/git.sh fetch'
 alias gvdiff="git difftool --tool=nvimdiff"
 alias ncd="n-cd"
 
+# distro aliases
+if [[ -x $(which pacman 2> /dev/null) ]]
+then
+    alias install='sudo pacman -S'
+    alias search='pacman -Ss'
+    alias remove='sudo pacman -Rs'
+    alias show='pacman -Si'
+    alias query='pacman -Qi'
+else
+    alias install='sudo apt install'
+    alias search='sudo apt search'
+    alias upgrade="export IS_APT_UPDATE_PERFORMED=YES && sudo apt update && sudo apt upgrade -y"
+    alias update="export IS_APT_UPDATE_PERFORMED=YES && sudo apt update"
+    alias reinstall="sudo apt reinstall"
+    alias purge="sudo apt purge"
+    alias autoremove="sudo apt autoremove"
+    alias remove="sudo apt remove"
+    alias show="apt show"
+fi
+
 if [[ -f "${GIT_REPOS}/alias_completion/complete_alias" ]]
 then
     source "${GIT_REPOS}/alias_completion/complete_alias"
@@ -87,8 +99,7 @@ then
     complete -F _complete_alias show
 fi
 
-
-if [[ -x $(which minikube) ]]
+if [[ -x $(which minikube 2> /dev/null) ]]
 then
     alias kc='minikube kubectl --'
     alias kcip='minikube ip'
@@ -97,7 +108,7 @@ else
 fi
 
 # Credits: https://github.com/Peltoche/lsd
-if [[ -x $(which lsd) ]]
+if [[ -x $(which lsd 2> /dev/null) ]]
 then
     alias ll='lsd -l'
     alias la='lsd -a'

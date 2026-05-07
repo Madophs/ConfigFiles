@@ -12,7 +12,7 @@ fi
 
 update_repos
 
-for apt_hook in ${APT_HOOKS[@]}
+for apt_hook in "${APT_HOOKS[@]}"
 do
-    "${MDS_SCRIPTS}/mdssetup.sh" ${apt_hook} --update
+    "${MDS_SCRIPTS}/mdssetup.sh" "${apt_hook}" --update
 done

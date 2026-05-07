@@ -49,6 +49,14 @@ export PY_IMG="${GIT_REPOS}/Image-Processsing/resources"
 export EDITOR=nvim
 export EDITOR_COMMAND="nvr -s {{FILE}}"
 export PAGER=less
+export MANROFFOPT="-c"
+export LESS_TERMCAP_mb=$'\e[1;33m'
+export LESS_TERMCAP_md=$'\e[1;32m'
+export LESS_TERMCAP_me=$'\e[0m'
+export LESS_TERMCAP_so=$'\e[01;44;37m'
+export LESS_TERMCAP_se=$'\e[0m'
+export LESS_TERMCAP_us=$'\e[1;36m'
+export LESS_TERMCAP_ue=$'\e[0m'
 export LD_LIBRARY_PATH=/usr/local/cuda-11.7/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
 export GREP_COLORS='ms=01;32'
 export TAGS="${MDS_ROOT}/tags"

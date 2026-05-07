@@ -121,7 +121,7 @@ set number
 set relativenumber
 set mouse=ni
 set showmatch
-set textwidth=80
+set textwidth=100
 set wrap
 set linebreak
 set showbreak=↳
@@ -205,8 +205,8 @@ if has('nvim')
     tnoremap <silent> λ <C-\><C-n>
     tnoremap <silent> <M-p> <C-\><C-n>:FloatermPrev<CR>
     tnoremap <silent> <M-n> <C-\><C-n>:FloatermNext<CR>
-    nnoremap <silent> <M-2> :BufferPrevious <CR>
-    nnoremap <silent> <M-3> :BufferNext <CR>
+    nnoremap <silent> <M-8> :BufferPrevious <CR>
+    nnoremap <silent> <M-9> :BufferNext <CR>
     nnoremap <silent> <M-{> <Cmd>BufferMovePrevious<CR>
     nnoremap <silent> <M-}> <Cmd>BufferMoveNext<CR>
     nnoremap <silent> <M-w> <Cmd>BufferPick<CR>
@@ -317,7 +317,7 @@ let g:airline#extensions#tabline#formatter = 'default'
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 let g:gutentags_modules = ['ctags']
-let g:gutentags_ctags_extra_args = ['--extra=f']
+let g:gutentags_ctags_extra_args = ['--extras=+F']
 let g:gutentags_ctags_exclude = ['storage', 'vendor', '*.out', 'build', '*.o', '*.d', '.dir', '*min.js', '*mix.js', '*bundle.js', '*esm.js']
 let g:gutentags_exclude_filetypes = ['markdown', 'log', 'json', 'cmake', 'xml', 'css']
 let g:gutentags_generate_on_write = 1

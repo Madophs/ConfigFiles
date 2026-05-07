@@ -105,10 +105,10 @@ function yy() {
 }
 
 function vicd() {
-    vifm --choose-dir - "$@" > "${APPCWD}"
+    vifm --choose-dir - . > "${APPCWD}"
 	if cwd="$(cat -- "${APPCWD}")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]
     then
-        add_cmd_to_trap ${SHELL_PID} "$(echo "${cwd}" | sed '1s/^\(.*\)/cd "\1"/g')"
+        add_cmd_to_trap "${SHELL_PID}" "$(echo "${cwd}" | sed '1s/^\(.*\)/cd "\1"/g')"
 	fi
 }
 
