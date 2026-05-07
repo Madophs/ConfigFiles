@@ -4,6 +4,7 @@ source "${MDS_SCRIPTS}/utils/ascii_menu.sh"
 
 TARGET_DIR="${MDS_LANG_AUDIO:-${HOME}/Downloads/audios}"
 FORVO_MP3_BASE_URL="https://audio12.forvo.com/audios/mp3/"
+MERRIAM_MP3_BASE_URL="https://media.merriam-webster.com/audio/prons"
 BASE_AUDIO_DOMAIN=""
 BASE_DOMAIN=""
 HTML_DOM=""
@@ -36,6 +37,8 @@ function gaudio_callback() {
 }
 
 function gaudio_set_vars() {
+    MENU=() AUDIO_URL_LIST=()
+
     if [[ "${content_type}" == "html" ]]
     then
         HTML_DOM="${content}"
@@ -47,7 +50,7 @@ function gaudio_set_vars() {
         HTML_DOM="$(lynx -connect-timeout=5000 -source "${audio_url}")" || perror "Connection error"
     fi
 
-    BASE_DOMAIN="$(echo "${audio_url}" | grep -o -e "https://[a-zA-Z\._]\+\.\(org\|com\)")"
+    BASE_DOMAIN="$(echo "${audio_url}" | grep -o -e "https://[a-zA-Z\._-]\+\.\(org\|com\)")"
     case "${BASE_DOMAIN}" in
         *cambridge*)
             local wotd_line_number
@@ -100,8 +103,43 @@ function gaudio_set_vars() {
                 sed "s|mp3|mp3\n|g" |
                 sed "s|\(.*\)mp3|${BASE_AUDIO_DOMAIN}\1mp3|g")
             ;;
+        *merriam-webster*)
+            BASE_AUDIO_DOMAIN="${MERRIAM_MP3_BASE_URL}"
+            SEARCHED_WORD="${audio_url##*/}"
+            printf -v SEARCHED_WORD '%b' "${SEARCHED_WORD//%/\\x}" # decode https special chars
+
+            local -a audio_raw_links=()
+            mapfile -t audio_raw_links < <(
+                echo "${HTML_DOM}" |
+                sed -n '/<span.*prons-entries.*/,/<\/span>/p' |
+                grep -o -E 'href="[^"]+"' |
+                sort -u
+            )
+
+            local lang audio_dir audio_filename
+            local -i counter=1
+            for raw_link in "${audio_raw_links[@]}"
+            do
+                # from lang=en_us&... ⮞ en/us
+                lang="${raw_link##*lang=}"
+                lang="${lang%%&*}"
+                lang="${lang/_//}"
+
+                # from dir=w&.. ⮞ w
+                audio_dir="${raw_link##*dir=}"
+                audio_dir="${audio_dir%%&*}"
+
+                # from file=filename001&.. ⮞ filename001
+                audio_filename="${raw_link##*file=}"
+                audio_filename="${audio_filename%%[&\"]*}"
+
+                MENU+=("Pronunciation for «${SEARCHED_WORD}» #${counter}")
+                AUDIO_URL_LIST+=("${BASE_AUDIO_DOMAIN}/${lang}/mp3/${audio_dir}/${audio_filename}.mp3")
+                (( ++counter ))
+            done
+            ;;
         *)
-            perror "Invalid URL"
+            pfail "Invalid URL"
             ;;
     esac
 
