@@ -1,0 +1,58 @@
+#!/bin/env bash
+
+source "${MDS_SCRIPTS}/utils/ascii_menu.sh"
+
+declare -l input
+declare -i solved=0
+
+function reword() {
+    case ${key} in
+        [iI])
+            echo -ne "${SHOWCURSOR}"
+            stty echo
+            read -r -p "Word: " input
+            stty -echo
+            echo -ne "${NOCURSOR}"
+
+            for (( i=0; i<${#menu_keys_ref[@]}; ++i ))
+            do
+                if [[ "${input}" == "${menu_keys_ref[${i}],,}" ]]
+                then
+                    menu_ref[i]="${menu_keys_ref[i]}"
+                    solved+=1
+                    title="Do you recall? (${solved}/${#word_list[@]})"
+                    break
+                fi
+            done
+            ;;
+        [hH])
+            for (( i=0; i<${#menu_item_selected}; ++i ))
+            do
+                if [[ "${menu_item_selected:i:1}" == '•' ]]
+                then
+                    menu_ref[menu_index]="${menu_ref[menu_index]/•/${menu_item_key_selected:i:1}}"
+                    break
+                fi
+            done
+            ;;
+    esac
+}
+
+########## MAIN ##########
+
+WORDS_FILE="${1}"
+[[ -f "${WORDS_FILE}" ]] || pfail "Open file."
+
+declare -a word_list_placeholder=()
+mapfile -t word_list < <(sort "${WORDS_FILE}")
+for (( i=0; i<${#word_list[@]}; ++i ))
+do
+    word_list_placeholder+=("${word_list[${i}]//?/•}")
+done
+
+ascii_menu_create \
+    word_list_placeholder \
+    word_list \
+    "Do you recall? (0/${#word_list[@]})" \
+    "(I)nput (H)int (Q)uit" \
+    reword
