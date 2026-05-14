@@ -35,6 +35,12 @@ function reword() {
                 fi
             done
             ;;
+        .)
+            menu_ref=("${menu_keys_ref[@]}")
+            ;;
+        ,)
+            menu_ref=("${menu_ref[@]//?/•}")
+            ;;
     esac
 }
 
@@ -44,11 +50,8 @@ WORDS_FILE="${1}"
 [[ -f "${WORDS_FILE}" ]] || pfail "Open file."
 
 declare -a word_list_placeholder=()
-mapfile -t word_list < <(sort "${WORDS_FILE}")
-for (( i=0; i<${#word_list[@]}; ++i ))
-do
-    word_list_placeholder+=("${word_list[${i}]//?/•}")
-done
+mapfile -t word_list < <(sort -u "${WORDS_FILE}")
+word_list_placeholder+=("${word_list[@]//?/•}")
 
 ascii_menu_create \
     word_list_placeholder \
