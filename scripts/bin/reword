@@ -16,7 +16,9 @@ function reword() {
 
             for (( i=0; i<${#menu_keys_ref[@]}; ++i ))
             do
-                if [[ "${input}" == "${menu_keys_ref[${i}],,}" ]]
+                if [[ "${menu_keys_ref[${i}],,}" == "${input}" &&
+                      "${menu_keys_ref[${i}]}"   != "${menu_ref[${i}]}"
+                ]]
                 then
                     menu_ref[i]="${menu_keys_ref[i]}"
                     solved+=1
@@ -39,6 +41,8 @@ function reword() {
             menu_ref=("${menu_keys_ref[@]}")
             ;;
         ,)
+            solved=0
+            title="Do you recall? (${solved}/${#word_list[@]})"
             menu_ref=("${menu_ref[@]//?/•}")
             ;;
     esac
