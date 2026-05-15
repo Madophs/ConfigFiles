@@ -10,17 +10,18 @@ opt_output="${2:--j}"
 
 function print_json_format() {
     echo "["
-    printf '{"author": "madophs",\n"title":"custom",\n"text": "%s"}%s\n' \
+    printf '{"author": "madophs",\n"title":"custom",\n"text": "%s",\n"id": %s}%s\n' \
            "${quotes[@]}"
     echo "]"
 }
 
 declare -a quotes=()
 mapfile -t quotes < <(
-    cat "${input_file}" |
-    tr -s '[:space:]' | tr '\n' '|' |
-    sed -e 's/|/\n,\n/g' -e 's/"/\\"/g' -e "s/’/'/g" -e 's/—/-/g' |
-    head -n -1)
+    awk '!a[$0]++' "${input_file}" |
+    sed -e '/^[[:space:]]*$/d' -e 's/"/\\"/g' -e "s/’/'/g" -e 's/—/-/g' |
+    awk '{print $0"\n"++i"\n,"}' |
+    head -n -1
+)
 
 case ${opt_output} in
     -o|--output)
