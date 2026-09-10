@@ -1,8 +1,33 @@
 #!/usr/bin/env bash
 
+function associative_array_update() {
+    local ref_name=${1}
+    local key=${2}
+    local value=${3}
+    if [[ ${REAL_SHELL} == zsh ]]
+    then
+        eval "${ref_name}[${key}]=\"${value}\""
+    else
+        local -n reference=${ref_name}
+        reference["${key}"]=${value}
+    fi
+}
+
+function associative_array_value() {
+    local ref_name=${1}
+    local key=${2}
+    if [[ ${REAL_SHELL} == zsh ]]
+    then
+        eval echo "\$${ref_name}[${key}]"
+    else
+        local -n reference=${ref_name}
+        echo "${reference[${key}]}"
+    fi
+}
+
 # map_ref => Hashtable to hold option values
 function preparse_args() {
-    declare -n map_ref=${1}
+    local map_ref=${1}
     declare -i counter=1
     shift
 
@@ -15,7 +40,7 @@ function preparse_args() {
     local param_name short_option
     while (( $# != 0 ))
     do
-        parameters=( ${ echo "${1}"; } )
+        parameters=( $(echo "${1}") )
 
         if ! echo "${parameters[*]}" | grep -E -o -q "name=.*[ \t]args=.*|args=.*[ \t]name.=*";
         then
@@ -23,25 +48,27 @@ function preparse_args() {
         fi
 
         param_name=$(echo "${parameters[*]}" | grep -o -e "name=[a-zA-Z_-]\+" | awk -F '=' '{print $NF}')
-        map_ref["main_params"]+="${param_name} "
-        map_ref["${param_name}_avail"]=no
-        map_ref["${param_name}_params"]="${param_name} --${param_name}"
+        associative_array_update "${map_ref}" "main_params" \
+            "$(associative_array_value "${map_ref}" main_params) ${param_name}"
+        associative_array_update "${map_ref}" "${param_name}_avail" "no"
+        associative_array_update "${map_ref}" "${param_name}_variants" "${param_name} --${param_name}"
 
         # key=value tokenization
         declare -a key_value=()
         for (( i=0; i<${#parameters[@]}; i+=1 ))
         do
-            mapfile -t key_value < <(echo "${parameters[@]:${i}:1}" | tr '=' '\n')
-            map_ref["${param_name}_${key_value[@]:0:1}"]="${key_value[*]:1:1}"
+            key_value=( $(echo "${parameters[@]:${i}:1}" | tr '=' ' ') )
+            associative_array_update "${map_ref}" "${param_name}_${key_value[*]:0:1}" "${key_value[*]:1:1}"
         done
 
         # Set short and long option value entry
-        map_ref["--${param_name}"]=""
+        associative_array_update "${map_ref}" "--${param_name}" ""
         short_option=$(echo "${parameters[*]}" | grep -o -e "short_option=[a-zA-Z_-]\+" | awk -F '=' '{print $NF}')
         if [[ -n "${short_option}" ]]
         then
-            map_ref["${short_option}"]=""
-            map_ref["${param_name}_params"]+=" ${short_option}"
+            associative_array_update "${map_ref}" "${short_option}" ""
+            associative_array_update "${map_ref}" "${param_name}_variants" \
+                "$(associative_array_value "${map_ref}" "${param_name}_variants") ${short_option}"
         fi
 
         counter+=1
@@ -50,29 +77,30 @@ function preparse_args() {
 }
 
 function get_array_keys() {
-    declare -n array_ref=${1}
+    local array_ref=${1}
     if [[ ${REAL_SHELL} == 'zsh' ]]
     then
-        echo "${(@k)array_ref}"
+        echo "${(@kP)array_ref[@]}"
     else
-        echo ${!array_ref[@]}
+        local -n reference=${array_ref}
+        echo "${!reference[*]}"
     fi
 }
 
 function print_args() {
-    local -n map_ref=${1}
+    local map_ref=${1}
     pinfo "Printing values"
-    mapfile -t keys < <( get_array_keys map_ref | tr ' ' '\n' | sort )
+    keys=( $(get_array_keys "${map_ref}" | tr ' ' '\n' | sort) )
     for (( i=0; i<${#keys[@]}; i+=1 ))
     do
-        echo "${keys[*]:${i}:1} = ${map_ref[${keys[@]:${i}:1}]}"
+        echo "${keys[*]:${i}:1} = $(associative_array_value "${map_ref}" "${keys[*]:${i}:1}")"
     done
 }
 
 function parse_args() {
-    local -n map_ref=${1}
+    local map_ref=${1}
     local append_extra_args=${2} # arguments not preceding by an option (n/y)
-    map_ref["extra"]=""
+    associative_array_update "${map_ref}" "extra" ""
     shift
     shift
 
@@ -82,10 +110,9 @@ function parse_args() {
         case ${input_param} in
             -*)
                 local param_name=""
-
-                for main_param in ${map_ref["main_params"]}
+                for main_param in $(associative_array_value "${map_ref}" "main_params")
                 do
-                    for variant in ${map_ref["${main_param}_params"]}
+                    for variant in $(associative_array_value "${map_ref}" "${main_param}_variants")
                     do
                         if [[ "${input_param}" == "${variant}" ]]
                         then
@@ -99,14 +126,14 @@ function parse_args() {
                 # Check if option (key) is present in map
                 if [[ -z "${param_name}" ]]
                 then
-                    cout error "Unknown argument: ${input_param}"
+                    cout error "Unknown argument: ${input_param} ${main_param}"
                 fi
 
                 # Mark option as available [avail]
-                map_ref["${param_name}_avail"]=yes
+                associative_array_update "${map_ref}" "${param_name}_avail" "yes"
 
                 local arg_value=''
-                if [[ ${map_ref["${param_name}_args"]} == yes || ${map_ref["${param_name}_args"]} == opt ]]
+                if [[ $(associative_array_value "${map_ref}" "${param_name}_args") == yes || $(associative_array_value "${map_ref}" "${param_name}_args") == opt ]]
                 then
                     # All option's space-separated arguments
                     while [[ "${2:0:1}" != '-' && -n "${2:0:1}" ]]
@@ -115,7 +142,8 @@ function parse_args() {
                         shift
                     done
 
-                    if [[ -z "${arg_value}" && ${map_ref["${param_name}_args"]} == yes ]]
+                    if [[ -z "${arg_value}" && \
+                        $(associative_array_value "${map_ref}" "${param_name}_args") == yes ]]
                     then
                         cout error "Missing value for arg «${input_param}»"
                     fi
@@ -125,13 +153,13 @@ function parse_args() {
 
                 if [[ -z ${arg_value} ]]
                 then
-                    arg_value=${map_ref["${param_name}_default"]}
+                    arg_value=$(associative_array_value "${map_ref}" "${param_name}_default")
                 fi
 
                 # Set values to params entries
-                for option_param in ${map_ref[${param_name}_params]}
+                for option_param in $(associative_array_value "${map_ref}" "${param_name}_variants")
                 do
-                    map_ref["${option_param}"]="${arg_value}"
+                    associative_array_update "${map_ref}" "${option_param}" "${arg_value}"
                 done
 
                 shift
@@ -139,7 +167,15 @@ function parse_args() {
             *)
                 if [[ ${append_extra_args} == 'y' ]]
                 then
-                    map_ref["extra"]+="${input_param} "
+                    local extra_value=$(associative_array_value "${map_ref}" "extra")
+                    if [[ -z "${extra_value}" ]]
+                    then
+                        associative_array_update "${map_ref}" "extra" \
+                            "${input_param}"
+                    else
+                        associative_array_update "${map_ref}" "extra" \
+                            "$(associative_array_value "${map_ref}" "extra") ${input_param}"
+                    fi
                 else
                     cout error "Invalid argument: ${input_param}"
                 fi
@@ -148,14 +184,14 @@ function parse_args() {
         esac
     done
 
-    for param_name in ${map_ref["main_params"]}
+    for param_name in $(associative_array_value "${map_ref}" "main_params")
     do
-        [[ -n ${map_ref["${param_name}"]} ]] && continue
-        if [[ ${map_ref["${param_name}_args"]} == no ]]
+        [[ -n "$(associative_array_value "${map_ref}" "${param_name}")" ]] && continue
+        if [[ $(associative_array_value "${map_ref}" "${param_name}_args") == no ]]
         then
-            for variant in ${map_ref["${param_name}_params"]}
+            for variant in $(associative_array_value "${map_ref}" "${param_name}_variants")
             do
-                map_ref["${variant}"]=no
+                associative_array_update "${map_ref}" "${variant}" "no"
             done
         fi
     done
@@ -163,19 +199,18 @@ function parse_args() {
 
 # parameter order in which options will be executed
 function exec_args_flow() {
-    local -n map_ref=${1}
+    local map_ref=${1}
     shift
     while (( $# > 0 ))
     do
         local param_name=${1}
-
-        if [[ ${map_ref["${param_name}_avail"]} == NO ]]
+        if [[ $(associative_array_value "${map_ref}" "${param_name}_avail") == no ]]
         then
             shift
             continue
         fi
 
-        local func_ref=${map_ref["${param_name}_function"]}
+        local func_ref=$(associative_array_value "${map_ref}" "${param_name}_function")
         if [[ -n "${func_ref}" ]]
         then
             ${func_ref} map_ref

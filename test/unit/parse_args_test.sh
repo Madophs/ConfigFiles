@@ -63,7 +63,6 @@ function test_preparse_check_populated_values() {
     fwktest_assert_string_equals "${map["file_args"]}" "opt"
     fwktest_assert_string_equals "${map["file_avail"]}" "yes"
 
-
     fwktest_assert_string_equals "${map["run"]}" "yes"
     fwktest_assert_string_equals "${map["--run"]}" "yes"
     fwktest_assert_string_equals "${map["-r"]}" "yes"

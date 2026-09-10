@@ -1,6 +1,7 @@
 #!/bin/bash
 
 source ${MDS_SCRIPTS}/common.sh
+source ${MDS_SCRIPTS}/utils/parse_args.sh
 
 function cdm() {
     if (( $# != 1 ))
@@ -63,21 +64,22 @@ function cl() {
 
 function Asm() {
     declare -A args_map
+    local filename file_extension output
     preparse_args args_map "name=output short_option=-o args=yes"
     parse_args args_map y "${@}"
 
-    local filename=$(echo "${args_map["extra"]}" | awk '{print $NF}')
-    local file_extension=$(get_file_extension ${filename})
-    local output=$([ -z "${args_map["-o"]}" ] && get_filename_without_extension ${filename} || echo "${args_map["-o"]}")
+    filename=$(echo "${args_map[extra]}" | awk '{print $NF}')
+    file_extension=$(get_file_extension "${filename}")
+    output=$([ -z "${args_map[-o]}" ] && get_filename_without_extension "${filename}" || echo "${args_map[-o]}")
 
     case ${file_extension} in
         s)
-            as $(echo ${args_map["extra"]}) -o "${output}.o" \
-                && ld "${output}.o" -o ${output}.out
+            as "${args_map[extra]}" -o "${output}.o" \
+                && ld "${output}.o" -o "${output}.out"
             ;;
         asm)
-            nasm -felf64 ${filename} -o "${output}.o" \
-                && ld "${output}.o" -o ${output}.out
+            nasm -felf64 "${filename}" -o "${output}.o" \
+                && ld "${output}.o" -o "${output}.out"
             ;;
         *)
             cout error "File extension no recognized"
