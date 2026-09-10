@@ -4,7 +4,11 @@ source "${MDS_SCRIPTS}/utils/ansi_codes.sh"
 
 [[ ! -v MDS_DEBUG ]] && export MDS_DEBUG=""
 
+MDS_STACKTRACE_ENABLED=Y
+
 function print_stacktrace() {
+    [[ ${MDS_STACKTRACE_ENABLED} != Y ]] && return
+
     local file lineno
     for ((i=1; i<=${#funcfiletrace[@]}; ++i))
     do
@@ -23,8 +27,8 @@ function print_stacktrace() {
     for ((i=0; i<${#BASH_SOURCE[@]}; ++i))
     do
         echo -ne "${YELLOW}${FUNCNAME[i]}${BROWN}...${GREEN}$(basename "${BASH_SOURCE[i]}")" >&2
-        # BASH_LINENO behave very strange when sourcing the scripts
-        # it gives inaccurate lines numbers
+        # BASH_LINENO behave very strange when sourcing scripts
+        # it gives inaccurate line numbers
         if (( i > 0 ))
         then
             echo -ne ":${CYAN}${BASH_LINENO[i-1]}${BLK}" >&2
