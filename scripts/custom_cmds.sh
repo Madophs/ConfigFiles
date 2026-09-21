@@ -74,7 +74,7 @@ function Asm() {
 
     case ${file_extension} in
         s)
-            as "${args_map[extra]}" -o "${output}.o" \
+            as "${args_map[extra]}" -g -o "${output}.o" \
                 && ld "${output}.o" -o "${output}.out"
             ;;
         asm)
@@ -138,7 +138,7 @@ function set_apt_hooks() {
 }
 
 # @brief: copy raw output to clipboard
-function c() {
+function xcopy() {
     local -i is_first_line=1
     while read -r line
     do
