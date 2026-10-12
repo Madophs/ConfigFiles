@@ -219,8 +219,8 @@ if has('nvim')
     xnoremap <silent> m :lua require('tsht').nodes()<CR>
     autocmd VimEnter * silent FloatermNew --silent
 
-    autocmd FileType sh inoremap ® <ESC>:w <CR> :FloatermSend %:p <CR><C-\><C-n>:FloatermShow<CR>
-    autocmd FileType sh nnoremap ® <ESC>:w <CR> :FloatermSend %:p <CR><C-\><C-n>:FloatermShow<CR>
+    autocmd FileType sh inoremap ≈ <ESC>:w <CR> :FloatermSend %:p <CR><C-\><C-n>:FloatermShow<CR>
+    autocmd FileType sh nnoremap ≈ <ESC>:w <CR> :FloatermSend %:p <CR><C-\><C-n>:FloatermShow<CR>
 else
     if $COMPETITIVE_MODE ==? "Y"
         map <F7> :!clear && mdscode -b -n %:p -t <CR>
@@ -353,7 +353,7 @@ let g:tagbar_type_cpp = {
 
 let g:ycm_filetype_whitelist = {'python': 1}
 let g:ycm_autoclose_preview_window_after_completion = 1
-let g:coc_filetypes_enable = ['c', 'cpp', 'tpp', 'javascript', 'typescript', 'php', 'bash', 'css', 'html', 'sh', 'vim', 'blade', 'gitcommit', 'rust', 'cmake', 'vim', 'lua', 'gitcommit', 'nasm', 'gas', 'python']
+let g:coc_filetypes_enable = ['c', 'cpp', 'tpp', 'javascript', 'typescript', 'php', 'bash', 'css', 'html', 'sh', 'vim', 'blade', 'gitcommit', 'rust', 'cmake', 'vim', 'lua', 'gitcommit', 'nasm', 'gas', 'python', 'json']
 let g:coc_global_extensions = ['coc-json', 'coc-angular', 'coc-cmake', 'coc-clangd', 'coc-css', 'coc-cssmodules', 'coc-html-css-support', 'coc-html', 'coc-htmlhint', 'coc-phpactor', 'coc-phpls', 'coc-sh', 'coc-spell-checker', 'coc-tsserver', 'coc-blade-formatter', 'coc-blade-linter', 'coc-blade', 'coc-yank', 'coc-vimlsp', 'coc-rust-analyzer', 'coc-lua', 'coc-emmet', 'coc-copilot', 'coc-prettier', 'coc-java', 'coc-pyright']
 let g:ycm_enabled = v:false
 
