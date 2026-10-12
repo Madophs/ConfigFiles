@@ -9,14 +9,17 @@ mkdir -p "${GIT_REPOS}"
 touch "${MDS_TRAP_CMD}"
 touch "${MDS_ROOT_FILE}"
 
-if [[ ! -h "${HOME}/.local/bin/mdssetup" ]]
+if [[ ! -h "${HOME}/.local/bin/mdssetup" || ! -e ${HOME}/.local/bin/mdssetup ]]
 then
     mkdir -p ~/.local/bin
+    unlink "${HOME}/.local/bin/mdssetup" &> /dev/null
     ln -s -T "${MDS_SCRIPTS}/mdssetup.sh" ~/.local/bin/mdssetup
 fi
 
-if [[ ! -h /etc/bash_completion.d/mdscode-prompt && -f "${GIT_REPOS}/MdsCode_Bash/src/mds-prompt" ]]
+if [[ -f "${GIT_REPOS}/MdsCode_Bash/src/mds-prompt"
+      && ( ! -h /etc/bash_completion.d/mdscode-prompt || ! -e "/etc/bash_completion.d/mdscode-prompt" ) ]]
 then
+    sudo unlink /etc/bash_completion.d/mdscode-prompt &> /dev/null
     sudo ln -s -T "${GIT_REPOS}/MdsCode_Bash/src/mds-prompt" /etc/bash_completion.d/mdscode-prompt
 fi
 
