@@ -1,7 +1,7 @@
 #!/bin/bash
 #shellparams --install --setup --update --latest-version
 
-source ${MDS_SCRIPTS}/common.sh
+source "${MDS_SCRIPTS}/common.sh"
 
 function nvim_latest_version() {
     wget -qO - https://github.com/neovim/neovim/releases | grep -o -e 'Nvim [0-9]\+\.[0-9]\+\.[0-9]' | grep -m 1 -o -e '[0-9]\+\.[0-9]\+\.[0-9]'
@@ -10,20 +10,19 @@ function nvim_latest_version() {
 function nvim_install() {
     local download_dir='/tmp/nvim/'
     local filename="nvim-linux-x86_64.appimage"
-    mkdir -p ${download_dir}
+    mkdir -p "${download_dir}"
 
     cout info "Installing Neovim"
     download "https://github.com/neovim/neovim/releases/download/v$(nvim_latest_version)/${filename}" ${download_dir}
-    sudo chmod +x ${download_dir}${filename}
-    sudo chown $USER:$USER ${download_dir}${filename}
+    sudo chmod +x "${download_dir}${filename}"
+    sudo chown "${USER}:${USER}" "${download_dir}${filename}"
 
     if [[ -f /usr/bin/nvim ]]; then
         sudo rm /usr/bin/nvim
     fi
 
-    sudo cp -f "${download_dir}${filename}" /usr/bin/nvim
-
-    if [[ $? == 0 ]]; then
+    if sudo cp -f "${download_dir}${filename}" /usr/bin/nvim;
+    then
         cout success "NeoVim installed successfully."
         mdssetup add_hook nvim.sh
     else
@@ -39,14 +38,19 @@ function nvim_setup() {
             ~/.local/share/nvim/site/pack/packer/start/packer.nvim
     fi
 
-    if [[ ! -h ~/.config/nvim/lua/plugins.lua ]]
+    local plugins="${HOME}/.config/nvim/lua/plugins.lua"
+    local configs="${HOME}/.config/nvim/lua/configs.lua"
+
+    if [[ ! -h $plugins || ! -e $plugins ]]
     then
-        ln -s ${MDS_CONFIG}/plugins.lua ~/.config/nvim/lua/plugins.lua
+        unlink "${plugins}" &> /dev/null
+        ln -s "${MDS_CONFIG}/plugins.lua" "${plugins}"
     fi
 
-    if [[ ! -h ~/.config/nvim/lua/configs.lua ]]
+    if [[ ! -h $configs || ! -e $configs ]]
     then
-        ln -s ${MDS_CONFIG}/vim/lua/configs.lua ~/.config/nvim/lua/configs.lua
+        unlink "${configs}" &> /dev/null
+        ln -s "${MDS_CONFIG}/vim/lua/configs.lua" "${configs}"
     fi
 
     echo "require('plugins')" > ~/.config/nvim/lua/init.lua
@@ -61,8 +65,9 @@ function nvim_update() {
     then
         cout error "Nvim not installed"
     fi
-    local latest_version=$(nvim_latest_version)
-    local current_version=$(nvim -v | grep -m 1 -o -e '[0-9]\+\.[0-9]\+.[0-9]\+')
+    local latest_version current_version
+    latest_version=$(nvim_latest_version)
+    current_version=$(nvim -v | grep -m 1 -o -e '[0-9]\+\.[0-9]\+.[0-9]\+')
     if [[ "${current_version}" != "${latest_version}" && -n "${latest_version}" ]]
     then
         nvim_install
@@ -70,7 +75,7 @@ function nvim_update() {
 }
 
 OPTION=$1
-: ${OPTION:="--install"}
+: "${OPTION:="--install"}"
 case ${OPTION} in
     --install)
         nvim_install
