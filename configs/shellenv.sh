@@ -1,0 +1,56 @@
+#!/bin/env bashles
+
+export SHELL_PID
+export MDS_CONFIG
+export MDS_SCRIPTS="${MDS_CONFIG}/scripts"
+export MDS_SCRIPTS_BIN="${MDS_CONFIG}/scripts/bin"
+export MDS_DATA="${HOME}/Documents"; MDS_DATA="${MDS_DATA}$(mount | grep -o '/mds_data')"
+export MDS_APPS="${MDS_DATA}/apps"
+export MDS_HOME="${HOME}"
+export MDS_HIDDEN_CONFIGS="${HOME}/.config/mdsconfig"
+export MDS_SESSIONS_DIR="${HOME}/.config/mdsconfig/sessions"
+export MDS_ROOT_FILE="${MDS_HIDDEN_CONFIGS}/.path.txt"
+export MDS_ROOT ; MDS_ROOT="$(cat "${MDS_ROOT_FILE}" 2> /dev/null)"
+export MDS_TRAP_CMD="${MDS_HIDDEN_CONFIGS}/mds_trap_cmd"
+export MDS_INPUT="${HOME}/.local/share/mdscode/io/input"
+export MDS_OUTPUT="${HOME}/.local/share/mdscode/io/output"
+export MDS_LANG_AUDIO="${HOME}/Documents/mnt/lang_audios"
+export MDS_VOCAB_DIR="${MDS_HIDDEN_CONFIGS}/vocabulary"
+export MDS_WPM_EN_QUOTES="${MDS_VOCAB_DIR}/wpm_en.json"
+export MDS_WPM_ES_QUOTES="${MDS_VOCAB_DIR}/wpm_es.json"
+export MDS_WPM_RU_QUOTES="${MDS_VOCAB_DIR}/wpm_ru.json"
+export MDS_WPM_PT_QUOTES="${MDS_VOCAB_DIR}/wpm_pt.json"
+export MDS_WPM_EN_TXT="${MDS_VOCAB_DIR}/wpm_en.txt"
+export MDS_WPM_ES_TXT="${MDS_VOCAB_DIR}/wpm_es.txt"
+export MDS_WPM_RU_TXT="${MDS_VOCAB_DIR}/wpm_ru.txt"
+export MDS_WPM_PT_TXT="${MDS_VOCAB_DIR}/wpm_pt.txt"
+export MDS_FANCY=YES
+export NEOVIDE_FRAME=none
+export NEOVIDE_FORK=1
+export NEOVIDE_OPENGL=1
+export GIT_REPOS="${MDS_DATA}/git"
+export MDS_ASSETS="${GIT_REPOS}/assets"
+export TEST="${HOME}/Documents/test"
+export CTEST="${TEST}/cpp"
+export PY_IMG="${GIT_REPOS}/Image-Processsing/resources"
+export EDITOR=nvim
+export EDITOR_COMMAND="nvr -s {{FILE}}"
+export PAGER=less
+export MANROFFOPT="-c"
+export LESS_TERMCAP_mb=$'\e[1;33m'
+export LESS_TERMCAP_md=$'\e[1;32m'
+export LESS_TERMCAP_me=$'\e[0m'
+export LESS_TERMCAP_so=$'\e[01;44;37m'
+export LESS_TERMCAP_se=$'\e[0m'
+export LESS_TERMCAP_us=$'\e[1;36m'
+export LESS_TERMCAP_ue=$'\e[0m'
+export LD_LIBRARY_PATH=/usr/local/cuda-11.7/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+export GREP_COLORS='ms=01;32'
+export TAGS="${MDS_ROOT}/tags"
+export PATH=/usr/local/cuda-11.7/bin${PATH:+:${PATH}}
+export PATH="${HOME}/.local/bin:${PATH}"
+export PATH="${MDS_APPS}/lua-language-server/bin:${PATH}"
+export PATH="${GIT_REPOS}/MdsCode_Bash:${PATH}"
+export PATH="${MDS_SCRIPTS_BIN}:${PATH}"
+export APPCWD=/tmp/appcwd
+unset SSH_ASKPASS
