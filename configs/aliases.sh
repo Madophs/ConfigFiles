@@ -8,8 +8,8 @@ alias cdhtml="cd /var/www/html/"
 alias cddir='cd ${HOME}/Documents/'
 alias cdconfig='cd ${MDS_CONFIG}'
 alias cdscripts='cd ${MDS_SCRIPTS}'
-alias cdw='cd ${HOME}/Downloads'
-alias cdd='cd ${HOME}/Documents'
+alias cdw='cd ${MDS_DATA}/Downloads'
+alias cdd='cd ${MDS_DATA}'
 alias cdg='TMPGITDIR=$(git rev-parse --show-toplevel 2> /dev/null) && cd ${TMPGITDIR}; unset TMPGITDIR'
 alias cdapps='cd ${MDS_APPS}'
 
@@ -28,6 +28,7 @@ alias nap="qdbus6 org.kde.Solid.PowerManagement /org/kde/Solid/PowerManagement/A
 alias myip="host myip.opendns.com resolver1.opendns.com"
 alias vimrc='${EDITOR} ${MDS_CONFIG}/vimrc'
 alias config='${EDITOR} $(find ${MDS_CONFIG} -type f -not -path "*/[@.]*" | fzf)'
+alias mk='make -C "$(git rev-parse --show-toplevel)"'
 alias mm="mdscode -f cpp -t -n"
 alias mb="mdscode -b"
 alias me="mdscode -e"
@@ -35,8 +36,8 @@ alias mo="mdscode -o -n"
 alias vimc="vim --servername Competitive --remote-silent "
 alias nvimf='nvim "$(fzf)"'
 alias nviml='nvim $(ls -A | fzf)'
-alias cdl='cd "$(fzf | grep -o -e ".\+\/")"'
-alias bashconfig="source ~/.bashrc"
+alias cdl='cd "$(fzf | grep -o -e ".\+/")"'
+alias bashload="source ~/.bashrc"
 alias sane="stty sane"
 alias mdsdebugx='touch /tmp/mds_output; export MDS_DEBUG=/tmp/mds_output'
 alias mdsdebugc='truncate -s 0 /tmp/mds_output'
@@ -57,7 +58,9 @@ alias wpm2json_pt='wpm2json "${MDS_WPM_PT_TXT}" > "${MDS_WPM_PT_QUOTES}"'
 
 # positional arguments are passed by awk command
 # shellcheck disable=SC2142
-alias syscalls="batcat \$(find /usr/include -name 'unistd*.h' | xargs grep 'write 1' | head -n 1 | awk -F ':' '{print \$1}')"
+alias syscalls="bat \$(find /usr/include -name 'unistd*.h' | xargs grep 'write 1' | head -n 1 | awk -F ':' '{print \$1}')"
+# shellcheck disable=SC2142
+alias syscalls32="bat \$(find /usr/include -name 'unistd*.h' | xargs grep 'write 4' | head -n 1 | awk -F ':' '{print \$1}')"
 
 # Scripts aliases
 alias operaffmpeg='${MDS_SCRIPTS}/operaffmpeg.sh'
