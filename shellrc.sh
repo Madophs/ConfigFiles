@@ -18,9 +18,9 @@ export SHELL_PID
 export MDS_CONFIG
 export MDS_SCRIPTS="${MDS_CONFIG}/scripts"
 export MDS_SCRIPTS_BIN="${MDS_CONFIG}/scripts/bin"
-export MDS_APPS="${HOME}/Documents/apps"
+export MDS_DATA="${HOME}/Documents"; MDS_DATA="${MDS_DATA}$(mount | grep -o '/mds_data')"
+export MDS_APPS="${MDS_DATA}/apps"
 export MDS_HOME="${HOME}"
-export MDS_ASSETS="${GIT_REPOS}/assets"
 export MDS_HIDDEN_CONFIGS="${HOME}/.config/mdsconfig"
 export MDS_SESSIONS_DIR="${HOME}/.config/mdsconfig/sessions"
 export MDS_ROOT_FILE="${MDS_HIDDEN_CONFIGS}/.path.txt"
@@ -42,7 +42,8 @@ export MDS_FANCY=YES
 export NEOVIDE_FRAME=none
 export NEOVIDE_FORK=1
 export NEOVIDE_OPENGL=1
-export GIT_REPOS="/home/${USER}/Documents/git"
+export GIT_REPOS="${MDS_DATA}/git"
+export MDS_ASSETS="${GIT_REPOS}/assets"
 export TEST="${HOME}/Documents/test"
 export CTEST="${TEST}/cpp"
 export PY_IMG="${GIT_REPOS}/Image-Processsing/resources"
