@@ -8,106 +8,62 @@ xkb_symbols "mds" {
 
     key.type[group1]="FOUR_LEVEL";
 
-    key <LSGT> { [      section,   plusminus,            section,      plusminus ] };
-    key <TLDE> { [        grave,  asciitilde,         dead_grave,        notsign ] };
-    key <AE01> { [            1,      exclam,         exclamdown,      therefore ] };
-    key <AE02> { [            2,          at, enfilledcircbullet,         degree ] };
-    key <AE03> { [            3,  numbersign,           sterling,          U2039 ] };
-    key <AE04> { [            4,      dollar,     dead_abovering,          U203A ] };
-    key <AE05> { [            5,     percent,           infinity,       multiply ] };
-    key <AE06> { [            6, asciicircum,            section,       function ] };
-    key <AE07> { [            7,   ampersand,          paragraph,   doubledagger ] };
-    key <AE08> { [            8,    asterisk,        Greek_theta,       EuroSign ] };
-    key <AE09> { [            9,   parenleft,         includedin,          union ] };
-    key <AE10> { [            0,  parenright,           includes,   intersection ] };
-    key <AE11> { [        minus,  underscore,             endash,          U223A ] };
-    key <AE12> { [        equal,        plus,           notequal,      plusminus ] };
-
-    key <AD01> { [            q,           Q,             0xff1b,         U1F90D ] };
-    key <AD02> { [            w,           W,              U2B9D,          U2B99 ] };
-    key <AD03> { [            e,           E,      Greek_epsilon,    Greek_SIGMA ] };
-    key <AD04> { [            r,           R,         dead_acute, dead_diaeresis ] };
-    key <AD05> { [            t,           T,             dagger,       currency ] };
-    key <AD06> { [            y,           Y,                yen,          U25CB ] };
-    key <AD07> { [            u,           U,     dead_abovering,          U2200 ] };
-    key <AD08> { [            i,           I,                 Up,             Up ] };
-    key <AD09> { [            o,           O,             oslash,         Oslash ] };
-    key <AD10> { [            p,           P,           Greek_pi,          U220F ] };
-    key <AD11> { [  bracketleft,   braceleft,              U27E6,          U2997 ] };
-    key <AD12> { [ bracketright,  braceright,              U27E7,          U2998 ] };
-    key <BKSL> { [    backslash,         bar,      guillemotleft, guillemotright ] };
-
-    key <AC01> { [            a,           A,              U2B9C,          U2B98 ] };
-    key <AC02> { [            s,           S,              U2B9F,          U2B9B ] };
-    key <AC03> { [            d,           D,              U2B9E,          U2B9A ] };
-    key <AC04> { [            f,           F,        Cyrillic_ef,    Cyrillic_EF ] };
-    key <AC05> { [            g,           G,        Greek_alpha,     Greek_beta ] };
-    key <AC06> { [            h,           H,            hstroke,        Hstroke ] };
-    key <AC07> { [            j,           J,               Left,           Left ] };
-    key <AC08> { [            k,           K,               Down,           Down ] };
-    key <AC09> { [            l,           L,              Right,          Right ] };
-    key <AC10> { [    semicolon,       colon,         dead_tilde,          U205D ] };
-    key <AC11> { [   apostrophe,    quotedbl,                 ae,             AE ] };
-
-    key <AB01> { [            z,           Z,        Greek_lamda,    Greek_LAMDA ] };
-    key <AB02> { [            x,           X,    dead_circumflex,     dead_caron ] };
-    key <AB03> { [            c,           C,           ccedilla,       Ccedilla ] };
-    key <AB04> { [            v,           V,              U2248,          U25CF ] };
-    key <AB05> { [            b,           B,              U00DF,          U1E9E ] };
-    key <AB06> { [            n,           N,              U211D,    Greek_OMEGA ] };
-    key <AB07> { [            m,           M,                 mu,         ssharp ] };
-    key <AB08> { [        comma,        less,      lessthanequal,          U2991 ] };
-    key <AB09> { [       period,     greater,   greaterthanequal,          U2992 ] };
-    key <AB10> { [        slash,    question,           division,   questiondown ] };
-
-    key <AD07> {
-        type = "EIGHT_LEVEL",
-        symbols[Group1]=[ u, U, Prior, Prior, u, U, Prior, Prior ]
-    };
-
-    key <AD08> {
-        type = "EIGHT_LEVEL",
-        symbols[Group1] = [ i, I, Up, Up, i, I, Up, Up ]
-    };
-
-
-    key <AC07> {
-        type = "EIGHT_LEVEL",
-        symbols[Group1] = [ j, J, Left, Left, j, J, Left, Left ]
-    };
-
-    key <AC08> {
-        type = "EIGHT_LEVEL",
-        symbols[Group1] = [ k, K, Down, Down, k, K, Down, Down ]
-    };
-
-    key <AC09> {
-        type = "EIGHT_LEVEL",
-        symbols[Group1] = [ l, L, Right, Right, l, L, Right, Right ]
-    };
-
-    key <AB07> {
-        type = "EIGHT_LEVEL",
-        symbols[Group1] = [ m, M, Next, Next, m, M, Next, Next ]
-    };
-
-    key <AB08> {
-        type = "EIGHT_LEVEL",
-        symbols[Group1] = [ comma, less, Home, Home, comma, less, Home, Home ]
-    };
-
-    key <AB09> {
-        type = "EIGHT_LEVEL",
-        symbols[Group1] = [ period, greater, End, End, period, greater, End, End ]
-    };
+    key <LSGT> { type="EIGHT_LEVEL", [         section,       plusminus,         section,       plusminus ] };
+    key <TLDE> { type="EIGHT_LEVEL", [           grave,      asciitilde,      dead_grave,         notsign ] };
+    key <AE01> { type="EIGHT_LEVEL", [               1,          exclam,      exclamdown,       therefore ] };
+    key <AE02> { type="EIGHT_LEVEL", [               2,              at,           U2022,          degree ] };
+    key <AE03> { type="EIGHT_LEVEL", [               3,      numbersign,        sterling,           U2039 ] };
+    key <AE04> { type="EIGHT_LEVEL", [               4,          dollar,  dead_abovering,           U203A ] };
+    key <AE05> { type="EIGHT_LEVEL", [               5,         percent,        infinity,        multiply ] };
+    key <AE06> { type="EIGHT_LEVEL", [               6,     asciicircum,         section,        function ] };
+    key <AE07> { type="EIGHT_LEVEL", [               7,       ampersand,       paragraph,    doubledagger ] };
+    key <AE08> { type="EIGHT_LEVEL", [               8,        asterisk,     Greek_theta,        EuroSign ] };
+    key <AE09> { type="EIGHT_LEVEL", [               9,       parenleft,      includedin,           union ] };
+    key <AE10> { type="EIGHT_LEVEL", [               0,      parenright,        includes,    intersection ] };
+    key <AE11> { type="EIGHT_LEVEL", [           minus,      underscore,          endash,           U223A ] };
+    key <AE12> { type="EIGHT_LEVEL", [           equal,            plus,        notequal,       plusminus ] };
+    key <AD01> { type="EIGHT_LEVEL", [               q,               Q,          0xff1b,          U1F90D ] };
+    key <AD02> { type="EIGHT_LEVEL", [               w,               W,           U2B9D,           U2B99 ] };
+    key <AD03> { type="EIGHT_LEVEL", [               e,               E,   Greek_epsilon,     Greek_SIGMA ] };
+    key <AD04> { type="EIGHT_LEVEL", [               r,               R,      dead_acute,  dead_diaeresis ] };
+    key <AD05> { type="EIGHT_LEVEL", [               t,               T,          dagger,        currency ] };
+    key <AD06> { type="EIGHT_LEVEL", [               y,               Y,             yen,           U25CB ] };
+    key <AD09> { type="EIGHT_LEVEL", [               o,               O,          oslash,          Oslash ] };
+    key <AD07> { type="EIGHT_LEVEL", [               u,               U,           Prior,           Prior ] };
+    key <AD08> { type="EIGHT_LEVEL", [               i,               I,              Up,              Up ] };
+    key <AD10> { type="EIGHT_LEVEL", [               p,               P,        Greek_pi,           U220F ] };
+    key <AD11> { type="EIGHT_LEVEL", [     bracketleft,       braceleft,           U27E6,           U2997 ] };
+    key <AD12> { type="EIGHT_LEVEL", [    bracketright,      braceright,           U27E7,           U2998 ] };
+    key <BKSL> { type="EIGHT_LEVEL", [       backslash,             bar,   guillemotleft,  guillemotright ] };
+    key <AC01> { type="EIGHT_LEVEL", [               a,               A,           U2B9C,           U2B98 ] };
+    key <AC02> { type="EIGHT_LEVEL", [               s,               S,           U2B9F,           U2B9B ] };
+    key <AC03> { type="EIGHT_LEVEL", [               d,               D,           U2B9E,           U2B9A ] };
+    key <AC04> { type="EIGHT_LEVEL", [               f,               F,     Cyrillic_ef,     Cyrillic_EF ] };
+    key <AC05> { type="EIGHT_LEVEL", [               g,               G,     Greek_alpha,      Greek_beta ] };
+    key <AC06> { type="EIGHT_LEVEL", [               h,               H,         hstroke,         Hstroke ] };
+    key <AC07> { type="EIGHT_LEVEL", [               j,               J,            Left,            Left ] };
+    key <AC08> { type="EIGHT_LEVEL", [               k,               K,            Down,            Down ] };
+    key <AC09> { type="EIGHT_LEVEL", [               l,               L,           Right,           Right ] };
+    key <AC10> { type="EIGHT_LEVEL", [       semicolon,           colon,      dead_tilde,           U205D ] };
+    key <AC11> { type="EIGHT_LEVEL", [      apostrophe,        quotedbl,              ae,              AE ] };
+    key <AB01> { type="EIGHT_LEVEL", [               z,               Z,     Greek_lamda,     Greek_LAMDA ] };
+    key <AB02> { type="EIGHT_LEVEL", [               x,               X, dead_circumflex,      dead_caron ] };
+    key <AB03> { type="EIGHT_LEVEL", [               c,               C,        ccedilla,        Ccedilla ] };
+    key <AB04> { type="EIGHT_LEVEL", [               v,               V,           U2248,           U25CF ] };
+    key <AB05> { type="EIGHT_LEVEL", [               b,               B,           U00DF,           U1E9E ] };
+    key <AB06> { type="EIGHT_LEVEL", [               n,               N,           U211D,     Greek_OMEGA ] };
+    key <AB07> { type="EIGHT_LEVEL", [               m,               M,            Next,            Next ] };
+    key <AB08> { type="EIGHT_LEVEL", [           comma,            less,            Home,            Home ] };
+    key <AB09> { type="EIGHT_LEVEL", [          period,         greater,             End,             End ] };
+    key <AB10> { type="EIGHT_LEVEL", [           slash,        question,        division,    questiondown ] };
 
     key <CAPS> {
         type= "FOUR_LEVEL",
-        symbols[Group1]= [ ISO_Level3_Shift, ISO_Level3_Shift, Caps_Lock, Caps_Lock ],
-        actions[Group1]= [ SetMods(modifiers=LevelThree),
-                        SetMods(modifiers=LevelThree),
-                        LockMods(modifiers=Lock),
-                        LockMods(modifiers=Lock) ]
+        symbols[Group1]=[ ISO_Level3_Shift, ISO_Level3_Shift, Caps_Lock, Caps_Lock ],
+        actions[Group1]=[ SetMods(modifiers=LevelThree),
+                          SetMods(modifiers=LevelThree),
+                          LockMods(modifiers=Lock),
+                          LockMods(modifiers=Lock) ]
     };
 
     include "level3(ralt_switch)"
