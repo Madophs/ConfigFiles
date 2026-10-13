@@ -13,7 +13,7 @@ xkb_symbols "mds" {
     key <AE01> { [            1,      exclam,         exclamdown,      therefore ] };
     key <AE02> { [            2,          at, enfilledcircbullet,         degree ] };
     key <AE03> { [            3,  numbersign,           sterling,          U2039 ] };
-    key <AE04> { [            4,      dollar,               cent,          U203A ] };
+    key <AE04> { [            4,      dollar,     dead_abovering,          U203A ] };
     key <AE05> { [            5,     percent,           infinity,       multiply ] };
     key <AE06> { [            6, asciicircum,            section,       function ] };
     key <AE07> { [            7,   ampersand,          paragraph,   doubledagger ] };
@@ -24,49 +24,90 @@ xkb_symbols "mds" {
     key <AE12> { [        equal,        plus,           notequal,      plusminus ] };
 
     key <AD01> { [            q,           Q,             0xff1b,         U1F90D ] };
-    key <AD02> { [            w,           W,                 Up,          U2B9D ] };
+    key <AD02> { [            w,           W,              U2B9D,          U2B99 ] };
     key <AD03> { [            e,           E,      Greek_epsilon,    Greek_SIGMA ] };
     key <AD04> { [            r,           R,         dead_acute, dead_diaeresis ] };
     key <AD05> { [            t,           T,             dagger,       currency ] };
     key <AD06> { [            y,           Y,                yen,          U25CB ] };
     key <AD07> { [            u,           U,     dead_abovering,          U2200 ] };
-    key <AD08> { [            i,           I,    dead_circumflex,     dead_caron ] };
+    key <AD08> { [            i,           I,                 Up,             Up ] };
     key <AD09> { [            o,           O,             oslash,         Oslash ] };
     key <AD10> { [            p,           P,           Greek_pi,          U220F ] };
     key <AD11> { [  bracketleft,   braceleft,              U27E6,          U2997 ] };
     key <AD12> { [ bracketright,  braceright,              U27E7,          U2998 ] };
     key <BKSL> { [    backslash,         bar,      guillemotleft, guillemotright ] };
 
-    key <AC01> { [            a,           A,               Left,          U2B9C ] };
-    key <AC02> { [            s,           S,               Down,          U2B9F ] };
-    key <AC03> { [            d,           D,              Right,          U2B9E ] };
+    key <AC01> { [            a,           A,              U2B9C,          U2B98 ] };
+    key <AC02> { [            s,           S,              U2B9F,          U2B9B ] };
+    key <AC03> { [            d,           D,              U2B9E,          U2B9A ] };
     key <AC04> { [            f,           F,        Cyrillic_ef,    Cyrillic_EF ] };
     key <AC05> { [            g,           G,        Greek_alpha,     Greek_beta ] };
     key <AC06> { [            h,           H,            hstroke,        Hstroke ] };
-    key <AC07> { [            j,           J,              U2584,          U2580 ] };
-    key <AC08> { [            k,           K,              U2248,          U25CF ] };
-    key <AC09> { [            l,           L,        Greek_lamda,    Greek_LAMDA ] };
+    key <AC07> { [            j,           J,               Left,           Left ] };
+    key <AC08> { [            k,           K,               Down,           Down ] };
+    key <AC09> { [            l,           L,              Right,          Right ] };
     key <AC10> { [    semicolon,       colon,         dead_tilde,          U205D ] };
     key <AC11> { [   apostrophe,    quotedbl,                 ae,             AE ] };
 
-    key <AB01> { [            z,           Z,               Home,          U2768 ] };
-    key <AB02> { [            x,           X,                End,          U2769 ] };
+    key <AB01> { [            z,           Z,        Greek_lamda,    Greek_LAMDA ] };
+    key <AB02> { [            x,           X,    dead_circumflex,     dead_caron ] };
     key <AB03> { [            c,           C,           ccedilla,       Ccedilla ] };
-    key <AB04> { [            v,           V,              U258C,          U2590 ] };
-    key <AB05> { [            b,           B,           integral,     squareroot ] };
+    key <AB04> { [            v,           V,              U2248,          U25CF ] };
+    key <AB05> { [            b,           B,              U00DF,          U1E9E ] };
     key <AB06> { [            n,           N,              U211D,    Greek_OMEGA ] };
     key <AB07> { [            m,           M,                 mu,         ssharp ] };
     key <AB08> { [        comma,        less,      lessthanequal,          U2991 ] };
     key <AB09> { [       period,     greater,   greaterthanequal,          U2992 ] };
     key <AB10> { [        slash,    question,           division,   questiondown ] };
 
+    key <AD07> {
+        type = "EIGHT_LEVEL",
+        symbols[Group1]=[ u, U, Prior, Prior, u, U, Prior, Prior ]
+    };
+
+    key <AD08> {
+        type = "EIGHT_LEVEL",
+        symbols[Group1] = [ i, I, Up, Up, i, I, Up, Up ]
+    };
+
+
+    key <AC07> {
+        type = "EIGHT_LEVEL",
+        symbols[Group1] = [ j, J, Left, Left, j, J, Left, Left ]
+    };
+
+    key <AC08> {
+        type = "EIGHT_LEVEL",
+        symbols[Group1] = [ k, K, Down, Down, k, K, Down, Down ]
+    };
+
+    key <AC09> {
+        type = "EIGHT_LEVEL",
+        symbols[Group1] = [ l, L, Right, Right, l, L, Right, Right ]
+    };
+
+    key <AB07> {
+        type = "EIGHT_LEVEL",
+        symbols[Group1] = [ m, M, Next, Next, m, M, Next, Next ]
+    };
+
+    key <AB08> {
+        type = "EIGHT_LEVEL",
+        symbols[Group1] = [ comma, less, Home, Home, comma, less, Home, Home ]
+    };
+
+    key <AB09> {
+        type = "EIGHT_LEVEL",
+        symbols[Group1] = [ period, greater, End, End, period, greater, End, End ]
+    };
+
     key <CAPS> {
-    type= "FOUR_LEVEL",
-    symbols[Group1]= [ ISO_Level3_Shift, ISO_Level3_Shift, Caps_Lock, Caps_Lock ],
-    actions[Group1]= [ SetMods(modifiers=LevelThree),
-                       SetMods(modifiers=LevelThree),
-                       LockMods(modifiers=Lock),
-                       LockMods(modifiers=Lock) ]
+        type= "FOUR_LEVEL",
+        symbols[Group1]= [ ISO_Level3_Shift, ISO_Level3_Shift, Caps_Lock, Caps_Lock ],
+        actions[Group1]= [ SetMods(modifiers=LevelThree),
+                        SetMods(modifiers=LevelThree),
+                        LockMods(modifiers=Lock),
+                        LockMods(modifiers=Lock) ]
     };
 
     include "level3(ralt_switch)"
