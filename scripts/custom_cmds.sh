@@ -186,6 +186,10 @@ function nvim() {
     echo -ne "${RESTORE_CURSOR_SET}"
 }
 
+function nvimlog() {
+    nvim -c "profile start profile${1:?}.log" -c "profile file *" -c "profile func *" "${2:?}"
+}
+
 # @brief: parse Anki export file (txt) words
 function anki_words() {
     grep -i -o -E '^[a-z -]+' "${1:?}" | sed -e 's/ *$//g' | tr '[:upper:]' '[:lower:]' > "${2:?}"
