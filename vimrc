@@ -10,17 +10,14 @@ endif
 " set the runtime path to include Vundle and initialize
 call plug#begin('~/.vim/plugged')
 
-Plug 'VundleVim/Vundle.vim'
-Plug 'octol/vim-cpp-enhanced-highlight'
+"Plug 'VundleVim/Vundle.vim'
 Plug 'scrooloose/nerdtree'
 Plug 'vifm/vifm.vim'
 Plug 'preservim/nerdcommenter'
-"Plug 'itchyny/lightline.vim'
 Plug 'airblade/vim-gitgutter'
+" Html expantion tags
 Plug 'mattn/emmet-vim'
 Plug 'tpope/vim-fugitive'
-Plug 'turbio/bracey.vim'
-Plug 'StanAngeloff/php.vim'
 if $MDS_FANCY ==? "yes"
     Plug 'ryanoasis/vim-devicons'
     Plug 'bluz71/vim-nightfly-guicolors'
@@ -29,24 +26,14 @@ endif
 Plug 'preservim/tagbar'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
-"Plug 'mhinz/vim-signify'
-Plug 'yggdroot/indentline'
-Plug 'crusoexia/vim-monokai'
-Plug 'tpope/vim-vinegar'
-Plug 'embark-theme/vim'
-Plug 'luochen1990/rainbow'
 Plug 'inside/vim-search-pulse'
 Plug 'mhinz/vim-startify'
-Plug 'pboettch/vim-cmake-syntax'
-Plug 'vim-python/python-syntax'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'sheerun/vim-polyglot'
-Plug 'uiiaoo/java-syntax.vim'
 Plug 'cdelledonne/vim-cmake'
 "Plug 'ycm-core/YouCompleteMe'
 Plug 'bronson/vim-visual-star-search'
-Plug 'voldikss/vim-floaterm'
-Plug 'rust-lang/rust.vim'
+"Plug 'voldikss/vim-floaterm'
+" GBrowse command
 Plug 'tpope/vim-rhubarb'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'Shirk/vim-gas'
@@ -54,6 +41,7 @@ Plug 'Shirk/vim-gas'
 if ! has('nvim')
     Plug 'vim-airline/vim-airline'
     Plug 'vim-airline/vim-airline-themes'
+    Plug 'sheerun/vim-polyglot'
 endif
 
 call plug#end()
@@ -72,11 +60,8 @@ autocmd FileType make setlocal tabstop=4 shiftwidth=4 softtabstop=0 noexpandtab
 
 " Highlight trailing spaces automatically
 highlight ExtraWhitespace ctermbg=red guibg=red
-autocmd ColorScheme * highlight ExtraWhitespace ctermbg=yellow guibg=yellow
 match ExtraWhitespace /\s\+$/
-"autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
-"autocmd InsertEnter * match ExtraWhitespace /\s\+$/
-"autocmd InsertLeave * match ExtraWhitespace /\s\+$/
+autocmd ColorScheme * highlight ExtraWhitespace ctermbg=yellow guibg=yellow
 if has('nvim')
     autocmd TermOpen * highlight ExtraWhitespace ctermbg=none guibg=none
     autocmd TermOpen * startinsert
@@ -94,8 +79,7 @@ autocmd BufWritePre * call DelTrailingEmptyChars()
 call setenv('CWRDIR', system('CWRDIR=$(git rev-parse --show-toplevel 2> /dev/null || pwd) ; echo -n $CWRDIR'))
 
 " Global configurations
-syntax on
-highlight link JavaIdentifier NONE
+syntax off
 
 " Search related configs
 set path=.,$CWRDIR,$CWRDIR/**,
@@ -179,14 +163,14 @@ if $MDS_FANCY ==? "YES"
     endif
 
     " Nice looking terminal
-    set termguicolors
+    "set termguicolors
 
     " Beautiful theme
     let g:lightline = { 'colorscheme': 'nightfly' }
     let g:nightflyUnderlineMatchParen = v:true
     let g:nightflyCursorColor = v:true
     let g:nightflyTransparent = v:true
-    colorscheme nightfly
+    "colorscheme nightfly
 else
     colorscheme torte
     set cursorline&
@@ -212,15 +196,13 @@ if has('nvim')
     nnoremap <silent> <M-w> <Cmd>BufferPick<CR>
     nnoremap <silent> <M-f> :HopWord<CR>
     nnoremap <silent> <M-p> :HopPattern<CR>
-    nnoremap <silent> <leader>v :HopYankChar1CurrentLine<CR>
-    nnoremap <silent> @sn :HopNodes<CR>
-    "nnoremap <silent> !n :HopPattern<CR>
+    nnoremap <silent> <D-n> :HopNodes<CR>
     omap     <silent> m :<C-U>lua require('tsht').nodes()<CR>
     xnoremap <silent> m :lua require('tsht').nodes()<CR>
     autocmd VimEnter * silent FloatermNew --silent
 
-    autocmd FileType sh inoremap ≈ <ESC>:w <CR> :FloatermSend %:p <CR><C-\><C-n>:FloatermShow<CR>
-    autocmd FileType sh nnoremap ≈ <ESC>:w <CR> :FloatermSend %:p <CR><C-\><C-n>:FloatermShow<CR>
+    autocmd FileType sh inoremap £ <ESC>:w <CR> :FloatermSend %:p <CR><C-\><C-n>:FloatermShow<CR>
+    autocmd FileType sh nnoremap £ <ESC>:w <CR> :FloatermSend %:p <CR><C-\><C-n>:FloatermShow<CR>
 else
     if $COMPETITIVE_MODE ==? "Y"
         map <F7> :!clear && mdscode -b -n %:p -t <CR>
@@ -243,13 +225,14 @@ let g:floaterm_width=0.9
 nnoremap <leader>n :NERDTreeToggle<CR>
 nnoremap <leader>f :NERDTreeFind<CR>
 nnoremap <leader>w :NERDTreeCWD<CR>
+nnoremap <leader>v :CocCommand coc-todo-tree.showTree <CR>
 vmap <leader>sw <Plug>(coc-codeaction-selected)
-nnoremap ▌ :Vifm<CR>
+nnoremap ≈ :Vifm<CR>
 map <F4> :TagbarToggle<CR>
 nnoremap <silent> <M-u> <Cmd> TagbarJumpPrev<CR>
 nnoremap <silent> <M-o> <Cmd> TagbarJumpNext<CR>
 nmap <C-J> :Kwbd <CR>
-nnoremap ∫ :Buffers <CR>
+nnoremap ß :Buffers <CR>
 
 " View management
 nnoremap <silent> ⮝ <C-W>k
@@ -269,18 +252,7 @@ nnoremap <silent> 🤍 <C-W>_<C-W>\|
 if has('nvim')
     let g:indentLine_enabled = 0
     let g:gitgutter_signs = 0
-else
-    "let g:indentLine_char_list = ['|', '¦', '┆', '┊']
-    let g:indentLine_char_list = ['|']
-    let g:indentLine_enabled = 1
-    autocmd InsertEnter,CursorMoved *.cpp IndentLinesReset
 endif
-
-" Parenthesis colors
-let g:rainbow_active = 1
-
-" Disable Rainbow plugin when editing cmake files
-autocmd FileType cmake RainbowToggleOff
 
 let g:vim_search_pulse_duration = 200
 
@@ -353,8 +325,8 @@ let g:tagbar_type_cpp = {
 
 let g:ycm_filetype_whitelist = {'python': 1}
 let g:ycm_autoclose_preview_window_after_completion = 1
-let g:coc_filetypes_enable = ['c', 'cpp', 'tpp', 'javascript', 'typescript', 'php', 'bash', 'css', 'html', 'sh', 'vim', 'blade', 'gitcommit', 'rust', 'cmake', 'vim', 'lua', 'gitcommit', 'nasm', 'gas', 'python', 'json']
-let g:coc_global_extensions = ['coc-json', 'coc-angular', 'coc-cmake', 'coc-clangd', 'coc-css', 'coc-cssmodules', 'coc-html-css-support', 'coc-html', 'coc-htmlhint', 'coc-phpactor', 'coc-phpls', 'coc-sh', 'coc-spell-checker', 'coc-tsserver', 'coc-blade-formatter', 'coc-blade-linter', 'coc-blade', 'coc-yank', 'coc-vimlsp', 'coc-rust-analyzer', 'coc-lua', 'coc-emmet', 'coc-copilot', 'coc-prettier', 'coc-java', 'coc-pyright']
+let g:coc_filetypes_enable = ['c', 'cpp', 'tpp', 'javascript', 'typescript', 'php', 'bash', 'css', 'html', 'sh', 'vim', 'vifm', 'blade', 'gitcommit', 'rust', 'cmake', 'vim', 'lua', 'gitcommit', 'nasm', 'gas', 'python', 'json']
+let g:coc_global_extensions = ['coc-json', 'coc-angular', 'coc-cmake', 'coc-clangd', 'coc-css', 'coc-cssmodules', 'coc-html-css-support', 'coc-html', 'coc-htmlhint', 'coc-phpactor', 'coc-phpls', 'coc-sh', 'coc-spell-checker', 'coc-tsserver', 'coc-blade-formatter', 'coc-blade-linter', 'coc-blade', 'coc-yank', 'coc-vimls', 'coc-rust-analyzer', 'coc-lua', 'coc-emmet', 'coc-copilot', 'coc-prettier', 'coc-java', 'coc-pyright', 'coc-nasm', 'coc-todo-tree']
 let g:ycm_enabled = v:false
 
 " Source files (Usually functions)
