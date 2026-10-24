@@ -47,35 +47,7 @@ endif
 call plug#end()
 filetype plugin indent on
 
-" autocmd section
 
-autocmd BufEnter,BufNewFile,BufRead *.asm set filetype=nasm
-autocmd BufEnter,BufNewFile,BufRead *.s,*.S set filetype=gas
-autocmd FileType html,typescript,javascript,blade,jst,lua setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab
-autocmd FileType make setlocal tabstop=4 shiftwidth=4 softtabstop=0 noexpandtab
-
-" Set the working directory to the current's file directory
-" Issues with terminal buffer
-"autocmd BufEnter * lcd %:p:h
-
-" Highlight trailing spaces automatically
-highlight ExtraWhitespace ctermbg=red guibg=red
-match ExtraWhitespace /\s\+$/
-autocmd ColorScheme * highlight ExtraWhitespace ctermbg=yellow guibg=yellow
-if has('nvim')
-    autocmd TermOpen * highlight ExtraWhitespace ctermbg=none guibg=none
-    autocmd TermOpen * startinsert
-    autocmd TermLeave * highlight ExtraWhitespace ctermbg=yellow guibg=yellow
-endif
-
-" Delete trailing whitespaces on write
-function DelTrailingEmptyChars()
-    let currcurpos = getcurpos()
-    :%s/\s\+$//e
-    call setpos('.', currcurpos)
-endfunction
-
-autocmd BufWritePre * call DelTrailingEmptyChars()
 call setenv('CWRDIR', system('CWRDIR=$(git rev-parse --show-toplevel 2> /dev/null || pwd) ; echo -n $CWRDIR'))
 
 " Global configurations
@@ -199,10 +171,6 @@ if has('nvim')
     nnoremap <silent> <D-n> :HopNodes<CR>
     omap     <silent> m :<C-U>lua require('tsht').nodes()<CR>
     xnoremap <silent> m :lua require('tsht').nodes()<CR>
-    autocmd VimEnter * silent FloatermNew --silent
-
-    autocmd FileType sh inoremap £ <ESC>:w <CR> :FloatermSend %:p <CR><C-\><C-n>:FloatermShow<CR>
-    autocmd FileType sh nnoremap £ <ESC>:w <CR> :FloatermSend %:p <CR><C-\><C-n>:FloatermShow<CR>
 else
     if $COMPETITIVE_MODE ==? "Y"
         map <F7> :!clear && mdscode -b -n %:p -t <CR>
@@ -255,13 +223,6 @@ if has('nvim')
 endif
 
 let g:vim_search_pulse_duration = 200
-
-" NERDTree configurations
-"let NERDTreeShowHidden=1
-
-" Exit Vim if NERDTree is the only window left.
-autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() |
-    \ quit | endif
 
 let g:trim_trailing_whitespace="true"
 
@@ -337,6 +298,35 @@ source $MDS_CONFIG/vim/SessionManager.vim
 source $MDS_CONFIG/vim/MdsCode.vim
 source $MDS_CONFIG/vim/cmds.vim
 
+" autocmd start section
+autocmd BufEnter,BufNewFile,BufRead *.asm set filetype=nasm
+autocmd BufEnter,BufNewFile,BufRead *.s,*.S set filetype=gas
+autocmd FileType html,typescript,javascript,blade,jst,lua setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab
+autocmd FileType make setlocal tabstop=4 shiftwidth=4 softtabstop=0 noexpandtab
+
+" Highlight trailing spaces automatically
+highlight ExtraWhitespace ctermbg=red guibg=red
+match ExtraWhitespace /\s\+$/
+autocmd ColorScheme * highlight ExtraWhitespace ctermbg=yellow guibg=yellow
+if has('nvim')
+    autocmd TermOpen * highlight ExtraWhitespace ctermbg=none guibg=none
+    autocmd TermOpen * startinsert
+    autocmd TermLeave * highlight ExtraWhitespace ctermbg=yellow guibg=yellow
+
+    autocmd VimEnter * silent FloatermNew --silent
+    autocmd FileType sh inoremap £ <ESC>:w <CR> :FloatermSend %:p <CR><C-\><C-n>:FloatermShow<CR>
+    autocmd FileType sh nnoremap £ <ESC>:w <CR> :FloatermSend %:p <CR><C-\><C-n>:FloatermShow<CR>
+endif
+
+" Exit Vim if NERDTree is the only window left.
+autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() |
+    \ quit | endif
+
+autocmd BufWritePre * call DelTrailingEmptyChars()
+
+" autocmd end section
+
+" Environment variables
 if has('nvim')
     call setenv('VIM_EDITOR', 'nvim')
     call setenv('EDITOR_COMMAND', "nvr -cc 'FloatermHide!' {{FILE}}")
