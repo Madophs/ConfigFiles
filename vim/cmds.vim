@@ -9,3 +9,10 @@ function! g:BashRemoveTimeMetrics()
     execute("e %")
 endfunction
 command! -nargs=0 BashRemoveTimeMetrics call g:BashRemoveTimeMetrics()
+
+" Delete trailing whitespaces on write
+function DelTrailingEmptyChars()
+    let currcurpos = getcurpos()
+    :%s/\s\+$//e
+    call setpos('.', currcurpos)
+endfunction
