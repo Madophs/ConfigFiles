@@ -20,8 +20,6 @@ Plug 'mattn/emmet-vim'
 Plug 'tpope/vim-fugitive'
 if $MDS_FANCY ==? "yes"
     Plug 'ryanoasis/vim-devicons'
-    Plug 'bluz71/vim-nightfly-guicolors'
-    Plug 'ghifarit53/tokyonight-vim'
 endif
 Plug 'preservim/tagbar'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -39,6 +37,8 @@ Plug 'ludovicchabant/vim-gutentags'
 Plug 'Shirk/vim-gas'
 
 if ! has('nvim')
+    Plug 'bluz71/vim-nightfly-guicolors'
+    Plug 'ghifarit53/tokyonight-vim'
     Plug 'vim-airline/vim-airline'
     Plug 'vim-airline/vim-airline-themes'
     Plug 'sheerun/vim-polyglot'
@@ -47,10 +47,26 @@ endif
 call plug#end()
 filetype plugin indent on
 
+" █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█
+" █                         Environment variables                        █
+" █▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█
 
 call setenv('CWRDIR', system('CWRDIR=$(git rev-parse --show-toplevel 2> /dev/null || pwd) ; echo -n $CWRDIR'))
 
-" Global configurations
+if has('nvim')
+    call setenv('VIM_EDITOR', 'nvim')
+    call setenv('EDITOR_COMMAND', "nvr -cc 'FloatermHide!' {{FILE}}")
+    call setenv('EDITOR_SPLIT_COMMAND', 'nvim -O2 {{FILE1}} {{FILE2}}')
+    call setenv('EDITOR_DIFF_COMMAND', 'nvim -d {{FILE1}} {{FILE2}}')
+    call setenv('EDITOR_DIFF_COMMAND', 'nvim -c "b 1 | set nosplitright | vsplit {{FILE3}} | execute \"normal \<C-w>K \" | resize -5" -d {{FILE1}} {{FILE2}}')
+else
+    call setenv('VIM_EDITOR', 'vim')
+endif
+
+" █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█
+" █                              Vim config                              █
+" █▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█
+
 syntax off
 
 " Search related configs
@@ -115,10 +131,6 @@ set wildoptions=fuzzy,pum,tagfile
 set title
 set backspace=indent,eol,start
 set noswapfile
-let g:python_highlight_all = 1
-
-" Bind VIM clipboard registry with Linux's
-"set clipboard=unnamedplus
 
 " Add Cool status line
 set laststatus=2
@@ -126,29 +138,99 @@ set laststatus=2
 " Set tags location
 set tags=$TAGS
 
-if $MDS_FANCY ==? "YES"
+" █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█
+" █                            Plugin configs                            █
+" █▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█
+
+let g:floaterm_keymap_toggle = '<F12>'
+let g:floaterm_height=0.9
+let g:floaterm_width=0.9
+
+if has('nvim')
+    let g:indentLine_enabled = 0
+    let g:gitgutter_signs = 0
+endif
+
+let g:vim_search_pulse_duration = 200
+
+" CMake configurations
+let g:cmake_link_compile_commands=1
+let g:cmake_default_config='build'
+
+" Airline configurations
+let g:airline#extensions#tabline#enabled = 1 "Show tabs if only one is enabled.
+let g:airline#extensions#tabline#formatter = 'default'
+let g:airline_powerline_fonts = 1
+let g:airline#extensions#tabline#formatter = 'unique_tail'
+let g:gutentags_modules = ['ctags']
+let g:gutentags_ctags_extra_args = ['--extras=+F']
+let g:gutentags_ctags_exclude = ['storage', 'vendor', '*.out', 'build', '*.o', '*.d', '.dir', '*min.js', '*mix.js', '*bundle.js', '*esm.js']
+let g:gutentags_exclude_filetypes = ['markdown', 'log', 'json', 'cmake', 'xml', 'css']
+let g:gutentags_generate_on_write = 1
+set statusline+=%{gutentags#statusline()}
+
+" Tagbar kinds configuration
+let g:tagbar_type_cpp = {
+    \ 'kinds' : [
+        \ 'd:macros:1:0',
+        \ 'p:prototypes:0:0',
+        \ 'g:enums',
+        \ 'e:enumerators:0:0',
+        \ 't:typedefs:0:0',
+        \ 'n:namespaces',
+        \ 'c:classes',
+        \ 's:structs',
+        \ 'u:unions',
+        \ 'f:functions',
+        \ 'm:members:0:0',
+        \ 'v:variables:0:0',
+        \ '?:unknown',
+    \ ],
+\ }
+
+let g:ycm_filetype_whitelist = {'python': 1}
+let g:ycm_autoclose_preview_window_after_completion = 1
+let g:coc_filetypes_enable = ['c', 'cpp', 'tpp', 'javascript', 'typescript', 'php', 'bash', 'css', 'html', 'sh', 'vim', 'vifm', 'blade', 'gitcommit', 'rust', 'cmake', 'vim', 'lua', 'gitcommit', 'nasm', 'gas', 'python', 'json']
+let g:coc_global_extensions = ['coc-json', 'coc-angular', 'coc-cmake', 'coc-clangd', 'coc-css', 'coc-cssmodules', 'coc-html-css-support', 'coc-html', 'coc-htmlhint', 'coc-phpactor', 'coc-phpls', 'coc-sh', 'coc-spell-checker', 'coc-tsserver', 'coc-blade-formatter', 'coc-blade-linter', 'coc-blade', 'coc-yank', 'coc-vimls', 'coc-rust-analyzer', 'coc-lua', 'coc-emmet', 'coc-copilot', 'coc-prettier', 'coc-java', 'coc-pyright', 'coc-nasm', 'coc-todo-tree']
+let g:ycm_enabled = v:false
+
+" █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█
+" █                              Colorscheme                             █
+" █▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█
+
+set termguicolors
+
+if has('nvim')
+    colorscheme nightfly
+else
     " I use Konsole terminal so let's add some color
     " For more info :h xterm-true-color
-    if !has('nvim')
-        let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-        let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-    endif
-
-    " Nice looking terminal
-    "set termguicolors
+    let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 
     " Beautiful theme
     let g:lightline = { 'colorscheme': 'nightfly' }
     let g:nightflyUnderlineMatchParen = v:true
     let g:nightflyCursorColor = v:true
     let g:nightflyTransparent = v:true
-    "colorscheme nightfly
-else
-    colorscheme torte
-    set cursorline&
+    colorscheme nightfly
 endif
 
-" Mappings
+" █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█
+" █                            Source configs                            █
+" █▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█
+
+source $MDS_CONFIG/vim/ToggleIOBuffers.vim
+source $MDS_CONFIG/vim/Kwbd.vim
+source $MDS_CONFIG/vim/Coc_vs_Ycm.vim
+source $MDS_CONFIG/vim/SessionManager.vim
+source $MDS_CONFIG/vim/MdsCode.vim
+source $MDS_CONFIG/vim/cmds.vim
+
+" █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█
+" █                               Mappings                               █
+" █▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█
+
 if has('nvim')
     if $COMPETITIVE_MODE ==? "Y"
         map <F6> :call MdsCode("-s") <CR> :FloatermToggle <CR>
@@ -184,9 +266,6 @@ map <LeftDrag> ""
 map <LeftRelease> ""
 map <F9> :call ToggleIOBuffers() <CR>
 map <F10> :setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab smartindent <CR>
-let g:floaterm_keymap_toggle = '<F12>'
-let g:floaterm_height=0.9
-let g:floaterm_width=0.9
 
 "map <c-h> :grep -rn $MDS_ROOT --exclude-dir=storage --exclude-dir=vendor --exclude-dir=node_modules --exclude=tags --exclude="*.json" -e
 "map <C-i> :cd $MDS_ROOT <CR>
@@ -217,25 +296,6 @@ nnoremap <silent> `j :resize -5 <CR>
 nnoremap <silent> `h :vertical resize -5 <CR>
 nnoremap <silent> 🤍 <C-W>_<C-W>\|
 
-if has('nvim')
-    let g:indentLine_enabled = 0
-    let g:gitgutter_signs = 0
-endif
-
-let g:vim_search_pulse_duration = 200
-
-let g:trim_trailing_whitespace="true"
-
-" netrw configurations
-let g:netrw_banner = 0
-let g:netrw_liststyle = 3
-let g:netrw_browse_split = 2
-let g:netrw_winsize = 25
-let g:netrw_keepdir = 0 " Netrw: keeps track of current browsing directory
-
-" CMake configurations
-let g:cmake_link_compile_commands=1
-let g:cmake_default_config='build'
 nmap <silent> gG :CMakeGenerate <CR>
 nmap <silent> gB :CMakeBuild <CR>
 nmap <silent> gc :CMakeToggle <CR>
@@ -244,61 +304,10 @@ nmap <silent> gL :CMakeTest --output-on-failure <CR>
 nmap <silent> <leader>t :BTags <CR>
 nmap <silent> <leader>T :GFiles <CR>
 
-" Airline configurations
-let g:airline#extensions#tabline#enabled = 1 "Show tabs if only one is enabled.
-let g:airline#extensions#tabline#formatter = 'default'
-let g:airline_powerline_fonts = 1
-let g:airline#extensions#tabline#formatter = 'unique_tail'
-let g:gutentags_modules = ['ctags']
-let g:gutentags_ctags_extra_args = ['--extras=+F']
-let g:gutentags_ctags_exclude = ['storage', 'vendor', '*.out', 'build', '*.o', '*.d', '.dir', '*min.js', '*mix.js', '*bundle.js', '*esm.js']
-let g:gutentags_exclude_filetypes = ['markdown', 'log', 'json', 'cmake', 'xml', 'css']
-let g:gutentags_generate_on_write = 1
-set statusline+=%{gutentags#statusline()}
+" █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█
+" █                            autocmd section                           █
+" █▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█
 
-" fzf stuff
-command! -bang -nargs=? -complete=dir Files
-    \ call fzf#vim#files(<q-args>, {'options': ['--layout=reverse', '--info=inline', '--preview', '~/.vim/plugged/fzf.vim/bin/preview.sh {}']}, <bang>0)
-
-command! -bang -nargs=* Rg
-    \ call fzf#vim#grep(
-    \   'rg --column --line-number --no-heading --color=always --smart-case '.fzf#shellescape(<q-args>),
-    \   fzf#vim#with_preview({'dir': systemlist('git rev-parse --show-toplevel')[0]}), <bang>0)
-
-" Tagbar kinds configuration
-let g:tagbar_type_cpp = {
-    \ 'kinds' : [
-        \ 'd:macros:1:0',
-        \ 'p:prototypes:0:0',
-        \ 'g:enums',
-        \ 'e:enumerators:0:0',
-        \ 't:typedefs:0:0',
-        \ 'n:namespaces',
-        \ 'c:classes',
-        \ 's:structs',
-        \ 'u:unions',
-        \ 'f:functions',
-        \ 'm:members:0:0',
-        \ 'v:variables:0:0',
-        \ '?:unknown',
-    \ ],
-\ }
-
-let g:ycm_filetype_whitelist = {'python': 1}
-let g:ycm_autoclose_preview_window_after_completion = 1
-let g:coc_filetypes_enable = ['c', 'cpp', 'tpp', 'javascript', 'typescript', 'php', 'bash', 'css', 'html', 'sh', 'vim', 'vifm', 'blade', 'gitcommit', 'rust', 'cmake', 'vim', 'lua', 'gitcommit', 'nasm', 'gas', 'python', 'json']
-let g:coc_global_extensions = ['coc-json', 'coc-angular', 'coc-cmake', 'coc-clangd', 'coc-css', 'coc-cssmodules', 'coc-html-css-support', 'coc-html', 'coc-htmlhint', 'coc-phpactor', 'coc-phpls', 'coc-sh', 'coc-spell-checker', 'coc-tsserver', 'coc-blade-formatter', 'coc-blade-linter', 'coc-blade', 'coc-yank', 'coc-vimls', 'coc-rust-analyzer', 'coc-lua', 'coc-emmet', 'coc-copilot', 'coc-prettier', 'coc-java', 'coc-pyright', 'coc-nasm', 'coc-todo-tree']
-let g:ycm_enabled = v:false
-
-" Source files (Usually functions)
-source $MDS_CONFIG/vim/ToggleIOBuffers.vim
-source $MDS_CONFIG/vim/Kwbd.vim
-source $MDS_CONFIG/vim/Coc_vs_Ycm.vim
-source $MDS_CONFIG/vim/SessionManager.vim
-source $MDS_CONFIG/vim/MdsCode.vim
-source $MDS_CONFIG/vim/cmds.vim
-
-" autocmd start section
 autocmd BufEnter,BufNewFile,BufRead *.asm set filetype=nasm
 autocmd BufEnter,BufNewFile,BufRead *.s,*.S set filetype=gas
 autocmd FileType html,typescript,javascript,blade,jst,lua setlocal tabstop=2 shiftwidth=2 softtabstop=2 expandtab
@@ -323,16 +332,3 @@ autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTr
     \ quit | endif
 
 autocmd BufWritePre * call DelTrailingEmptyChars()
-
-" autocmd end section
-
-" Environment variables
-if has('nvim')
-    call setenv('VIM_EDITOR', 'nvim')
-    call setenv('EDITOR_COMMAND', "nvr -cc 'FloatermHide!' {{FILE}}")
-    call setenv('EDITOR_SPLIT_COMMAND', 'nvim -O2 {{FILE1}} {{FILE2}}')
-    call setenv('EDITOR_DIFF_COMMAND', 'nvim -d {{FILE1}} {{FILE2}}')
-    call setenv('EDITOR_DIFF_COMMAND', 'nvim -c "b 1 | set nosplitright | vsplit {{FILE3}} | execute \"normal \<C-w>K \" | resize -5" -d {{FILE1}} {{FILE2}}')
-else
-    call setenv('VIM_EDITOR', 'vim')
-endif
