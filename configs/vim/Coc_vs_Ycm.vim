@@ -1,3 +1,7 @@
+if has('nvim')
+    finish
+endif
+
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
     execute 'h '.expand('<cword>')
@@ -16,11 +20,16 @@ function! s:filetype_handler_for_type()
         " To code navigation.
         nmap <silent> gd <Plug>(coc-definition)
         nmap <silent> gy <Plug>(coc-type-definition)
+
+        nnoremap <silent> <leader>ci :call CocActionAsync('showIncomingCalls')<CR>
+        nnoremap <silent> <leader>co :call CocActionAsync('showOutgoingCalls')<CR>
+
         "nmap <silent> gi <Plug>(coc-implementation)
         nmap <silent> gr <Plug>(coc-references)
         nnoremap <C-l> :CocNext<CR>
         nnoremap <C-h> :CocPrev<CR>
-        nnoremap ф :CocListResume <CR>
+        nnoremap ð :CocListResume <CR>
+        nnoremap Ð :CocList diagnostics <CR>
         " Formatting selected code.
         xmap <leader>f  <Plug>(coc-format-selected)
         nmap <leader>f  <Plug>(coc-format-selected)

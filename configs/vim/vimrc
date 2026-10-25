@@ -67,7 +67,7 @@ endif
 " █                              Vim config                              █
 " █▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█
 
-syntax off
+syntax on
 
 " Search related configs
 set path=.,$CWRDIR,$CWRDIR/**,
@@ -191,7 +191,7 @@ let g:tagbar_type_cpp = {
 let g:ycm_filetype_whitelist = {'python': 1}
 let g:ycm_autoclose_preview_window_after_completion = 1
 let g:coc_filetypes_enable = ['c', 'cpp', 'tpp', 'javascript', 'typescript', 'php', 'bash', 'css', 'html', 'sh', 'vim', 'vifm', 'blade', 'gitcommit', 'rust', 'cmake', 'vim', 'lua', 'gitcommit', 'nasm', 'gas', 'python', 'json']
-let g:coc_global_extensions = ['coc-json', 'coc-angular', 'coc-cmake', 'coc-clangd', 'coc-css', 'coc-cssmodules', 'coc-html-css-support', 'coc-html', 'coc-htmlhint', 'coc-phpactor', 'coc-phpls', 'coc-sh', 'coc-spell-checker', 'coc-tsserver', 'coc-blade-formatter', 'coc-blade-linter', 'coc-blade', 'coc-yank', 'coc-vimls', 'coc-rust-analyzer', 'coc-lua', 'coc-emmet', 'coc-copilot', 'coc-prettier', 'coc-java', 'coc-pyright', 'coc-nasm', 'coc-todo-tree']
+let g:coc_global_extensions = ['coc-json', 'coc-angular', 'coc-cmake', 'coc-clangd', 'coc-css', 'coc-cssmodules', 'coc-html-css-support', 'coc-html', 'coc-htmlhint', 'coc-phpactor', 'coc-phpls', 'coc-sh', 'coc-spell-checker', 'coc-tsserver', 'coc-blade-formatter', 'coc-blade-linter', 'coc-blade', 'coc-yank', 'coc-vimls', 'coc-rust-analyzer', 'coc-lua', 'coc-luals', 'coc-emmet', 'coc-copilot', 'coc-prettier', 'coc-java', 'coc-pyright', 'coc-nasm', 'coc-todo-tree']
 let g:ycm_enabled = v:false
 
 " █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█
@@ -200,19 +200,18 @@ let g:ycm_enabled = v:false
 
 set termguicolors
 
-if has('nvim')
-    colorscheme nightfly
-else
+if ! has('nvim')
     " I use Konsole terminal so let's add some color
     " For more info :h xterm-true-color
     let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
     let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 
-    " Beautiful theme
-    let g:lightline = { 'colorscheme': 'nightfly' }
     let g:nightflyUnderlineMatchParen = v:true
     let g:nightflyCursorColor = v:true
     let g:nightflyTransparent = v:true
+
+    " Beautiful theme
+    let g:lightline = { 'colorscheme': 'nightfly' }
     colorscheme nightfly
 endif
 
@@ -220,12 +219,12 @@ endif
 " █                            Source configs                            █
 " █▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█
 
-source $MDS_CONFIG/vim/ToggleIOBuffers.vim
-source $MDS_CONFIG/vim/Kwbd.vim
-source $MDS_CONFIG/vim/Coc_vs_Ycm.vim
-source $MDS_CONFIG/vim/SessionManager.vim
-source $MDS_CONFIG/vim/MdsCode.vim
-source $MDS_CONFIG/vim/cmds.vim
+source $MDS_VIM/ToggleIOBuffers.vim
+source $MDS_VIM/Kwbd.vim
+source $MDS_VIM/Coc_vs_Ycm.vim
+source $MDS_VIM/SessionManager.vim
+source $MDS_VIM/MdsCode.vim
+source $MDS_VIM/cmds.vim
 
 " █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█
 " █                               Mappings                               █

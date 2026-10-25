@@ -31,33 +31,24 @@ function nvim_install() {
 }
 
 function nvim_setup() {
-    mkdir -p ~/.config/nvim/lua
-    if [[ ! -d ~/.local/share/nvim/site/pack/packer/start/packer.nvim ]]
-    then
-        git clone --depth 1 https://github.com/wbthomason/packer.nvim\
-            ~/.local/share/nvim/site/pack/packer/start/packer.nvim
-    fi
+    local -r nvim_config="${HOME}/.config/nvim"
+    local -r lua_dir="${nvim_config}/lua"
+    local -r config="${lua_dir}/config/"
+    local -r plugins="${lua_dir}/plugins/"
+    local -r postconfig="${lua_dir}/postconfig/"
 
-    local plugins="${HOME}/.config/nvim/lua/plugins.lua"
-    local configs="${HOME}/.config/nvim/lua/configs.lua"
+    # Clean whatever is in the directory
+    rm -rf "${lua_dir}"
+    rm -rf "${nvim_config}/init.lua"
+    # Create plugin directory structure
+    mkdir -p "${config}" "${plugins}" "${postconfig}"
 
-    if [[ ! -h $plugins || ! -e $plugins ]]
-    then
-        unlink "${plugins}" &> /dev/null
-        ln -s "${MDS_CONFIG}/plugins.lua" "${plugins}"
-    fi
-
-    if [[ ! -h $configs || ! -e $configs ]]
-    then
-        unlink "${configs}" &> /dev/null
-        ln -s "${MDS_CONFIG}/vim/lua/configs.lua" "${configs}"
-    fi
-
-    echo "require('plugins')" > ~/.config/nvim/lua/init.lua
-    echo "require('configs')" >> ~/.config/nvim/lua/init.lua
-
-    echo "source \${MDS_CONFIG}/vimrc" > ~/.config/nvim/init.vim
-    echo "lua require('init')" >> ~/.config/nvim/init.vim
+    fn_create_sym_link "${MDS_VIM}/lua/init.lua" "${nvim_config}/"
+    fn_create_sym_link "${MDS_VIM}/lua/lazy.lua" "${config}"
+    fn_create_sym_link "${MDS_VIM}/lua/plugins1.lua" "${plugins}"
+    fn_create_sym_link "${MDS_VIM}/lua/cmp.lua" "${plugins}"
+    fn_create_sym_link "${MDS_VIM}/lua/snacks.lua" "${plugins}"
+    fn_create_sym_link "${MDS_VIM}/lua/cmp_config.lua" "${postconfig}"
 }
 
 function nvim_update() {

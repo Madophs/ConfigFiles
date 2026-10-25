@@ -290,6 +290,44 @@ function clean_file() {
     truncate -s 0 ${file_to_empty} &> /dev/null
 }
 
+function fn_create_sym_link() {
+    local src="${1:?}"
+    local dst="${2:?}"
+    local dst_owner=""
+
+    [[ $src =~ ^/.+ ]] || pfail "Source needs to be absolute path"
+
+    # get file ownership if file exists
+    [[ ! -d $dst && (-h $dst || -e $dst) ]] &&
+        dst_owner=$( stat --printf="%U" "${dst}" )
+
+    # if previous dst file exists we can deduct ownership
+    if [[ $dst_owner == "root" ]]
+    then
+        sudo unlink "${dst}"
+        sudo ln -s "${src}" "${dst}"
+        return
+    elif [[ -n "${dst_owner}" ]]
+    then
+        unlink "${dst}"
+        ln -s "${src}" "${dst}"
+        return
+    fi
+
+    if [[  $dst =~ (.*/)(.+) ]]
+    then
+        (( ${#BASH_REMATCH[@]} > 0 )) && match=("${BASH_REMATCH[@]:1}")
+        dst_owner=$( stat --printf="%U" "${match[@]:0:1}" )
+        if [[ $dst_owner == "root" ]]
+        then
+            sudo ln -s "${src}" "${dst}"
+            return
+        fi
+    fi
+
+    ln -s "${src}" "${dst}" || pfail "Create symbolic link"
+}
+
 function add_desktop_app_entry() {
     missing_argument_validation 1 ${1}
     cat > "${MDS_HOME}/.local/share/applications/${1}.desktop" << EOF
