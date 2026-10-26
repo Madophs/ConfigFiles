@@ -55,6 +55,7 @@ alias wpm2json_en='wpm2json "${MDS_WPM_EN_TXT}" > "${MDS_WPM_EN_QUOTES}"'
 alias wpm2json_es='wpm2json "${MDS_WPM_ES_TXT}" > "${MDS_WPM_ES_QUOTES}"'
 alias wpm2json_ru='wpm2json "${MDS_WPM_RU_TXT}" > "${MDS_WPM_RU_QUOTES}"'
 alias wpm2json_pt='wpm2json "${MDS_WPM_PT_TXT}" > "${MDS_WPM_PT_QUOTES}"'
+alias xkbb='xkbcli compile-keymap --layout mds'
 
 # positional arguments are passed by awk command
 # shellcheck disable=SC2142
