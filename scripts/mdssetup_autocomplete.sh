@@ -38,7 +38,7 @@ _mdssetup() {
         # close FD
         exec 3<&-
 
-        _mdssetup_read "${opts}" "${cur}"
+        _mdssetup_read "${opts} --edit" "${cur}"
         return 0
     done
 

@@ -72,6 +72,11 @@ case ${ARG} in
     *)
         shift
         [[ " ${setup_scripts[*]} " == *" ${ARG} "* ]] || pfail "Invalid option «${ARG}»"
-        "${SETUPS_PATH}/${ARG}" "${@}"
+        if [[ ${1} == "--edit" ]]
+        then
+            "${EDITOR}" "${SETUPS_PATH}/${ARG}"
+        else
+            "${SETUPS_PATH}/${ARG}" "${@}"
+        fi
     	;;
 esac
