@@ -1,11 +1,11 @@
 #!/bin/bash
 
-SOURCE_PATH=${MDS_SCRIPTS}/third_party
+SETUPS_PATH=${MDS_SCRIPTS}/setups
 source "${MDS_SCRIPTS}/common.sh"
 
 declare -g APT_HOOKS_FILE="${MDS_HIDDEN_CONFIGS}/apt_hooks"
-declare -g -a hook_scripts=( $(ls "${SOURCE_PATH}/"*.sh) )
-hook_scripts=(${hook_scripts[@]#*party/})
+declare -g -a setup_scripts=("${SETUPS_PATH}/"*.sh)
+setup_scripts=("${setup_scripts[@]##*setups/}")
 
 function add_hook() {
     missing_argument_validation 1 "${1}"
@@ -37,7 +37,6 @@ function remove_hook() {
     if mapfile -t apt_hooks < "${APT_HOOKS_FILE}" 2> /dev/null;
     then
         printf "%s\n" "${apt_hooks[@]%${hook_del}}" > "${APT_HOOKS_FILE}"
-        return
     fi
 }
 
@@ -51,8 +50,8 @@ then
     exit 0
 fi
 
-SUBJECT=${1}
-case ${SUBJECT} in
+ARG=${1}
+case ${ARG} in
     add_hook)
         shift
         add_hook "${@}"
@@ -72,10 +71,7 @@ case ${SUBJECT} in
     	;;
     *)
         shift
-        for script in "${hook_scripts[@]}"
-        do
-            [[ "${script}" == "${SUBJECT}" ]] && "${SOURCE_PATH}/${SUBJECT}" "${@}" && exit 0
-        done
-        cout error "Unknown option «${*}»"
+        [[ " ${setup_scripts[*]} " == *" ${ARG} "* ]] || pfail "Invalid option «${ARG}»"
+        "${SETUPS_PATH}/${ARG}" "${@}"
     	;;
 esac

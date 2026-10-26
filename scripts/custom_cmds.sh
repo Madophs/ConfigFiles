@@ -132,7 +132,7 @@ function __custcmds() {
 }
 
 function set_apt_hooks() {
-    local hook_updater="${MDS_SCRIPTS}/third_party/hook_update"
+    local hook_updater="${MDS_SCRIPTS}/setups/hook_update"
     local target="/etc/apt/apt.conf.d/05hook-mds"
     sudo dd of=${target} <<< "APT::Update::Post-Invoke {\"sudo -u madophs -i ${hook_updater} ;\";};" 2> /dev/null
 }
