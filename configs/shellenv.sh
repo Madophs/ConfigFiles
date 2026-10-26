@@ -37,6 +37,7 @@ export PY_IMG="${GIT_REPOS}/Image-Processsing/resources"
 export EDITOR=nvim
 export EDITOR_COMMAND="nvr -s {{FILE}}"
 export PAGER=less
+export BASH_COMPLETION_DIR="${HOME}/.local/share/bash-completion/completions"
 export MANROFFOPT="-c"
 export LESS_TERMCAP_mb=$'\e[1;33m'
 export LESS_TERMCAP_md=$'\e[1;32m'

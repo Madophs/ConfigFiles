@@ -6,6 +6,7 @@ mkdir -p "${MDS_SESSIONS_DIR}"
 mkdir -p "${MDS_VOCAB_DIR}"
 mkdir -p "${MDS_APPS}"
 mkdir -p "${GIT_REPOS}"
+mkdir -p "${BASH_COMPLETION_DIR}"
 touch "${MDS_TRAP_CMD}"
 touch "${MDS_ROOT_FILE}"
 

@@ -44,8 +44,9 @@ function remove_hook() {
 # This scripts setup/install some 3rd party software that I personally use.
 if (( $# < 1 ))
 then
-    echo "Usage: mdsetup [program] [options]..."
-    echo 'Run "mdssetup autocomplete" for bash autocompletion'
+    echo "Usage: mdssetup [program] [options]..."
+    [[ ! -h "${BASH_COMPLETION_DIR}/mdssetup" || ! -e "${BASH_COMPLETION_DIR}/mdssetup" ]] &&
+        echo 'Run "mdssetup autocomplete" for bash autocompletion'
     echo "Jehú Jair Ruiz Villegas"
     exit 0
 fi
@@ -67,8 +68,7 @@ case ${SUBJECT} in
         cat "${APT_HOOKS_FILE}" 2> /dev/null
         ;;
     autocomplete)
-        sudo unlink /etc/bash_completion.d/mdssetup-prompt &> /dev/null
-        sudo ln -s "${MDS_SCRIPTS}/mdssetup_autocomplete.sh" /etc/bash_completion.d/mdssetup-prompt
+        fn_create_sym_link "${MDS_SCRIPTS}/mdssetup_autocomplete.sh" "${BASH_COMPLETION_DIR}/mdssetup"
     	;;
     *)
         shift

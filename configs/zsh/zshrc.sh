@@ -45,3 +45,11 @@ source "${MDS_CONFIG}/configs/zsh/zsh_plugins.sh"
 
 # calling functions
 export_colors
+
+autoload -U +X bashcompinit && bashcompinit
+
+# autocomplete commands from bash
+for completion_file in "${BASH_COMPLETION_DIR}/"*(N); # nullglob
+do
+    source "${completion_file}"
+done
