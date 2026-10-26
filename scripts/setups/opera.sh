@@ -1,7 +1,8 @@
 #!/bin/bash
 #shellparams --install --update --install-ffmpeg --versions --remove-ffmpeg --remove --set-autoupdate --remove-set-autoupdate
 
-source ${MDS_SCRIPTS}/common.sh
+source "${MDS_SCRIPTS}/common.sh"
+source "${MDS_SCRIPTS}/utils/parse_args.sh"
 PACKAGE_NAME=opera-stable
 OPERA_FTP_URL=https://download5.operacdn.com/ftp/pub/opera/desktop
 
@@ -10,7 +11,7 @@ DOWNLOAD_DIR='/tmp/ffmpeg'
 FFMPEG_REPO="https://github.com/nwjs-ffmpeg-prebuilt/nwjs-ffmpeg-prebuilt/releases"
 
 function do_opera_set_vars_and_paths() {
-    declare -g OPERA_BIN=$(readlink -f $(which opera) 2> /dev/null)
+    declare -g OPERA_BIN=$(readlink -f "$(which opera 2> /dev/null)" 2> /dev/null)
     declare -g TARGET_PATH=$(echo ${OPERA_BIN} | grep -o -e '^/.\+/' | sed 's|/$|/lib_extra|g')
     declare -g IS_OPERA_INSTALLED="$([ -n "${OPERA_BIN}" ] && echo YES || echo NO)"
     declare -g WAS_OPERA_KILLED=NO
@@ -33,6 +34,7 @@ function do_opera_get_version() {
 }
 
 function do_opera_show_ffmpeg_lib_versions() {
+    [[ "${IS_OPERA_INSTALLED}" == NO ]] && return
     cout info " ffmpeg library versions:"
     wget -qO - ${FFMPEG_REPO} | grep -A10 '<section aria-labelledby="hd' |
         grep -E -o -e '20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]|[0-9]\.[0-9]+\.[0-9]' |
@@ -47,7 +49,7 @@ function do_opera_show_versions() {
 
     echo -e "${latest_versions}" | grep -B10 -A10 -w --color=always ${opera_version} || echo -e "${latest_versions}"
     echo
-    cout info " Current version: " ${opera_version}
+    cout info " Current version: ${opera_version}"
 }
 
 function get_opera_download_link() {
@@ -100,7 +102,7 @@ function do_set_autoupdate() {
     sudo touch ${apt_opera_autofix}
     sudo truncate -s 0 ${apt_opera_autofix}
     echo 'DPkg::Pre-Invoke {"stat -c %Z $(readlink -f $(which opera)) > /tmp/opera.timestamp";};' | sudo tee -a ${apt_opera_autofix}
-    echo 'DPkg::Post-Invoke {"if [ `stat -c %Z $(readlink -f $(which opera))` -ne `cat /tmp/opera.timestamp` ]; then export MDS_SCRIPTS={{}};export MDS_TRAP_CMD={{trap}};${MDS_SCRIPTS}/third_party/opera.sh --install-ffmpeg; fi; rm /tmp/opera.timestamp";};' | sed -e "s|{{}}|${MDS_SCRIPTS}|g" -e "s|{{trap}}|${MDS_TRAP_CMD}|g" | sudo tee -a ${apt_opera_autofix}
+    echo 'DPkg::Post-Invoke {"if [ `stat -c %Z $(readlink -f $(which opera))` -ne `cat /tmp/opera.timestamp` ]; then export MDS_SCRIPTS={{}};export MDS_TRAP_CMD={{trap}};${MDS_SCRIPTS}/setups/opera.sh --install-ffmpeg; fi; rm /tmp/opera.timestamp";};' | sed -e "s|{{}}|${MDS_SCRIPTS}|g" -e "s|{{trap}}|${MDS_TRAP_CMD}|g" | sudo tee -a ${apt_opera_autofix}
 }
 
 function do_remove_set_autoupdate() {
