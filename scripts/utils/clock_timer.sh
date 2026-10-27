@@ -34,7 +34,7 @@ clock_end() {
     # Subtract time spent on time consuming operations
     __total_spent_time=$(( __clock_end - __clock_start - __time_on_operation ))
 
-    printf -v __total_spent_time "%d.%6.6s" $((__total_spent_time / 1000000)) ${__total_spent_time}
+    printf -v __total_spent_time "%d.%6.6s" $((__total_spent_time / 1000000)) $((__total_spent_time % 1000000))
     __total_spent_time=${__total_spent_time// /0}
     cout debug "Total time spent at <${YELLOW}${FUNCNAME[1]}${BLK}> is ${CYAN}${__total_spent_time}${BLK} seconds."
 
