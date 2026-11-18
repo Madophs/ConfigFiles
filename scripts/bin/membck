@@ -1,0 +1,94 @@
+#!/bin/env bash
+
+source "${MDS_SCRIPTS}/utils/cout.sh"
+
+shopt -s nullglob
+
+: "${MEM_BACKUP_DIR:=${HOME}/Documents/test/mega}"
+
+: "${PS1_MEMCARDS_SRC:=${HOME}/.local/share/duckstation/memcards}"
+: "${PS1_MEMCARDS_DST:=${MEM_BACKUP_DIR}/ps1}"
+
+: "${PS2_MEMCARDS_SRC:=${HOME}/.var/app/net.pcsx2.PCSX2/config/PCSX2/memcards}"
+: "${PS2_MEMCARDS_DST:=${MEM_BACKUP_DIR}/ps2}"
+
+: "${BACKUPS_MAX_AMOUNT:=20}"
+declare -g -i BACKUPS_MAX_AMOUNT
+
+# Use ISO-8601 for auto-chronological order
+CURRENT_DATETIME=${ date "+%Y-%m-%d_%H-%M-%S"; }
+
+declare -g -a BACKUPS_FOR_ENFORCEMENT=()
+
+function enforce_backup_limit() {
+    local -a eligible_dirs=()
+    for backup_dir in "${BACKUPS_FOR_ENFORCEMENT[@]}"
+    do
+        cd "${backup_dir}" || pfail "cd «${backup_dir}»"
+        # Directories captured in ascending order
+        eligible_dirs=()
+        for candidate in *;
+        do
+            if [[ ! -e "${backup_dir}/${candidate}/.keep" ]]
+            then
+                eligible_dirs+=( "${candidate}" )
+            fi
+        done
+        (( ${#eligible_dirs[@]} < 1 )) && continue
+        if (( ${#eligible_dirs[@]} > BACKUPS_MAX_AMOUNT && 0 < BACKUPS_MAX_AMOUNT ))
+        then
+            local -i delete_amount=$(( ${#eligible_dirs[@]} - BACKUPS_MAX_AMOUNT ))
+            for (( i=0; i<delete_amount; ++i ))
+            do
+                rm -rf "${eligible_dirs[i]}"
+            done
+        fi
+    done
+}
+
+function backup_emulator_memcards() {
+    local -r dir_src=${1}
+    local -r dir_dst=${2}
+    local -r emulator_type=${3^^}
+    local -r file_ext=${4}
+
+    [[ -d "${dir_src}" ]] || { pwarn "${emulator_type} memory cards directory not found"; return 0; }
+    cd "${dir_src}" || pfail "cd «${dir_src}»"
+
+    local memcard_dirpath latest_backup backup_dst
+    local src_hash dst_hash
+    local -a memfiles=(*."${file_ext}")
+    for memfile in "${memfiles[@]}"
+    do
+        memcard_dirpath="${dir_dst}/${memfile%."${file_ext}"}"
+        mkdir -p "${memcard_dirpath}"
+        BACKUPS_FOR_ENFORCEMENT+=( "${memcard_dirpath}" )
+        latest_backup=${ printf "%s/${memfile}\n" "${memcard_dirpath}/"* | tail -n 1; }
+        dst_hash=${ md5sum "${latest_backup}" 2> /dev/null | cut -d ' ' -f 1; }
+        src_hash=${ md5sum "${memfile}" | cut -d ' ' -f 1; }
+        [[ "${src_hash}" == "${dst_hash}" ]] && continue
+        backup_dst="${memcard_dirpath}/${CURRENT_DATETIME}"
+        mkdir -p "${backup_dst}"
+        cp "${memfile}" "${backup_dst}"
+        pdebug "cp ${memfile} ${backup_dst}"
+        pinfo "${emulator_type} backup: ${YELLOW}${memfile}${BLK}"
+    done
+}
+
+# @brief Duckstation memcards backup
+function backup_ps1_memcards() {
+    backup_emulator_memcards "${PS1_MEMCARDS_SRC}" "${PS1_MEMCARDS_DST}" "ps1" "mcd"
+}
+
+# @brief PCSX2 memcards backup
+function backup_ps2_memcards() {
+    backup_emulator_memcards "${PS2_MEMCARDS_SRC}" "${PS2_MEMCARDS_DST}" "ps2" "ps2"
+}
+
+function backup_all() {
+    backup_ps1_memcards
+    backup_ps2_memcards
+    enforce_backup_limit
+}
+
+backup_all
