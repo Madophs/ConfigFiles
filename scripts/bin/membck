@@ -57,21 +57,20 @@ function backup_emulator_memcards() {
 
     local memcard_dirpath latest_backup backup_dst
     local src_hash dst_hash
-    local -a memfiles=(*."${file_ext}")
-    for memfile in "${memfiles[@]}"
+    local -a savefiles=(*."${file_ext}")
+    for savefile in "${savefiles[@]}"
     do
-        memcard_dirpath="${dir_dst}/${memfile%."${file_ext}"}"
+        memcard_dirpath="${dir_dst}/${savefile%."${file_ext}"}"
         mkdir -p "${memcard_dirpath}"
         BACKUPS_FOR_ENFORCEMENT+=( "${memcard_dirpath}" )
-        latest_backup=${ printf "%s/${memfile}\n" "${memcard_dirpath}/"* | tail -n 1; }
+        latest_backup=${ printf "%s/${savefile}\n" "${memcard_dirpath}/"* | tail -n 1; }
         dst_hash=${ md5sum "${latest_backup}" 2> /dev/null | cut -d ' ' -f 1; }
-        src_hash=${ md5sum "${memfile}" | cut -d ' ' -f 1; }
+        src_hash=${ md5sum "${savefile}" | cut -d ' ' -f 1; }
         [[ "${src_hash}" == "${dst_hash}" ]] && continue
         backup_dst="${memcard_dirpath}/${CURRENT_DATETIME}"
         mkdir -p "${backup_dst}"
-        cp "${memfile}" "${backup_dst}"
-        pdebug "cp ${memfile} ${backup_dst}"
-        pinfo "${emulator_type} backup: ${YELLOW}${memfile}${BLK}"
+        cp "${savefile}" "${backup_dst}"
+        pinfo "${emulator_type} backup: ${YELLOW}${savefile}${BLK}"
     done
 }
 
