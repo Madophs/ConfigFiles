@@ -69,7 +69,7 @@ function backup_emulator_memcards() {
         [[ "${src_hash}" == "${dst_hash}" ]] && continue
         backup_dst="${memcard_dirpath}/${CURRENT_DATETIME}"
         mkdir -p "${backup_dst}"
-        cp "${savefile}" "${backup_dst}"
+        cp "${savefile}" "${backup_dst}" || pfail "(cp savefile ⮞ backup_dst) cp «${savefile}» «${backup_dst}»"
         pinfo "${emulator_type} backup: ${YELLOW}${savefile}${BLK}"
     done
 }
@@ -89,5 +89,10 @@ function backup_all() {
     backup_ps2_memcards
     enforce_backup_limit
 }
+
+if [[ ! -d "${MEM_BACKUP_DIR}" ]]
+then
+    pfail "Backup directory doesn't exists"
+fi
 
 backup_all
