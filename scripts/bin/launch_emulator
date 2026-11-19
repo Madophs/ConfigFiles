@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -e
+
+# Back up memcards from emulators:
+# Duckstation, PCSX2
+"${MDS_SCRIPTS_BIN:?MDS_SCRIPTS_BIN not defined}/membck"
+
+emulator_bin="${1:?Missing emulator command}"
+shift
+exec "${emulator_bin}" "${@}"
