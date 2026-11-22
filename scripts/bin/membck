@@ -20,6 +20,16 @@ CURRENT_DATETIME=${ date "+%Y-%m-%d_%H-%M-%S"; }
 
 declare -g -a BACKUPS_FOR_ENFORCEMENT=()
 
+function compute_md5sum() {
+    local file="${1}"
+    if [[ "${file}" == *7z ]]
+    then
+        7z e -so "${file}" | md5sum | cut -d ' ' -f 1
+    else
+        md5sum "${file}" 2> /dev/null | cut -d ' ' -f 1
+    fi
+}
+
 function enforce_backup_limit() {
     local -a eligible_dirs=()
     for backup_dir in "${BACKUPS_FOR_ENFORCEMENT[@]}"
@@ -63,13 +73,13 @@ function backup_emulator_memcards() {
         memcard_dirpath="${dir_dst}/${savefile%."${file_ext}"}"
         mkdir -p "${memcard_dirpath}"
         BACKUPS_FOR_ENFORCEMENT+=( "${memcard_dirpath}" )
-        latest_backup=${ printf "%s/${savefile}\n" "${memcard_dirpath}/"* | tail -n 1; }
-        dst_hash=${ md5sum "${latest_backup}" 2> /dev/null | cut -d ' ' -f 1; }
-        src_hash=${ md5sum "${savefile}" | cut -d ' ' -f 1; }
+        latest_backup=${ printf "%s\n" "${memcard_dirpath}/"*/* | tail -n 1; }
+        dst_hash=${ compute_md5sum "${latest_backup}"; }
+        src_hash=${ compute_md5sum "${savefile}"; }
         [[ "${src_hash}" == "${dst_hash}" ]] && continue
         backup_dst="${memcard_dirpath}/${CURRENT_DATETIME}"
         mkdir -p "${backup_dst}"
-        cp "${savefile}" "${backup_dst}" || pfail "(cp savefile ⮞ backup_dst) cp «${savefile}» «${backup_dst}»"
+        7z a "${backup_dst}/${savefile}.7z" "${savefile}" > /dev/null || pfail "(7z a savefile.7z ⮞ backup_dst) 7z a «${backup_dst}/${savefile}.7z» «${savefile}»"
         pinfo "${emulator_type} backup: ${YELLOW}${savefile}${BLK}"
     done
 }
