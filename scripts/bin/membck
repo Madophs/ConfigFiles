@@ -100,7 +100,7 @@ function backup_all() {
     enforce_backup_limit
 }
 
-[[ -x "$(command -v md5su)" ]]  || pfail "«md5sum» not found."
+[[ -x "$(command -v md5sum)" ]]  || pfail "«md5sum» not found."
 [[ -x "$(command -v 7z)" ]]     || pfail "«7z» not found."
 [[ -d "${MEM_BACKUP_DIR}" ]]    || pfail "«${MEM_BACKUP_DIR}»directory doesn't exists. Please set MEM_BACKUP_DIR properly."
 
