@@ -38,7 +38,7 @@ function gdiff_callback() {
     local git_file="${GIT_BASE_DIR}/${menu_item_key_selected}"
     case ${key} in
         [vV]|"")
-            nvim "${git_file}" -c Gdiffsplit
+            "${EDITOR}" "${git_file}" -c Gdiffsplit
             ;;
         [aA])
             git add "${git_file}"
